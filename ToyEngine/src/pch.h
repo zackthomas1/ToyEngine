@@ -13,7 +13,7 @@
 #include <unordered_map>
 #include <unordered_set>
 
-#include "log.h"
+#include "ToyEngine/log.h"
 
 #ifdef PLATFORM_WINDOWS
 	#include <Windows.h>

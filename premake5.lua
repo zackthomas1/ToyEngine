@@ -1,7 +1,7 @@
 --premake5.lua 
 workspace "ToyEngine" 
     architecture "x64"
-    startproject "ToyEngine"
+    startproject "Sandbox"
 
     configurations 
     { 
@@ -25,11 +25,13 @@ group "Dependencies"
     include "ToyEngine/vendor/glad"
 group ""
 
+-- Toy Engine project
 project "ToyEngine"
     location "ToyEngine"
-    kind "ConsoleApp"
+    kind "StaticLib"
     language "C++"
     cppdialect "C++17"
+    staticruntime "on"
 
     targetdir ("bin/" .. outputdir .. "/%{prj.name}")
     objdir ("bin-int/" .. outputdir .. "/%{prj.name}")
@@ -37,56 +39,110 @@ project "ToyEngine"
 	pchheader "pch.h"
 	pchsource "ToyEngine/src/pch.cpp"
 
-files
-{
-    "%{prj.name}/src/**.h",
-    "%{prj.name}/src/**.cpp"
-}
-
---[[
-    defines{
-
-    }
-]]
-
-includedirs
-{
-    "%{prj.name}/src",
-    "%{IncludeDir.GLFW}",
-    "%{IncludeDir.glad}",
-    "%{IncludeDir.stb}",
-    "%{IncludeDir.glm}",
-    "%{IncludeDir.spdlog}",
-}
-
-links
-{
-    "GLFW",
-    "glad",
-    "opengl32.lib",
-}
-
-filter "system:windows"
-    systemversion "latest"
-    buildoptions { "/utf-8" }
-
-    defines
+    files
     {
-        "GLFW_INCLUDE_NONE",
-        "PLATFORM_WINDOWS"
+        "%{prj.name}/src/**.h",
+        "%{prj.name}/src/**.cpp"
     }
 
-    filter "configurations:Debug"
-        defines {"TY_DEBUG", "TY_ENABLE_ASSERTS"}
-        runtime "Debug"
-        symbols "On"
+    defines{
+        "_CRT_SECURE_NO_WARNINGS"
+    }
 
-    filter "configurations:Release"
-        defines {"TY_RELEASE"}
-        runtime "Release"
-        optimize "On"
+    includedirs
+    {
+        "%{prj.name}/src",
+        "%{IncludeDir.GLFW}",
+        "%{IncludeDir.glad}",
+        "%{IncludeDir.stb}",
+        "%{IncludeDir.glm}",
+        "%{IncludeDir.spdlog}",
+    }
 
-    filter "configurations:Dist"
-        defines {"TY_DIST"}
-        runtime "Release"
-        optimize "On"
+    links
+    {
+        "GLFW",
+        "glad",
+        "opengl32.lib",
+    }
+
+    filter "system:windows"
+        systemversion "latest"
+        buildoptions { "/utf-8" }
+
+        defines
+        {
+            "TY_PLATFORM_WINDOWS",
+            "TY_BUILD_DLL",
+            "GLFW_INCLUDE_NONE",
+        }
+
+        filter "configurations:Debug"
+            defines {"TY_DEBUG", "TY_ENABLE_ASSERTS"}
+            runtime "Debug"
+            symbols "On"
+
+        filter "configurations:Release"
+            defines {"TY_RELEASE"}
+            runtime "Release"
+            optimize "On"
+
+        filter "configurations:Dist"
+            defines {"TY_DIST"}
+            runtime "Release"
+            optimize "On"
+
+        -- Application Project
+project "Sandbox"
+    location "Sandbox"
+    kind "ConsoleApp"
+    language "C++"
+    cppdialect "C++17"
+    staticruntime "on"
+
+    targetdir ("bin/" .. outputdir .. "/%{prj.name}")
+    objdir ("bin-int/" .. outputdir .. "/%{prj.name}")
+
+    files
+    {
+        "%{prj.name}/src/**.h", 
+        "%{prj.name}/src/**.cpp"
+    }
+
+    includedirs
+    {
+        "ToyEngine/src", 
+        "ToyEngine/vendor", 
+        "%{IncludeDir.glm}",
+        "%{IncludeDir.spdlog}"
+    }
+
+    links 
+    {
+        "ToyEngine"
+    }
+
+    filter "system:windows"
+        staticruntime "On"
+        systemversion "latest"
+        buildoptions { "/utf-8" }
+
+        defines
+        {
+            "TY_PLATFORM_WINDOWS",
+        }
+
+        filter "configurations:Debug"
+            defines {"TY_DEBUG", "TY_ENABLE_ASSERTS"}
+            runtime "Debug"
+            symbols "on"
+
+        filter "configurations:Release"
+            defines {"TY_RELEASE"}
+            runtime "Release"
+            optimize "on"
+
+        filter "configurations:Dist"
+            defines {"TY_DIST"}
+            runtime "Release"
+            optimize "on"

@@ -1,5 +1,5 @@
 #include "pch.h"
-#include "delta_time.h"
+#include "ToyEngine/delta_time.h"
 #include <GLFW/glfw3.h>
 
 namespace ToyEngine {
@@ -15,6 +15,6 @@ namespace ToyEngine {
 		current_frame_time_ = glfwGetTime();
 		delta_time_ = current_frame_time_ - last_frame_time_;
 		last_frame_time_ = current_frame_time_;
-		//std::cout << delta_time_ << std::endl;
+		TY_CORE_TRACE("time step: {}", delta_time_);
 	}
 }

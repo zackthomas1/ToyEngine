@@ -10,13 +10,13 @@
 #define GLM_ENABLE_EXPERIMENTAL
 #include <glm/gtx/string_cast.hpp>
 
-#include "shader_s.h"
-#include "texture_2d.h"
-#include "primatives/cube.h"
-#include "primatives/plane.h"
-#include "delta_time.h"
-#include "cameras/fly_camera.h"
-#include "cameras/orthographic_camera.h"
+#include "ToyEngine/shader_s.h"
+#include "ToyEngine/texture_2d.h"
+#include "ToyEngine/primatives/cube.h"
+#include "ToyEngine/primatives/plane.h"
+#include "ToyEngine/delta_time.h"
+#include "ToyEngine/cameras/fly_camera.h"
+#include "ToyEngine/cameras/orthographic_camera.h"
 
 // Declare functions
 void ProcessInput(GLFWwindow* window, float time_step);

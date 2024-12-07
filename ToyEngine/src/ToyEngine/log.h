@@ -17,7 +17,6 @@ namespace ToyEngine
 	};
 }
 
-// define as macors to reduce 
 // Core log macros
 #define TY_CORE_TRACE(...)	:: ToyEngine::Log::GetCoreLogger()->trace(__VA_ARGS__)
 #define TY_CORE_INFO(...)	:: ToyEngine::Log::GetCoreLogger()->info(__VA_ARGS__)
