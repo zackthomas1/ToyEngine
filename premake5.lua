@@ -45,7 +45,8 @@ project "ToyEngine"
         "%{prj.name}/src/**.cpp"
     }
 
-    defines{
+    defines
+    {
         "_CRT_SECURE_NO_WARNINGS"
     }
 
@@ -114,7 +115,7 @@ project "Sandbox"
         "ToyEngine/src", 
         "ToyEngine/vendor", 
         "%{IncludeDir.glm}",
-        "%{IncludeDir.spdlog}"
+        "%{IncludeDir.spdlog}",  
     }
 
     links 
@@ -133,7 +134,7 @@ project "Sandbox"
         }
 
         filter "configurations:Debug"
-            defines {"TY_DEBUG", "TY_ENABLE_ASSERTS"}
+            defines {"TY_DEBUG"}
             runtime "Debug"
             symbols "on"
 

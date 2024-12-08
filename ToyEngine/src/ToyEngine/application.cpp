@@ -7,7 +7,10 @@ namespace ToyEngine
 
 	Application::Application()
 	{
+		TY_CORE_ASSERT(!s_instance, "Application already exist!")
+		s_instance = this;
 
+		window_ = std::unique_ptr<Window>(Window::Create());
 	}
 
 	Application::~Application()
@@ -19,7 +22,7 @@ namespace ToyEngine
 	{
 		while (true)
 		{
-			TY_CORE_INFO("running");
+			//TY_CORE_INFO("running");
 		}
 	}
 

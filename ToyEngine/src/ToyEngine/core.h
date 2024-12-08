@@ -1,5 +1,20 @@
 #pragma once
 
+#ifdef TY_PLATFORM_WINDOWS
+	#ifdef TY_DYNAMIC_LINK
+		#ifdef TY_BUILD_DLL
+			#define TOYENGINE_API __declspec(dllexport)
+		#else
+			#define TOYENGINE_API __declspec(dllimport)
+		#endif // TY_BUILD_DLL
+	#else
+		#define TOYENGINE_API
+	#endif // TY_DYNAMIC_LINK
+#else
+	#error Only supports Windows
+#endif // TY_PLATFORM_WINDOWS
+
+
 #ifdef TY_DEBUG
 	#define TY_ENABLE_ASSERTS
 #endif // TY_DEBUG
