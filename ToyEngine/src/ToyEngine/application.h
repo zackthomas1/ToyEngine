@@ -1,6 +1,6 @@
 #pragma once
-#include "ToyEngine/core.h"
-#include "ToyEngine/window.h"
+#include "core.h"
+#include "windows_window.h"
 
 namespace ToyEngine
 {
@@ -12,7 +12,7 @@ namespace ToyEngine
 
 		void Run();
 	private:
-		std::unique_ptr<Window> window_;
+		std::unique_ptr<WindowsWindow> window_;
 		static Application* s_instance;
 	};
 

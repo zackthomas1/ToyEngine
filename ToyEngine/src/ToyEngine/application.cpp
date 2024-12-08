@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "ToyEngine/application.h"
 
+
 namespace ToyEngine
 {
 	Application* Application::s_instance = nullptr;
@@ -10,7 +11,18 @@ namespace ToyEngine
 		TY_CORE_ASSERT(!s_instance, "Application already exist!")
 		s_instance = this;
 
-		window_ = std::unique_ptr<Window>(Window::Create());
+		window_ = std::unique_ptr<WindowsWindow>(WindowsWindow::Create());
+		window_->MakeContextCurrent();
+
+		// GLAD: load all OpenGL function pointers
+		if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
+		{
+			TY_CORE_ERROR("Failed to intialize GLAD");
+			window_ = nullptr;
+		}
+
+		// Set rendering window size 
+		glViewport(0, 0, window_->GetWidth(), window_->GetHeight());
 	}
 
 	Application::~Application()
@@ -20,9 +32,17 @@ namespace ToyEngine
 
 	void Application::Run()
 	{
-		while (true)
+		while (!window_->ShouldClose())
 		{
-			//TY_CORE_INFO("running");
+			window_->ProcessInput();
+			
+			// render
+			// ------
+			glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+			glClear(GL_COLOR_BUFFER_BIT);
+
+			window_->SwapBuffers();
+			window_->PollEvents();
 		}
 	}
 

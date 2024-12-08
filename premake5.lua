@@ -14,15 +14,19 @@ outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
 
 -- Include directories relative to root folder (solution directory)
 IncludeDir = {}
-IncludeDir["GLFW"] = "ToyEngine/vendor/GLFW/include"
-IncludeDir["glad"] = "ToyEngine/vendor/glad/include"
-IncludeDir["stb"] = "ToyEngine/vendor/stb"
-IncludeDir["glm"] = "ToyEngine/vendor/glm"
-IncludeDir["spdlog"] = "ToyEngine/vendor/spdlog/include"
+IncludeDir["GLFW"]      = "%{wks.location}/ToyEngine/vendor/GLFW/include"
+IncludeDir["glad"]      = "%{wks.location}/ToyEngine/vendor/glad/include"
+IncludeDir["stb"]       = "%{wks.location}/ToyEngine/vendor/stb"
+IncludeDir["glm"]       = "%{wks.location}/ToyEngine/vendor/glm"
+IncludeDir["spdlog"]    = "%{wks.location}/ToyEngine/vendor/spdlog/include"
 
 group "Dependencies"
     include "ToyEngine/vendor/GLFW"
     include "ToyEngine/vendor/glad"
+group ""
+
+group "Tools"
+    include "Sandbox"
 group ""
 
 -- Toy Engine project
@@ -80,61 +84,6 @@ project "ToyEngine"
 
         filter "configurations:Debug"
             defines {"TY_DEBUG", "TY_ENABLE_ASSERTS"}
-            runtime "Debug"
-            symbols "On"
-
-        filter "configurations:Release"
-            defines {"TY_RELEASE"}
-            runtime "Release"
-            optimize "On"
-
-        filter "configurations:Dist"
-            defines {"TY_DIST"}
-            runtime "Release"
-            optimize "On"
-
-        -- Application Project
-project "Sandbox"
-    location "Sandbox"
-    kind "ConsoleApp"
-    language "C++"
-    cppdialect "C++17"
-    staticruntime "on"
-
-    targetdir ("bin/" .. outputdir .. "/%{prj.name}")
-    objdir ("bin-int/" .. outputdir .. "/%{prj.name}")
-
-    files
-    {
-        "%{prj.name}/src/**.h", 
-        "%{prj.name}/src/**.cpp"
-    }
-
-    includedirs
-    {
-        "ToyEngine/src", 
-        "ToyEngine/vendor", 
-        "%{IncludeDir.glm}",
-        "%{IncludeDir.spdlog}",  
-    }
-
-    links 
-    {
-        "ToyEngine"
-    }
-
-    filter "system:windows"
-        staticruntime "On"
-        systemversion "latest"
-        buildoptions { "/utf-8" }
-
-        defines
-        {
-            "TY_PLATFORM_WINDOWS",
-        }
-
-        filter "configurations:Debug"
-            defines {"TY_DEBUG"}
             runtime "Debug"
             symbols "on"
 
