@@ -1,6 +1,6 @@
 #include "pch.h"
 #include "ToyEngine/application.h"
-
+#include "ToyEngine/commands/command.h"
 
 namespace ToyEngine
 {
@@ -8,11 +8,17 @@ namespace ToyEngine
 
 	Application::Application()
 	{
+		//
 		TY_CORE_ASSERT(!s_instance, "Application already exist!")
 		s_instance = this;
 
+		//
 		window_ = std::unique_ptr<WindowsWindow>(WindowsWindow::Create());
 		window_->MakeContextCurrent();
+		window_->SetCommandCallbackFn(InputHandler::ExecuteCommand);
+
+		//
+		is_running_ = true;
 
 		// GLAD: load all OpenGL function pointers
 		if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
@@ -34,8 +40,8 @@ namespace ToyEngine
 	{
 		while (!window_->ShouldClose())
 		{
-			window_->ProcessInput();
-			
+			window_->ProcessInput(0.0f);
+
 			// render
 			// ------
 			glClearColor(0.2f, 0.3f, 0.3f, 1.0f);

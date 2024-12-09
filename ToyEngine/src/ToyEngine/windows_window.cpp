@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "windows_window.h"
+#include "ToyEngine/commands/command.h"
 
 namespace ToyEngine
 {
@@ -20,20 +21,32 @@ namespace ToyEngine
 
 	unsigned int WindowsWindow::GetWidth() const
 	{
-		return settings_.width;
+		return data_.width;
 	}
 
 	unsigned int WindowsWindow::GetHeight() const
 	{
-		return settings_.height;
+		return data_.height;
 	}
 
-	void WindowsWindow::ProcessInput()
+	GLFWwindow* WindowsWindow::GetWindowPointer() const
 	{
-		if (glfwGetKey(window_, GLFW_KEY_ESCAPE) == GLFW_PRESS) 
-		{
-			TY_CORE_INFO("Key_Escape: Press");
-			glfwSetWindowShouldClose(window_, true);
+		return window_;
+	}
+
+	void WindowsWindow::ProcessInput(float time_step)
+	{
+		if (glfwGetKey(window_, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
+			CommandWindowClose command(window_);
+			data_.command_callback(command);
+		}
+		if (glfwGetKey(window_, GLFW_KEY_W) == GLFW_PRESS) {
+			CommandCameraUp command = CommandCameraUp();
+			data_.command_callback(command);
+		}
+		if (glfwGetKey(window_, GLFW_KEY_S) == GLFW_PRESS) {
+			CommandCameraDown command = CommandCameraDown();
+			data_.command_callback(command);
 		}
 	}
 
@@ -77,6 +90,11 @@ namespace ToyEngine
 		glfwPollEvents();
 	}
 
+	void WindowsWindow::CloseWindow()
+	{
+		glfwSetWindowShouldClose(window_, true);
+	}
+
 	bool WindowsWindow::ShouldClose()
 	{
 		return static_cast<bool>(glfwWindowShouldClose(window_));
@@ -84,9 +102,9 @@ namespace ToyEngine
 
 	void WindowsWindow::Init(const WindowProps& props)
 	{
-		settings_.title = props.title;
-		settings_.width = props.width;
-		settings_.height = props.height;
+		data_.title = props.title;
+		data_.width = props.width;
+		data_.height = props.height;
 
 		// GLFW: initialize and configure
 		glfwInit();
@@ -96,7 +114,7 @@ namespace ToyEngine
 		//glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 
 		// GLFW: window object creation
-		window_ = glfwCreateWindow(settings_.width, settings_.height, settings_.title.c_str(), NULL, NULL);
+		window_ = glfwCreateWindow(data_.width, data_.height, data_.title.c_str(), NULL, NULL);
 		if (window_ == NULL)
 		{
 			TY_CORE_ERROR("Failed to create GLFW window");
