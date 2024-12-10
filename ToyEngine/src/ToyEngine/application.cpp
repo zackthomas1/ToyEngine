@@ -14,21 +14,10 @@ namespace ToyEngine
 
 		//
 		window_ = std::unique_ptr<WindowsWindow>(WindowsWindow::Create());
-		window_->MakeContextCurrent();
-		window_->SetCommandCallbackFn(InputHandler::ExecuteCommand);
+		window_->SetCommandCallbackFn(Application::EventHandler);
 
 		//
 		is_running_ = true;
-
-		// GLAD: load all OpenGL function pointers
-		if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
-		{
-			TY_CORE_ERROR("Failed to intialize GLAD");
-			window_ = nullptr;
-		}
-
-		// Set rendering window size 
-		glViewport(0, 0, window_->GetWidth(), window_->GetHeight());
 	}
 
 	Application::~Application()
@@ -38,7 +27,7 @@ namespace ToyEngine
 
 	void Application::Run()
 	{
-		while (!window_->ShouldClose())
+		while (is_running_)
 		{
 			window_->ProcessInput(0.0f);
 
@@ -52,5 +41,38 @@ namespace ToyEngine
 		}
 	}
 
+	void Application::EventHandler(Event& e)
+	{
+		if (EventKeyPress* event = dynamic_cast<EventKeyPress*>(&e))
+		{
+			switch (event->GetKeyCode())
+			{
+			case KeyCode::key_escape:
+			{
+				CommandWindowClose command(&(s_instance->is_running_));
+				command.Execute();
+				break;
+			}
+			case KeyCode::key_w:
+			{
+				CommandCameraForward command = CommandCameraForward();
+				command.Execute();
+				break;
+			}
+			case KeyCode::key_s:
+			{
+				CommandCameraBackwards command = CommandCameraBackwards();
+				command.Execute();
+				break;
+			}
+			default:
+			{}
+			}
+		}
+		else if (EventKeyRelease* event = dynamic_cast<EventKeyRelease*>(&e))
+		{
 
+		}
+
+	}
 }

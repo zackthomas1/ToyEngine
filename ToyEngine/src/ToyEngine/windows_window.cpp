@@ -1,6 +1,5 @@
 #include "pch.h"
 #include "windows_window.h"
-#include "ToyEngine/commands/command.h"
 
 namespace ToyEngine
 {
@@ -19,60 +18,20 @@ namespace ToyEngine
 		return std::make_unique<WindowsWindow>(props);
 	}
 
-	unsigned int WindowsWindow::GetWidth() const
-	{
-		return data_.width;
-	}
-
-	unsigned int WindowsWindow::GetHeight() const
-	{
-		return data_.height;
-	}
-
-	GLFWwindow* WindowsWindow::GetWindowPointer() const
-	{
-		return window_;
-	}
-
 	void WindowsWindow::ProcessInput(float time_step)
 	{
 		if (glfwGetKey(window_, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
-			CommandWindowClose command(window_);
-			data_.command_callback(command);
+			EventKeyPress key_press(key_escape);
+			data_.event_callback(key_press);
 		}
 		if (glfwGetKey(window_, GLFW_KEY_W) == GLFW_PRESS) {
-			CommandCameraUp command = CommandCameraUp();
-			data_.command_callback(command);
+			EventKeyPress key_press(key_w);
+			data_.event_callback(key_press);
 		}
 		if (glfwGetKey(window_, GLFW_KEY_S) == GLFW_PRESS) {
-			CommandCameraDown command = CommandCameraDown();
-			data_.command_callback(command);
+			EventKeyPress key_press(key_s);
+			data_.event_callback(key_press);
 		}
-	}
-
-	void WindowsWindow::SetFrameBufferSizeCallback(void(*framebuffer_size_callback)(GLFWwindow* window, int width, int height))
-	{
-		glfwSetFramebufferSizeCallback(window_, framebuffer_size_callback); 	// set call-back function for window resize
-	}
-
-	void WindowsWindow::SetKeyCallback(void(*key_callback)(GLFWwindow* window, int key, int scancode, int action, int mods))
-	{
-		glfwSetKeyCallback(window_, key_callback);								// set call-back function key input
-	}
-
-	void WindowsWindow::SetCursorPositionCallback(void(cursor_position_callback)(GLFWwindow* window, double xpos, double ypos))
-	{
-		glfwSetCursorPosCallback(window_, cursor_position_callback);			// set call-back function cursor pos input
-	}
-
-	void WindowsWindow::SetScrollCallback(void(*scroll_callback)(GLFWwindow* window, double x_offset, double y_offset))
-	{
-		glfwSetScrollCallback(window_, scroll_callback);
-	}
-
-	void WindowsWindow::MakeContextCurrent()
-	{
-		glfwMakeContextCurrent(window_);
 	}
 
 	void WindowsWindow::SetInputMode()
@@ -88,16 +47,6 @@ namespace ToyEngine
 	void WindowsWindow::PollEvents()
 	{
 		glfwPollEvents();
-	}
-
-	void WindowsWindow::CloseWindow()
-	{
-		glfwSetWindowShouldClose(window_, true);
-	}
-
-	bool WindowsWindow::ShouldClose()
-	{
-		return static_cast<bool>(glfwWindowShouldClose(window_));
 	}
 
 	void WindowsWindow::Init(const WindowProps& props)
@@ -121,9 +70,46 @@ namespace ToyEngine
 			glfwTerminate();
 			window_ = nullptr;
 		}
+		
+		glfwMakeContextCurrent(window_);
+		SetCallbackFns();
+
+		// GLAD: load all OpenGL function pointers
+		if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
+		{
+			TY_CORE_ERROR("Failed to intialize GLAD");
+			window_ = nullptr;
+		}
+
+		// Set rendering window size 
+		glViewport(0, 0, data_.width, data_.height);
 	}
+
+	void WindowsWindow::SetCallbackFns()
+	{
+		glfwSetFramebufferSizeCallback(window_, [](GLFWwindow* window, int width, int height) {
+			// make sure the viewport matches the new window dimensions; note that width and 
+			// height will be significantly larger than specified on retina displays.
+			TY_CORE_TRACE("Update Framebuffer size: width - {} height - {}", width, height);
+			glViewport(0, 0, width, height);
+		});
+
+		glfwSetKeyCallback(window_, [](GLFWwindow* window, int key, int scancode, int action, int mods) {
+			TY_CORE_WARN("TODO: implement key call-back function");
+		});							// set call-back function key input
+
+		glfwSetScrollCallback(window_, [](GLFWwindow* window, double x_offset, double y_offset) {
+			TY_CORE_WARN("TODO: implement scroll call-back function");
+		});
+
+		glfwSetCursorPosCallback(window_, [](GLFWwindow* window, double xpos, double ypos) {
+			TY_CORE_WARN("TODO: implement cursor pos call-back function");
+		});			// set call-back function cursor pos input
+	}
+
 	void WindowsWindow::Shutdown()
 	{
+		TY_CORE_TRACE("Shutdown window");
 		glfwTerminate();
 	}
 }

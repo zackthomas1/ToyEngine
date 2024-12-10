@@ -1,7 +1,7 @@
 #pragma once
 #include "core.h"
+#include "ToyEngine/event.h"
 #include "ToyEngine/windows_window.h"
-#include "ToyEngine/commands/input_handler.h"
 
 
 namespace ToyEngine
@@ -13,6 +13,8 @@ namespace ToyEngine
 		virtual ~Application(); 
 
 		void Run();
+
+		static void EventHandler(Event& e);
 	private:
 		bool is_running_;
 		std::unique_ptr<WindowsWindow> window_;

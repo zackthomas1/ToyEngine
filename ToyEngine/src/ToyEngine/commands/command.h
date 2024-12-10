@@ -1,5 +1,4 @@
 #pragma once
-#include <GLFW/glfw3.h>
 
 namespace ToyEngine
 {
@@ -12,21 +11,23 @@ namespace ToyEngine
 	class CommandWindowClose : public Command
 	{
 	public:
-		CommandWindowClose(GLFWwindow* window) : window_(window) {}
+		CommandWindowClose(bool* is_running) : is_running_(is_running) {}
 		void Execute() override;
 	private:
-		GLFWwindow* window_;
+		bool* is_running_;
 	};
 
-	class CommandCameraUp : public Command
+	class CommandCameraForward : public Command
 	{
 	public:
+		CommandCameraForward() {}
 		void Execute() override;
 	};
 
-	class CommandCameraDown : public Command
+	class CommandCameraBackwards : public Command
 	{
 	public:
+		CommandCameraBackwards() {}
 		void Execute() override;
 	};
 }

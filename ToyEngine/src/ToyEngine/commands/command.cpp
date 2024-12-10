@@ -6,16 +6,15 @@ namespace ToyEngine
 	void ToyEngine::CommandWindowClose::Execute()
 	{
 		TY_CORE_TRACE("Command - Close Window");
-		glfwSetWindowShouldClose(window_, true);
-
+		*is_running_ = false;
 	}
-	void ToyEngine::CommandCameraUp::Execute()
+	void ToyEngine::CommandCameraForward::Execute()
 	{
-		TY_CORE_TRACE("Command - Camera Up");
+		TY_CORE_TRACE("Command - Camera Forward");
 	}
-	void ToyEngine::CommandCameraDown::Execute()
+	void ToyEngine::CommandCameraBackwards::Execute()
 	{
-		TY_CORE_TRACE("Command - Camera Down");
+		TY_CORE_TRACE("Command - Camera Backwards");
 	}
 
 }
