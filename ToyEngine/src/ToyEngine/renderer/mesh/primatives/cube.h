@@ -1,14 +1,14 @@
 #pragma once
-#include "primative.h"
+#include "ToyEngine/renderer/mesh/mesh.h"
+
 namespace ToyEngine
 {
-	class Cube : public Primative
+	class Cube : public Mesh
 	{
 	public:
 		Cube();
-		~Cube();
+		~Cube() {}
 
-		void Draw() const override;
 	private:
 		float vertices_[180] = {
 			// position			  // uv

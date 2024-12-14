@@ -2,6 +2,7 @@
 #include "core.h"
 #include "ToyEngine/event.h"
 #include "ToyEngine/windows_window.h"
+#include "ToyEngine/renderer/renderer.h"
 
 
 namespace ToyEngine
@@ -18,6 +19,7 @@ namespace ToyEngine
 	private:
 		bool is_running_;
 		std::unique_ptr<WindowsWindow> window_;
+		std::unique_ptr<Renderer> renderer_;
 		static Application* s_instance;
 	};
 

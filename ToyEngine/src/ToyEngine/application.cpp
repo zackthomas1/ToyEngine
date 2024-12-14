@@ -8,16 +8,16 @@ namespace ToyEngine
 
 	Application::Application()
 	{
-		//
 		TY_CORE_ASSERT(!s_instance, "Application already exist!")
 		s_instance = this;
 
-		//
 		window_ = std::unique_ptr<WindowsWindow>(WindowsWindow::Create());
 		window_->SetCommandCallbackFn(Application::EventHandler);
-
-		//
 		is_running_ = true;
+
+		std::shared_ptr<Scene> scene = std::make_shared<Scene>();
+
+		renderer_ = std::unique_ptr<Renderer>(Renderer::Create(scene));
 	}
 
 	Application::~Application()
@@ -29,12 +29,12 @@ namespace ToyEngine
 	{
 		while (is_running_)
 		{
-			window_->ProcessInput(0.0f);
+			// TODO: Implement function that calculates the time 
+			// difference between two frames rendering
+			float time_delta = 0.0f;
+			window_->ProcessInput(time_delta);
 
-			// render
-			// ------
-			glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
-			glClear(GL_COLOR_BUFFER_BIT);
+			renderer_->DrawScene();
 
 			window_->SwapBuffers();
 			window_->PollEvents();

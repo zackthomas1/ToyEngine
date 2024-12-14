@@ -1,14 +1,16 @@
 #pragma once
+
 namespace ToyEngine
 {
-	class Primative
+	class Mesh
 	{
 	public:
-		virtual ~Primative() {}
-
-		virtual void Draw() const = 0;
+		virtual ~Mesh();
+	
+		virtual void Draw() const;
 
 	protected:
 		unsigned int vao_, vbo_, ebo_;
+		unsigned int vertex_count_;
 	};
 }
