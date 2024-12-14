@@ -18,9 +18,15 @@ namespace ToyEngine
 		return std::make_unique<WindowsWindow>(props);
 	}
 
+	bool WindowsWindow::ShouldClose()
+	{
+		return glfwWindowShouldClose(window_);
+	}
+
 	void WindowsWindow::ProcessInput(float time_step)
 	{
 		if (glfwGetKey(window_, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
+			glfwSetWindowShouldClose(window_, TRUE);
 			EventKeyPress key_press(key_escape);
 			data_.event_callback(key_press);
 		}
@@ -96,7 +102,7 @@ namespace ToyEngine
 
 		glfwSetKeyCallback(window_, [](GLFWwindow* window, int key, int scancode, int action, int mods) {
 			TY_CORE_WARN("TODO: implement key call-back function");
-		});							// set call-back function key input
+		});
 
 		glfwSetScrollCallback(window_, [](GLFWwindow* window, double x_offset, double y_offset) {
 			TY_CORE_WARN("TODO: implement scroll call-back function");
@@ -104,7 +110,7 @@ namespace ToyEngine
 
 		glfwSetCursorPosCallback(window_, [](GLFWwindow* window, double xpos, double ypos) {
 			TY_CORE_WARN("TODO: implement cursor pos call-back function");
-		});			// set call-back function cursor pos input
+		});
 	}
 
 	void WindowsWindow::Shutdown()

@@ -17,7 +17,6 @@ namespace ToyEngine
 
 		static void EventHandler(Event& e);
 	private:
-		bool is_running_;
 		std::unique_ptr<WindowsWindow> window_;
 		std::unique_ptr<Renderer> renderer_;
 		static Application* s_instance;

@@ -11,10 +11,8 @@ namespace ToyEngine
 	class CommandWindowClose : public Command
 	{
 	public:
-		CommandWindowClose(bool* is_running) : is_running_(is_running) {}
+		CommandWindowClose() {}
 		void Execute() override;
-	private:
-		bool* is_running_;
 	};
 
 	class CommandCameraForward : public Command

@@ -13,7 +13,6 @@ namespace ToyEngine
 
 		window_ = std::unique_ptr<WindowsWindow>(WindowsWindow::Create());
 		window_->SetCommandCallbackFn(Application::EventHandler);
-		is_running_ = true;
 
 		std::shared_ptr<Scene> scene = std::make_shared<Scene>();
 
@@ -27,7 +26,7 @@ namespace ToyEngine
 
 	void Application::Run()
 	{
-		while (is_running_)
+		while (!window_->ShouldClose())
 		{
 			// TODO: Implement function that calculates the time 
 			// difference between two frames rendering
@@ -49,7 +48,7 @@ namespace ToyEngine
 			{
 			case KeyCode::key_escape:
 			{
-				CommandWindowClose command(&(s_instance->is_running_));
+				CommandWindowClose command = CommandWindowClose();
 				command.Execute();
 				break;
 			}

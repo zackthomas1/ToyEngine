@@ -33,6 +33,7 @@ namespace ToyEngine
 
 		void SetCommandCallbackFn(const EventCallbackFn& callback) { data_.event_callback = callback; }
 
+		bool ShouldClose();
 		void ProcessInput(float time_step);
 		void SetInputMode();
 		void SwapBuffers(); 
