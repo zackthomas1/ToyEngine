@@ -7,9 +7,8 @@
 namespace ToyEngine
 {
 	Texture2D::Texture2D(const char* path, bool flip_vertically)
+		: path_(path)
 	{
-		path_ = path;
-
 		// generate texture sampler
 		glGenTextures(1, &id_);
 		Bind();

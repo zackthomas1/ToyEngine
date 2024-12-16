@@ -31,4 +31,12 @@ namespace ToyEngine
 	private:
 		KeyCode key_;
 	};
+
+	class EventVerticalScroll : public Event
+	{
+	public:
+		EventVerticalScroll(float y_offset) : y_offset_(y_offset) {}
+	private:
+		float y_offset_;
+	};
 }

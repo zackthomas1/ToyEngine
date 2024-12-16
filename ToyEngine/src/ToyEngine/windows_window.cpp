@@ -106,6 +106,9 @@ namespace ToyEngine
 
 		glfwSetScrollCallback(window_, [](GLFWwindow* window, double x_offset, double y_offset) {
 			TY_CORE_WARN("TODO: implement scroll call-back function");
+			EventVerticalScroll scroll(y_offset); 
+			//data_->event_callback(scroll);
+
 		});
 
 		glfwSetCursorPosCallback(window_, [](GLFWwindow* window, double xpos, double ypos) {

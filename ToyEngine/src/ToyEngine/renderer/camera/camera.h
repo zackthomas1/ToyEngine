@@ -20,10 +20,10 @@ namespace ToyEngine
 	};
 
 	// default camera values
-	const glm::vec3 kWorldUp = glm::vec3(0.0, 1.0, 0.0);
-	const glm::vec3 kCameraPosition = glm::vec3(0.0, 0.0, 3.0),
-		kCameraFront = glm::vec3(0.0, 0.0, -1.0),
-		kCameraUp = glm::vec3(0.0, 1.0, 0.0);
+	const glm::vec3 kWorldUp = glm::vec3(0.0f, 1.0f, 0.0f);
+	const glm::vec3 kCameraPosition = glm::vec3(0.0f, 0.0f, 3.0f),
+		kCameraFront = glm::vec3(0.0f, 0.0f, -1.0f),
+		kCameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
 	const float kPitch = 0.0f, kYaw = -90.0f,
 		kZnear = 0.1f, kZfar = 100.0f,
 		kMovementSpeed = 10.0f, kMouseSensitivity = 0.1f;

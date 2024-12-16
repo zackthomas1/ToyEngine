@@ -17,9 +17,10 @@ namespace ToyEngine
 
 		static std::unique_ptr<Renderer> Create(std::shared_ptr<Scene> scene);
 	private: 
-		void Draw(Model model);
+		void Draw(Model& model);
 	private: 
 		Model model_;
+		FlyCamera camera_;
 		std::shared_ptr<Scene> scene_;
 		//std::shared_ptr<Shader> shader_;
 		//std::shared_ptr<FlyCamera> camera_;

@@ -1,23 +1,20 @@
 #version 330 core
 
-layout (location = 0) in vec3 aPos;		// 
-layout (location = 1) in vec3 aColor;	// the color variable has attribute position 1 
-layout (location = 2) in vec2 aTexCoord;// 
+layout (location = 0) in vec3 a_pos;		// 
+layout (location = 1) in vec2 a_tex_coord;// 
 
-out vec4 vertexColor;
 out vec4 vertexPosition;
-out vec2 TexCoord;
+out vec2 texCoord;
 
-uniform mat4 model;
-uniform mat4 view; 
-uniform mat4 projection;
+uniform mat4 u_model;
+uniform mat4 u_view; 
+uniform mat4 u_projection;
 
 void main()
 {
 	// pass uniforms to fragment shader
-	vertexColor = vec4(aColor.x, aColor.y, aColor.z,1.0);
-	vertexPosition = vec4(aPos.x, aPos.y, aPos.z, 1.0);; 
-	TexCoord = aTexCoord;
+	vertexPosition = vec4(a_pos.x, a_pos.y, a_pos.z, 1.0);; 
+	texCoord = a_tex_coord;
 
-	gl_Position = projection * view * model * vec4(aPos.x , aPos.y, aPos.z, 1.0);
+	gl_Position = u_projection * u_view * u_model * vec4(a_pos.x , a_pos.y, a_pos.z, 1.0);
 }
