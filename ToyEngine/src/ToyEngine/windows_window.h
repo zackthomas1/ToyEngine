@@ -4,7 +4,7 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
-#include "ToyEngine/event.h"
+#include "ToyEngine/events/event.h"
 
 namespace ToyEngine
 {
@@ -34,7 +34,7 @@ namespace ToyEngine
 		void SetCommandCallbackFn(const EventCallbackFn& callback) { data_.event_callback = callback; }
 
 		bool ShouldClose();
-		void ProcessInput(float time_step);
+		void ProcessInput();
 		void SetInputMode();
 		void SwapBuffers(); 
 		void PollEvents();

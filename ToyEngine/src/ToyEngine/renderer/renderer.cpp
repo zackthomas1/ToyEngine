@@ -48,7 +48,96 @@ namespace ToyEngine
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		
 		Draw(model_);
-		//scene_->DrawScene();
+		scene_->DrawScene();
+	}
+
+	void Renderer::OnNotify(Event& e)
+	{
+		const float kTimeStep = 0.01f;
+		if (EventKeyInput* event = dynamic_cast<EventKeyInput*>(&e))
+		{
+			switch (event->GetKeyCode())
+			{
+			case KeyCode::kKeyW:
+			{
+				switch (event->GetKeyState())
+				{
+				case KeyState::kPress:
+				{
+					TY_CORE_TRACE("OnNotify - Camera Forward");
+					camera_.UpdatePosition(CameraMovement::kForward, kTimeStep);
+					break;
+				}
+				}
+				break;
+			}
+			case KeyCode::kKeyS:
+			{
+				switch (event->GetKeyState())
+				{
+				case KeyState::kPress:
+				{
+					TY_CORE_TRACE("OnNotify - Camera Backward");
+					camera_.UpdatePosition(CameraMovement::kBackward, kTimeStep);
+					break;
+				}
+				}
+				break;
+			}
+			case KeyCode::kKeyA:
+			{
+				switch (event->GetKeyState())
+				{
+				case KeyState::kPress:
+				{
+					TY_CORE_TRACE("OnNotify - Camera Left");
+					camera_.UpdatePosition(CameraMovement::kLeft, kTimeStep);
+					break;
+				}
+				}
+				break;
+			}
+			case KeyCode::kKeyD:
+			{
+				switch (event->GetKeyState())
+				{
+				case KeyState::kPress:
+				{
+					TY_CORE_TRACE("OnNotify - Camera Right");
+					camera_.UpdatePosition(CameraMovement::kRight, kTimeStep);
+					break;
+				}
+				}
+				break;
+			}
+			case KeyCode::kKeyE:
+			{
+				switch (event->GetKeyState())
+				{
+				case KeyState::kPress:
+				{
+					TY_CORE_TRACE("OnNotify - Camera Up");
+					camera_.UpdatePosition(CameraMovement::kUp, kTimeStep);
+					break;
+				}
+				}
+				break;
+			}
+			case KeyCode::kKeyQ:
+			{
+				switch (event->GetKeyState())
+				{
+				case KeyState::kPress:
+				{
+					TY_CORE_TRACE("OnNotify - Camera Down");
+					camera_.UpdatePosition(CameraMovement::kDown, kTimeStep);
+					break;
+				}
+				}
+				break;
+			}
+			}
+		}
 	}
 
 	void Renderer::Draw(Model& model)

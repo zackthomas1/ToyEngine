@@ -22,8 +22,8 @@ namespace ToyEngine
 		glm::mat4 GetProjectionMatrix() const;
 
 		// call-back
-		void ProcessMouseMovement(float x_offset, float y_offset, GLboolean constrainPitch = TRUE);
-		void ProcessMouseScroll(float y_offset);
+		void UpdateLookDirection(float x_offset, float y_offset, GLboolean constrainPitch = TRUE);
+		void UpdateFOV(float y_offset);
 
 	private:
 		// camera attributes

@@ -28,7 +28,7 @@ namespace ToyEngine{
 	}
 
 	// call-back
-	void FlyCamera::ProcessMouseMovement(float x_offset, float y_offset, GLboolean constrainPitch)
+	void FlyCamera::UpdateLookDirection(float x_offset, float y_offset, GLboolean constrainPitch)
 	{
 		//std::cout << "x_offset: " << x_offset << "\ty_offset: " << x_offset << std::endl;
 
@@ -45,7 +45,7 @@ namespace ToyEngine{
 
 		UpdateCameraVectors();
 	}
-	void FlyCamera::ProcessMouseScroll(float y_offset)
+	void FlyCamera::UpdateFOV(float y_offset)
 	{
 		fov_ -= y_offset;
 		if (fov_ < 1.0f)

@@ -157,32 +157,32 @@ void ProcessInput(GLFWwindow* window, float time_step)
 	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
 	{
 		//std::cout << "Key W Press" << std::endl;
-		camera.ProcessKeyboard(ToyEngine::FORWARD, time_step);
+		camera.UpdatePosition(ToyEngine::CameraMovement::kForward, time_step);
 	}
 	else if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
 	{
 		//std::cout << "Key W Press" << std::endl;
-		camera.ProcessKeyboard(ToyEngine::BACKWARD, time_step);
+		camera.UpdatePosition(ToyEngine::CameraMovement::kBackward, time_step);
 	}
 	else if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
 	{
 		//std::cout << "Key A Press" << std::endl;
-		camera.ProcessKeyboard(ToyEngine::LEFT, time_step);
+		camera.UpdatePosition(ToyEngine::CameraMovement::kLeft, time_step);
 	}
 	else if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
 	{
 		//std::cout << "Key D Press" << std::endl;
-		camera.ProcessKeyboard(ToyEngine::RIGHT, time_step);
+		camera.UpdatePosition(ToyEngine::CameraMovement::kRight, time_step);
 	}
 	else if (glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS)
 	{
 		//std::cout << "Key W Press" << std::endl;
-		camera.ProcessKeyboard(ToyEngine::DOWN, time_step);
+		camera.UpdatePosition(ToyEngine::CameraMovement::kDown, time_step);
 	}
 	else if (glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS)
 	{
 		//std::cout << "Key W Press" << std::endl;
-		camera.ProcessKeyboard(ToyEngine::UP, time_step);
+		camera.UpdatePosition(ToyEngine::kUp, time_step);
 	}
 }
 
@@ -237,12 +237,12 @@ static void cursor_position_callback(GLFWwindow* window, double xpos, double ypo
 	last_x = xpos; 
 	last_y = ypos;
 
-	camera.ProcessMouseMovement(x_offset, y_offset);
+	camera.UpdateLookDirection(x_offset, y_offset);
 }
 
 void scroll_callback(GLFWwindow* window, double x_offset, double y_offset)
 {
-	camera.ProcessMouseScroll((float)y_offset);
+	camera.UpdateFOV((float)y_offset);
 }
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height)

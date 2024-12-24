@@ -1,6 +1,6 @@
 #include "pch.h"
 #include "ToyEngine/application.h"
-#include "ToyEngine/commands/command.h"
+#include "ToyEngine/events/event_handler.h"
 
 namespace ToyEngine
 {
@@ -15,7 +15,6 @@ namespace ToyEngine
 		window_->SetCommandCallbackFn(Application::EventHandler);
 
 		std::shared_ptr<Scene> scene = std::make_shared<Scene>();
-
 		renderer_ = std::unique_ptr<Renderer>(Renderer::Create(scene));
 	}
 
@@ -23,16 +22,26 @@ namespace ToyEngine
 	{
 
 	}
+	void Application::Update(float time_delta)
+	{
+		//renderer_->UpdateScene();
+	}
 
 	void Application::Run()
 	{
 		while (!window_->ShouldClose())
 		{
-			// TODO: Implement function that calculates the time 
-			// difference between two frames rendering
-			float time_delta = 0.0f;
-			window_->ProcessInput(time_delta);
+			// TODO: Implement variable time step
+			float time_delta = 1.0f;
 
+			// handle any user input since the last call
+			//ProcessInput();
+			window_->ProcessInput();
+
+			//advance the game simulation one step
+			Update(time_delta);
+
+			// draw the game
 			renderer_->DrawScene();
 
 			window_->SwapBuffers();
@@ -42,36 +51,6 @@ namespace ToyEngine
 
 	void Application::EventHandler(Event& e)
 	{
-		if (EventKeyPress* event = dynamic_cast<EventKeyPress*>(&e))
-		{
-			switch (event->GetKeyCode())
-			{
-			case KeyCode::key_escape:
-			{
-				CommandWindowClose command = CommandWindowClose();
-				command.Execute();
-				break;
-			}
-			case KeyCode::key_w:
-			{
-				CommandCameraForward command = CommandCameraForward();
-				command.Execute();
-				break;
-			}
-			case KeyCode::key_s:
-			{
-				CommandCameraBackwards command = CommandCameraBackwards();
-				command.Execute();
-				break;
-			}
-			default:
-			{}
-			}
-		}
-		else if (EventKeyRelease* event = dynamic_cast<EventKeyRelease*>(&e))
-		{
-
-		}
-
+		s_instance->renderer_->OnNotify(e);
 	}
 }

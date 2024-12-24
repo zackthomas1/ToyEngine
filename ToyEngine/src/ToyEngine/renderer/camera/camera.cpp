@@ -38,27 +38,27 @@ namespace ToyEngine
 	}
 
 	// call-back
-	void Camera::ProcessKeyboard(Camera_Movement direction, float time_step) 
+	void Camera::UpdatePosition(CameraMovement direction, float time_step) 
 	{
 		float velocity = movement_speed_ * time_step;
 		switch (direction)
 		{
-		case FORWARD:
+		case kForward:
 			camera_position_ += velocity * camera_front_;
 			break;
-		case BACKWARD:
+		case kBackward:
 			camera_position_ -= velocity * camera_front_;
 			break;
-		case LEFT:
+		case kLeft:
 			camera_position_ -= velocity * camera_right_;
 			break;
-		case RIGHT:
+		case kRight:
 			camera_position_ += velocity * camera_right_;
 			break;
-		case UP:
+		case kUp:
 			camera_position_ += velocity * camera_up_;
 			break;
-		case DOWN:
+		case kDown:
 			camera_position_ -= velocity * camera_up_;
 			break;
 		}

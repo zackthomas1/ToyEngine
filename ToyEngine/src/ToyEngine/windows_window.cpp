@@ -23,19 +23,35 @@ namespace ToyEngine
 		return glfwWindowShouldClose(window_);
 	}
 
-	void WindowsWindow::ProcessInput(float time_step)
+	void WindowsWindow::ProcessInput()
 	{
 		if (glfwGetKey(window_, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
 			glfwSetWindowShouldClose(window_, TRUE);
-			EventKeyPress key_press(key_escape);
+			EventKeyInput key_press(KeyCode::kKeyEscape, KeyState::kPress);
 			data_.event_callback(key_press);
 		}
 		if (glfwGetKey(window_, GLFW_KEY_W) == GLFW_PRESS) {
-			EventKeyPress key_press(key_w);
+			EventKeyInput key_press(KeyCode::kKeyW, KeyState::kPress);
 			data_.event_callback(key_press);
 		}
 		if (glfwGetKey(window_, GLFW_KEY_S) == GLFW_PRESS) {
-			EventKeyPress key_press(key_s);
+			EventKeyInput key_press(KeyCode::kKeyS, KeyState::kPress);
+			data_.event_callback(key_press);
+		}
+		if (glfwGetKey(window_, GLFW_KEY_A) == GLFW_PRESS) {
+			EventKeyInput key_press(KeyCode::kKeyA, KeyState::kPress);
+			data_.event_callback(key_press);
+		}
+		if (glfwGetKey(window_, GLFW_KEY_D) == GLFW_PRESS) {
+			EventKeyInput key_press(KeyCode::kKeyD, KeyState::kPress);
+			data_.event_callback(key_press);
+		}
+		if (glfwGetKey(window_, GLFW_KEY_E) == GLFW_PRESS) {
+			EventKeyInput key_press(KeyCode::kKeyE, KeyState::kPress);
+			data_.event_callback(key_press);
+		}
+		if (glfwGetKey(window_, GLFW_KEY_Q) == GLFW_PRESS) {
+			EventKeyInput key_press(KeyCode::kKeyQ, KeyState::kPress);
 			data_.event_callback(key_press);
 		}
 	}

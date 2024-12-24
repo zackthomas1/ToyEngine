@@ -9,14 +9,15 @@ namespace ToyEngine
 {
 	// defines serveral possible options for camera movement.
 	// Use as an abstraction to stay away from window_system specific input methods
-	enum Camera_Movement
+	enum CameraMovement
 	{
-		FORWARD,
-		BACKWARD,
-		LEFT,
-		RIGHT,
-		UP,
-		DOWN
+		kForward,
+		kBackward,
+		kLeft,
+		kRight,
+		kUp,
+		kDown,
+		kNone,
 	};
 
 	// default camera values
@@ -45,10 +46,11 @@ namespace ToyEngine
 		void SetNear(float znear);
 		void SetFar(float zfar);
 
-		// call-back
-		virtual void ProcessKeyboard(Camera_Movement direction, float time_step);
-		virtual void ProcessMouseMovement(float x_offset, float y_offset, GLboolean constrainPitch = TRUE) {}
-		virtual void ProcessMouseScroll(float y_offset) {}
+		// update methods
+		//virtual void Update();
+		virtual void UpdatePosition(CameraMovement direction, float time_step);
+		virtual void UpdateLookDirection(float x_offset, float y_offset, GLboolean constrainPitch = TRUE) {}
+		virtual void UpdateFOV(float y_offset) {}
 	protected: 
 		// camera attributes
 		float pitch_, yaw_,	// Euler angles
@@ -59,6 +61,8 @@ namespace ToyEngine
 			camera_front_,
 			camera_up_,
 			camera_right_;
+
+		CameraMovement movement_update;
 
 		// protected methods
 		virtual void UpdateCameraVectors();
