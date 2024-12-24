@@ -11,21 +11,16 @@ namespace ToyEngine
 	class Renderer : public Observer
 	{
 	public:
-		Renderer(std::shared_ptr<Scene> scene);
+		Renderer();
 		~Renderer() {}
 
-		void SetScene(std::shared_ptr<Scene> scene) { scene_ = scene; };
-		void DrawScene();
+		void UpdateScene(float time_delta); 
+		void DrawScene(std::shared_ptr<Scene> scene);
 		virtual void OnNotify(Event& event);
 
-		static std::unique_ptr<Renderer> Create(std::shared_ptr<Scene> scene);
+		static std::unique_ptr<Renderer> Create();
 	private: 
-		void Draw(Model& model);
-	private: 
-		Model model_;
-		FlyCamera camera_;
-		std::shared_ptr<Scene> scene_;
+		FlyCamera render_camera_;
 		//std::shared_ptr<Shader> shader_;
-		//std::shared_ptr<FlyCamera> camera_;
 	};
 }

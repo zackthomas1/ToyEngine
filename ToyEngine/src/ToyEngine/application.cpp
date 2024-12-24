@@ -14,17 +14,19 @@ namespace ToyEngine
 		window_ = std::unique_ptr<WindowsWindow>(WindowsWindow::Create());
 		window_->SetCommandCallbackFn(Application::EventHandler);
 
-		std::shared_ptr<Scene> scene = std::make_shared<Scene>();
-		renderer_ = std::unique_ptr<Renderer>(Renderer::Create(scene));
+		scene_ = std::make_shared<Scene>();
+
+		renderer_ = std::unique_ptr<Renderer>(Renderer::Create());
 	}
 
 	Application::~Application()
 	{
 
 	}
+
 	void Application::Update(float time_delta)
 	{
-		//renderer_->UpdateScene();
+		renderer_->UpdateScene(time_delta);
 	}
 
 	void Application::Run()
@@ -35,15 +37,15 @@ namespace ToyEngine
 			float time_delta = 1.0f;
 
 			// handle any user input since the last call
-			//ProcessInput();
 			window_->ProcessInput();
 
 			//advance the game simulation one step
 			Update(time_delta);
 
 			// draw the game
-			renderer_->DrawScene();
+			renderer_->DrawScene(scene_);
 
+			//
 			window_->SwapBuffers();
 			window_->PollEvents();
 		}

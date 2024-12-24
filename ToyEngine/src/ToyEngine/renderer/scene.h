@@ -3,21 +3,23 @@
 #include "ToyEngine/renderer/model.h"
 #include "ToyEngine/renderer/light.h"
 
+#include "ToyEngine/renderer/camera/fly_camera.h"
+
 namespace ToyEngine
 {
 	class Scene
 	{
 	public:
-		Scene() {}
+		Scene();
 		~Scene() {}
-		
-		void DrawScene();
-		
-		void AddModel(Model model);
+			
+		std::vector<std::shared_ptr<Model>>* GetSceneModels() { return &models_; }
+
+		void AddModel(std::shared_ptr<Model> model);
 		//void AddLight(Light light); 
 
 	private:
-		std::vector<Model> models_; 
+		std::vector<std::shared_ptr<Model>> models_; 
 		//std::vector<Light> lights_; 
 
 	};

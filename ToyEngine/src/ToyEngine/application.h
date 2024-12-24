@@ -21,6 +21,7 @@ namespace ToyEngine
 	private:
 		std::unique_ptr<WindowsWindow> window_;
 		std::unique_ptr<Renderer> renderer_;
+		std::shared_ptr<Scene> scene_;
 		static Application* s_instance;
 	};
 
