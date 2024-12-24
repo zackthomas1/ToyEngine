@@ -11,12 +11,7 @@ namespace ToyEngine
 {
 	Renderer::Renderer()
 	{
-
-	}
-
-	void Renderer::UpdateScene(float time_delta)
-	{
-
+		shader_ = std::make_shared<Shader>("../assets/shaders/1_9_camera.vs", "../assets/shaders/1_9_camera.fs");
 	}
 
 	void Renderer::DrawScene(std::shared_ptr<Scene> scene)
@@ -31,20 +26,21 @@ namespace ToyEngine
 		for (std::shared_ptr<Model> model : *scene->GetSceneModels())
 		{
 			// activate shader and texture unites
-			model->GetShader()->Use();
+			shader_->Use();
+			model->GetMaterial()->SetMaterialUniforms(shader_);
 			model->GetMaterial()->ActivateTextureUnits();
 		
 			// texture related unifroms 
-			model->GetShader()->SetFloat("u_alpha_tex", 0.5f);
-			model->GetShader()->SetFloat("u_scale_tex", 1.5f);
-			model->GetShader()->SetFloat2("u_pos_tex", 0.5f, 0.5f);
+			shader_->SetFloat("u_alpha_tex", 0.5f);
+			shader_->SetFloat("u_scale_tex", 1.5f);
+			shader_->SetFloat2("u_pos_tex", 0.5f, 0.5f);
 
 			// send camera data to vertex shader
-			model->GetShader()->SetMat4("u_view", render_camera_.GetViewMatrix());
-			model->GetShader()->SetMat4("u_projection", render_camera_.GetProjectionMatrix());
+			shader_->SetMat4("u_view", render_camera_.GetViewMatrix());
+			shader_->SetMat4("u_projection", render_camera_.GetProjectionMatrix());
 
 			// set model transforms in vertex shader
-			model->GetShader()->SetMat4("u_model", model->GetModelMatrix());
+			shader_->SetMat4("u_model", model->GetModelMatrix());
 			
 			// draw mesh
 			model->GetMesh()->Draw();
@@ -144,4 +140,5 @@ namespace ToyEngine
 	{
 		return std::make_unique<Renderer>();
 	}
+
 }

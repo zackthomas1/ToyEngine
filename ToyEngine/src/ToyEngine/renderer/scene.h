@@ -15,6 +15,8 @@ namespace ToyEngine
 			
 		std::vector<std::shared_ptr<Model>>* GetSceneModels() { return &models_; }
 
+		void Update(float time_delta);
+		
 		void AddModel(std::shared_ptr<Model> model);
 		//void AddLight(Light light); 
 

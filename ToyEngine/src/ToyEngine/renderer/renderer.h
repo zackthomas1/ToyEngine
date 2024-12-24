@@ -14,13 +14,12 @@ namespace ToyEngine
 		Renderer();
 		~Renderer() {}
 
-		void UpdateScene(float time_delta); 
 		void DrawScene(std::shared_ptr<Scene> scene);
 		virtual void OnNotify(Event& event);
 
 		static std::unique_ptr<Renderer> Create();
 	private: 
 		FlyCamera render_camera_;
-		//std::shared_ptr<Shader> shader_;
+		std::shared_ptr<Shader> shader_;
 	};
 }

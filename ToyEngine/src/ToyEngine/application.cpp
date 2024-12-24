@@ -26,7 +26,7 @@ namespace ToyEngine
 
 	void Application::Update(float time_delta)
 	{
-		renderer_->UpdateScene(time_delta);
+		scene_->Update(time_delta);
 	}
 
 	void Application::Run()

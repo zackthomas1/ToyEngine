@@ -13,14 +13,12 @@ namespace ToyEngine
 	{
 	public:
 		Model() : model_mat_() {}
-		Model(std::shared_ptr<Shader> shader, std::shared_ptr<Mesh> mesh, std::shared_ptr<Material> material) :
-			model_mat_(glm::mat4(1.0f)), shader_(shader), mesh_(mesh), material_(material) {}
+		Model(std::shared_ptr<Mesh> mesh, std::shared_ptr<Material> material) :
+			model_mat_(glm::mat4(1.0f)), mesh_(mesh), material_(material) {}
 		virtual ~Model() {}
 
-		void SetMaterialUniforms();
-
+		// getter/setter
 		glm::mat4 GetModelMatrix() const { return model_mat_; }
-		std::shared_ptr<Shader> GetShader() const { return shader_; }
 		std::shared_ptr<Mesh> GetMesh() const { return mesh_; }
 		std::shared_ptr<Material> GetMaterial() const { return material_; }
 
@@ -28,7 +26,6 @@ namespace ToyEngine
 
 	private: 
 		glm::mat4 model_mat_;
-		std::shared_ptr<Shader> shader_;
 		std::shared_ptr<Mesh> mesh_;
 		std::shared_ptr<Material> material_;
 	};
