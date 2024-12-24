@@ -23,7 +23,7 @@ namespace ToyEngine
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		
 		// draw each model in the scene
-		for (std::shared_ptr<Model> model : *scene->GetSceneModels())
+		for (std::shared_ptr<Model> model : *scene->GetModels())
 		{
 			// activate shader and texture unites
 			shader_->Use();
@@ -36,8 +36,8 @@ namespace ToyEngine
 			shader_->SetFloat2("u_pos_tex", 0.5f, 0.5f);
 
 			// send camera data to vertex shader
-			shader_->SetMat4("u_view", render_camera_.GetViewMatrix());
-			shader_->SetMat4("u_projection", render_camera_.GetProjectionMatrix());
+			shader_->SetMat4("u_view", render_camera_->GetViewMatrix());
+			shader_->SetMat4("u_projection", render_camera_->GetProjectionMatrix());
 
 			// set model transforms in vertex shader
 			shader_->SetMat4("u_model", model->GetModelMatrix());
@@ -60,8 +60,8 @@ namespace ToyEngine
 				{
 				case KeyState::kPress:
 				{
-					TY_CORE_TRACE("OnNotify - Camera Forward");
-					render_camera_.UpdatePosition(CameraMovement::kForward, kTimeStep);
+					//TY_CORE_TRACE("OnNotify - Camera Forward");
+					render_camera_->UpdatePosition(CameraMovement::kForward, kTimeStep);
 					break;
 				}
 				}
@@ -73,8 +73,8 @@ namespace ToyEngine
 				{
 				case KeyState::kPress:
 				{
-					TY_CORE_TRACE("OnNotify - Camera Backward");
-					render_camera_.UpdatePosition(CameraMovement::kBackward, kTimeStep);
+					//TY_CORE_TRACE("OnNotify - Camera Backward");
+					render_camera_->UpdatePosition(CameraMovement::kBackward, kTimeStep);
 					break;
 				}
 				}
@@ -86,8 +86,8 @@ namespace ToyEngine
 				{
 				case KeyState::kPress:
 				{
-					TY_CORE_TRACE("OnNotify - Camera Left");
-					render_camera_.UpdatePosition(CameraMovement::kLeft, kTimeStep);
+					//TY_CORE_TRACE("OnNotify - Camera Left");
+					render_camera_->UpdatePosition(CameraMovement::kLeft, kTimeStep);
 					break;
 				}
 				}
@@ -99,8 +99,8 @@ namespace ToyEngine
 				{
 				case KeyState::kPress:
 				{
-					TY_CORE_TRACE("OnNotify - Camera Right");
-					render_camera_.UpdatePosition(CameraMovement::kRight, kTimeStep);
+					//TY_CORE_TRACE("OnNotify - Camera Right");
+					render_camera_->UpdatePosition(CameraMovement::kRight, kTimeStep);
 					break;
 				}
 				}
@@ -112,8 +112,8 @@ namespace ToyEngine
 				{
 				case KeyState::kPress:
 				{
-					TY_CORE_TRACE("OnNotify - Camera Up");
-					render_camera_.UpdatePosition(CameraMovement::kUp, kTimeStep);
+					//TY_CORE_TRACE("OnNotify - Camera Up");
+					render_camera_->UpdatePosition(CameraMovement::kUp, kTimeStep);
 					break;
 				}
 				}
@@ -125,8 +125,8 @@ namespace ToyEngine
 				{
 				case KeyState::kPress:
 				{
-					TY_CORE_TRACE("OnNotify - Camera Down");
-					render_camera_.UpdatePosition(CameraMovement::kDown, kTimeStep);
+					//TY_CORE_TRACE("OnNotify - Camera Down");
+					render_camera_->UpdatePosition(CameraMovement::kDown, kTimeStep);
 					break;
 				}
 				}

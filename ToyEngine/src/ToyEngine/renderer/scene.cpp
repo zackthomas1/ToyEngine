@@ -1,9 +1,9 @@
 #include "pch.h"
 #include "scene.h"
 
-#include "ToyEngine/renderer/mesh/primatives/plane.h"
 #include "ToyEngine/renderer/mesh/primatives/cube.h"
-#include "ToyEngine/renderer/mesh/primatives/triangle.h"
+#include "ToyEngine/renderer/camera/fly_camera.h"
+#include "ToyEngine/renderer/camera/orthographic_camera.h"
 
 namespace ToyEngine
 {
@@ -24,6 +24,11 @@ namespace ToyEngine
 
 	Scene::Scene()
 	{
+		// Create scene cameras
+		cameras_.push_back(std::make_shared<FlyCamera>());
+		cameras_.push_back(std::make_shared<OrthographicCamera>());
+
+		// Create scene geometry
 		std::shared_ptr<Cube> cube_mesh = std::make_shared<Cube>();
 		std::shared_ptr<Material> material = std::make_shared<Material>();
 

@@ -17,6 +17,7 @@ namespace ToyEngine
 		scene_ = std::make_shared<Scene>();
 
 		renderer_ = std::unique_ptr<Renderer>(Renderer::Create());
+		renderer_->SetCamera((*scene_->GetCameras())[0]);
 	}
 
 	Application::~Application()

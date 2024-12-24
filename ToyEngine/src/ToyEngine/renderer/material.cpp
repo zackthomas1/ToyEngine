@@ -21,7 +21,7 @@ namespace ToyEngine
 	{
 		for (int i = 0; i < GetTextures()->size(); i++) {
 			int sampler_location = ((*GetTextures())[i]->id()) - 1;
-			TY_CORE_INFO("SetMaterialUniforms - name:{}", "text_sample_" + std::to_string(sampler_location));
+			//TY_CORE_INFO("SetMaterialUniforms - name:{}", "text_sample_" + std::to_string(sampler_location));
 			shader->SetInt("text_sample_" + std::to_string(sampler_location), sampler_location);
 		}
 	}

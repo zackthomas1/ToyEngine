@@ -3,7 +3,7 @@
 #include "ToyEngine/renderer/model.h"
 #include "ToyEngine/renderer/light.h"
 
-#include "ToyEngine/renderer/camera/fly_camera.h"
+#include "ToyEngine/renderer/camera/camera.h"
 
 namespace ToyEngine
 {
@@ -12,15 +12,19 @@ namespace ToyEngine
 	public:
 		Scene();
 		~Scene() {}
-			
-		std::vector<std::shared_ptr<Model>>* GetSceneModels() { return &models_; }
 
 		void Update(float time_delta);
-		
+
+		// scene modifiers
 		void AddModel(std::shared_ptr<Model> model);
 		//void AddLight(Light light); 
 
+		// getter/setter
+		std::vector<std::shared_ptr<Model>>* GetModels() { return &models_; }
+		std::vector<std::shared_ptr<Camera>>* GetCameras() { return &cameras_; }
+
 	private:
+		std::vector<std::shared_ptr<Camera>> cameras_;
 		std::vector<std::shared_ptr<Model>> models_; 
 		//std::vector<Light> lights_; 
 
