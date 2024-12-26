@@ -4,6 +4,7 @@
 #include "ToyEngine/application.h"
 #include "ToyEngine/windows_window.h"
 
+// Rendering
 #include "ToyEngine/renderer/renderer.h"
 #include "ToyEngine/renderer/camera/camera.h"
 #include "ToyEngine/renderer/camera/fly_camera.h"

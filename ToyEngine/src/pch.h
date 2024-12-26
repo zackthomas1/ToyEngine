@@ -15,6 +15,6 @@
 
 #include "ToyEngine/log.h"
 
-#ifdef PLATFORM_WINDOWS
+#ifdef TY_PLATFORM_WINDOWS
 	#include <Windows.h>
 #endif

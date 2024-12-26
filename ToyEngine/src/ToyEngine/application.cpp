@@ -2,6 +2,9 @@
 #include "ToyEngine/application.h"
 #include "ToyEngine/events/event_handler.h"
 
+#include "ToyEngine/services/time_step_glfw.h"
+#include "ToyEngine/services/locator.h"
+
 namespace ToyEngine
 {
 	Application* Application::s_instance = nullptr;
@@ -11,18 +14,24 @@ namespace ToyEngine
 		TY_CORE_ASSERT(!s_instance, "Application already exist!")
 		s_instance = this;
 
+		// initialize window
 		window_ = std::unique_ptr<WindowsWindow>(WindowsWindow::Create());
 		window_->SetCommandCallbackFn(Application::EventHandler);
 
+		// initialize time step
+		Locator::SetTimeStepProvider(new TimeStepGLFW());
+
+		// create scene
 		scene_ = std::make_shared<Scene>();
 
+		// initialize renderer
 		renderer_ = std::unique_ptr<Renderer>(Renderer::Create());
 		renderer_->SetCamera((*scene_->GetCameras())[0]);
 	}
 
 	Application::~Application()
 	{
-
+		Locator::DeleteTimeStepProvider();
 	}
 
 	void Application::Update(float time_delta)
@@ -32,20 +41,17 @@ namespace ToyEngine
 
 	void Application::Run()
 	{
-		float last_time = glfwGetTime(); // Time of last frame
-
 		while (!window_->ShouldClose())
 		{
-			// variable time step
-			float current_time = glfwGetTime();
-			float time_delta = current_time - last_time;
-			last_time = current_time;
+			// update variable time step
+			Locator::TimeStepService()->Update();
+			TY_CORE_INFO("{}", Locator::TimeStepService()->GetTimeStep()); 
 
 			// handle any user input since the last call
 			window_->ProcessInput();
 
 			// advance the game simulation one step
-			Update(time_delta);
+			Update(Locator::TimeStepService()->GetTimeStep());
 
 			// draw the game
 			renderer_->DrawScene(scene_);

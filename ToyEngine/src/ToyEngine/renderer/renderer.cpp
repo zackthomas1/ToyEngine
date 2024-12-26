@@ -5,6 +5,8 @@
 #include "ToyEngine/renderer/mesh/primatives/cube.h"
 #include "ToyEngine/renderer/mesh/primatives/triangle.h"
 
+#include "ToyEngine/services/locator.h"
+
 #include <glad/glad.h>
 
 namespace ToyEngine
@@ -60,7 +62,7 @@ namespace ToyEngine
 			render_camera_->UpdateLookDirection(event->GetXOffset(), event->GetYOffset());
 		}
 
-		const float kTimeStep = 0.001f;
+		float step_value = Locator::TimeStepService()->GetTimeStep();
 		if(EventKeyInput* event = dynamic_cast<EventKeyInput*>(&e))
 		{
 			switch (event->GetKeyCode())
@@ -72,7 +74,7 @@ namespace ToyEngine
 				case KeyState::kPress:
 				{
 					//TY_CORE_TRACE("OnNotify - Camera Forward");
-					render_camera_->UpdatePosition(CameraMovement::kForward, kTimeStep);
+					render_camera_->UpdatePosition(CameraMovement::kForward, step_value);
 					break;
 				}
 				}
@@ -85,7 +87,7 @@ namespace ToyEngine
 				case KeyState::kPress:
 				{
 					//TY_CORE_TRACE("OnNotify - Camera Backward");
-					render_camera_->UpdatePosition(CameraMovement::kBackward, kTimeStep);
+					render_camera_->UpdatePosition(CameraMovement::kBackward, step_value);
 					break;
 				}
 				}
@@ -98,7 +100,7 @@ namespace ToyEngine
 				case KeyState::kPress:
 				{
 					//TY_CORE_TRACE("OnNotify - Camera Left");
-					render_camera_->UpdatePosition(CameraMovement::kLeft, kTimeStep);
+					render_camera_->UpdatePosition(CameraMovement::kLeft, step_value);
 					break;
 				}
 				}
@@ -111,7 +113,7 @@ namespace ToyEngine
 				case KeyState::kPress:
 				{
 					//TY_CORE_TRACE("OnNotify - Camera Right");
-					render_camera_->UpdatePosition(CameraMovement::kRight, kTimeStep);
+					render_camera_->UpdatePosition(CameraMovement::kRight, step_value);
 					break;
 				}
 				}
@@ -124,7 +126,7 @@ namespace ToyEngine
 				case KeyState::kPress:
 				{
 					//TY_CORE_TRACE("OnNotify - Camera Up");
-					render_camera_->UpdatePosition(CameraMovement::kUp, kTimeStep);
+					render_camera_->UpdatePosition(CameraMovement::kUp, step_value);
 					break;
 				}
 				}
@@ -137,7 +139,7 @@ namespace ToyEngine
 				case KeyState::kPress:
 				{
 					//TY_CORE_TRACE("OnNotify - Camera Down");
-					render_camera_->UpdatePosition(CameraMovement::kDown, kTimeStep);
+					render_camera_->UpdatePosition(CameraMovement::kDown, step_value);
 					break;
 				}
 				}

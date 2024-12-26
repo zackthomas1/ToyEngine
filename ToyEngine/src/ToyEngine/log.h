@@ -30,7 +30,7 @@ namespace ToyEngine
 	#define TY_INFO(...)		:: ToyEngine::Log::GetClientLogger()->info(__VA_ARGS__)
 	#define TY_WARN(...)		:: ToyEngine::Log::GetClientLogger()->warn(__VA_ARGS__)
 	#define TY_ERROR(...)		:: ToyEngine::Log::GetlientLLogger()->error(__VA_ARGS__)
-	#define TY_CORE_FATAL(...)	:: ToyEngine::Log::GetlientLLogger()->fatal(__VA_ARGS__)
+	#define TY_FATAL(...)	:: ToyEngine::Log::GetlientLLogger()->fatal(__VA_ARGS__)
 #else
 	#define TY_CORE_TRACE(...)
 	#define TY_CORE_INFO(...)

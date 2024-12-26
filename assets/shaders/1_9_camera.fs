@@ -12,7 +12,7 @@ uniform vec2 	u_pos_tex;
 uniform float 	u_scale_tex;
 
 // texture samplers
-uniform sampler2D text_sample_0;		// texture unit = 0
+uniform sampler2D text_sample_0;	// texture unit = 0
 uniform sampler2D text_sample_1; 	// texture unit = 1
 
 void main()
