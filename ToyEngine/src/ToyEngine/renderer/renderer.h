@@ -20,7 +20,7 @@ namespace ToyEngine
 		void SetCamera(std::shared_ptr<Camera> camera) { render_camera_ = camera; }
 
 		// Observer methods
-		virtual void OnNotify(Event& event);
+		virtual void OnEvent(Event& event);
 
 		static std::unique_ptr<Renderer> Create();
 	private: 

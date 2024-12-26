@@ -76,6 +76,8 @@ namespace ToyEngine
 		data_.title = props.title;
 		data_.width = props.width;
 		data_.height = props.height;
+		data_.x_mouse_pos = props.x_mouse_pos; 
+		data_.y_mouse_pos = props.y_mouse_pos;
 
 		// GLFW: initialize and configure
 		glfwInit();
@@ -105,6 +107,12 @@ namespace ToyEngine
 
 		// Set rendering window size 
 		glViewport(0, 0, data_.width, data_.height);
+
+		glfwSetWindowUserPointer(window_, &data_);
+
+		// set mouse capture
+		glfwSetInputMode(window_, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+
 	}
 
 	void WindowsWindow::SetCallbackFns()
@@ -117,18 +125,39 @@ namespace ToyEngine
 		});
 
 		glfwSetKeyCallback(window_, [](GLFWwindow* window, int key, int scancode, int action, int mods) {
-			TY_CORE_WARN("TODO: implement key call-back function");
+			//TY_CORE_WARN("TODO: implement key call-back function");
 		});
 
 		glfwSetScrollCallback(window_, [](GLFWwindow* window, double x_offset, double y_offset) {
-			TY_CORE_WARN("TODO: implement scroll call-back function");
+			WindowData& data = *(WindowData*)glfwGetWindowUserPointer(window);
 			EventVerticalScroll scroll(y_offset); 
-			//data_->event_callback(scroll);
+			data.event_callback(scroll);
 
+			//TY_CORE_WARN("TODO: implement scroll call-back function");
 		});
 
 		glfwSetCursorPosCallback(window_, [](GLFWwindow* window, double xpos, double ypos) {
-			TY_CORE_WARN("TODO: implement cursor pos call-back function");
+			WindowData& data = *(WindowData*)glfwGetWindowUserPointer(window);
+			
+			float x_current_pos = static_cast<float>(xpos);
+			float y_current_pos = static_cast<float>(ypos);
+
+			if (!data.is_mouse_active)
+			{
+				data.x_mouse_pos = x_current_pos; 
+				data.y_mouse_pos = y_current_pos;
+				data.is_mouse_active = true;
+			}
+			float x_offset = x_current_pos - data.x_mouse_pos; 
+			float y_offset = y_current_pos - data.y_mouse_pos;
+			
+			data.x_mouse_pos = x_current_pos;
+			data.y_mouse_pos = y_current_pos;
+
+			EventCursorPos cursor_pos(x_offset, y_offset);
+			data.event_callback(cursor_pos);
+
+			//TY_CORE_WARN("TODO: implement cursor pos call-back function");
 		});
 	}
 

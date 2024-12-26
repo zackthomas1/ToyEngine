@@ -47,10 +47,21 @@ namespace ToyEngine
 		}
 	}
 
-	void Renderer::OnNotify(Event& e)
+	void Renderer::OnEvent(Event& e)
 	{
-		const float kTimeStep = 0.01f;
-		if (EventKeyInput* event = dynamic_cast<EventKeyInput*>(&e))
+		if(EventVerticalScroll* event = dynamic_cast<EventVerticalScroll*>(&e))
+		{
+			render_camera_->UpdateFOV(event->GetYOffset());
+		}
+
+		if (EventCursorPos* event = dynamic_cast<EventCursorPos*>(&e))
+		{
+			//TY_CORE_INFO("EventCursorPos: x_offset-{} y_offset-{}", event->GetXOffset(), event->GetYOffset());
+			render_camera_->UpdateLookDirection(event->GetXOffset(), event->GetYOffset());
+		}
+
+		const float kTimeStep = 0.001f;
+		if(EventKeyInput* event = dynamic_cast<EventKeyInput*>(&e))
 		{
 			switch (event->GetKeyCode())
 			{

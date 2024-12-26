@@ -30,8 +30,6 @@ namespace ToyEngine{
 	// call-back
 	void FlyCamera::UpdateLookDirection(float x_offset, float y_offset, GLboolean constrainPitch)
 	{
-		//std::cout << "x_offset: " << x_offset << "\ty_offset: " << x_offset << std::endl;
-
 		x_offset *= mouse_sensitivity_;
 		y_offset *= mouse_sensitivity_;
 

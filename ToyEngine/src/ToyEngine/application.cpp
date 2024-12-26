@@ -32,15 +32,19 @@ namespace ToyEngine
 
 	void Application::Run()
 	{
+		float last_time = glfwGetTime(); // Time of last frame
+
 		while (!window_->ShouldClose())
 		{
-			// TODO: Implement variable time step
-			float time_delta = 1.0f;
+			// variable time step
+			float current_time = glfwGetTime();
+			float time_delta = current_time - last_time;
+			last_time = current_time;
 
 			// handle any user input since the last call
 			window_->ProcessInput();
 
-			//advance the game simulation one step
+			// advance the game simulation one step
 			Update(time_delta);
 
 			// draw the game
@@ -54,6 +58,6 @@ namespace ToyEngine
 
 	void Application::EventHandler(Event& e)
 	{
-		s_instance->renderer_->OnNotify(e);
+		s_instance->renderer_->OnEvent(e);
 	}
 }

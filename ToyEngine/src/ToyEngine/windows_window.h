@@ -13,11 +13,18 @@ namespace ToyEngine
 		std::string title;
 		unsigned int width;
 		unsigned int height;
+		bool is_mouse_active;
+		float x_mouse_pos, y_mouse_pos;
 
 		WindowProps(const std::string& title = "Learn OpenGL",
 			unsigned int width = 800,
-			unsigned int height = 600)
-			: title(title), width(width), height(height) {
+			unsigned int height = 600,
+			bool is_mouse_active = false,
+			float x_mouse_pos = 800.0f / 2.0f,
+			float y_mouse_pos = 600.0f / 2.0f)
+			: title(title), width(width), height(height), 
+			is_mouse_active(is_mouse_active), x_mouse_pos(x_mouse_pos), y_mouse_pos(y_mouse_pos) 
+		{
 		}
 	};
 
@@ -46,13 +53,15 @@ namespace ToyEngine
 	private: 
 		GLFWwindow* window_;
 
-		struct WindowSettings
+		struct WindowData
 		{
 			std::string title;
 			unsigned int width, height;
 			EventCallbackFn event_callback;
+			bool is_mouse_active;
+			float x_mouse_pos, y_mouse_pos;
 		};
 
-		WindowSettings data_;
+		WindowData data_;
 	};
 }

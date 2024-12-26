@@ -11,7 +11,7 @@ namespace ToyEngine
 	{
 		for (int i = 0; i < observer_count_; i++)
 		{
-			observers_[i]->OnNotify(event);
+			observers_[i]->OnEvent(event);
 		}
 	}
 

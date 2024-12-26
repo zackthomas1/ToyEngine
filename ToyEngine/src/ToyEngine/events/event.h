@@ -42,7 +42,18 @@ namespace ToyEngine
 	{
 	public:
 		EventVerticalScroll(float y_offset) : y_offset_(y_offset) {}
+		float GetYOffset() { return y_offset_; }
 	private:
 		float y_offset_;
+	};
+
+	class EventCursorPos : public Event
+	{
+	public:
+		EventCursorPos(double xpos, double ypos) : x_offset_(xpos), y_offset_(ypos) {}
+		double GetXOffset() { return x_offset_; }
+		double GetYOffset() { return y_offset_; }
+	private:
+		double x_offset_, y_offset_;
 	};
 }
