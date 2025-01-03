@@ -11,7 +11,7 @@ namespace ToyEngine
 	{
 	public:
 		Scene();
-		~Scene() {}
+		~Scene();
 
 		void Update(float time_delta);
 
@@ -20,8 +20,8 @@ namespace ToyEngine
 		//void AddLight(Light light); 
 
 		// getter/setter
-		std::vector<std::shared_ptr<Model>>* GetModels() { return &models_; }
-		std::vector<std::shared_ptr<Camera>>* GetCameras() { return &cameras_; }
+		const std::vector<std::shared_ptr<Model>>& GetModels() const { return models_; }
+		const std::vector<std::shared_ptr<Camera>>& GetCameras() const { return cameras_; }
 
 	private:
 		std::vector<std::shared_ptr<Camera>> cameras_;

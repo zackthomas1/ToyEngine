@@ -48,7 +48,7 @@ namespace ToyEngine
 
 	Texture2D::~Texture2D()
 	{
-		//glDeleteTextures(1, &id_);
+		glDeleteTextures(1, &id_);
 	}
 
 	void Texture2D::Bind() const

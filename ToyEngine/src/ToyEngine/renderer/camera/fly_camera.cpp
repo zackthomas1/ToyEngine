@@ -8,7 +8,6 @@ namespace ToyEngine{
 			Camera(position, up, pitch, yaw, znear, zfar),
 			aspect_(aspect), fov_(fov)
 	{
-
 	}
 
 	FlyCamera::FlyCamera(float pos_x, float pos_y, float pos_z, 
@@ -18,7 +17,6 @@ namespace ToyEngine{
 			Camera(glm::vec3(pos_x, pos_y, pos_z), glm::vec3(up_x, up_y, up_z), pitch, yaw, znear, zfar),
 			aspect_(aspect), fov_(fov)
 	{
-
 	}
 
 	// getter/setter

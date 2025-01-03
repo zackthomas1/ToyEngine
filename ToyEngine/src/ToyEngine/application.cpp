@@ -26,7 +26,7 @@ namespace ToyEngine
 
 		// initialize renderer
 		renderer_ = std::unique_ptr<Renderer>(Renderer::Create());
-		renderer_->SetCamera((*scene_->GetCameras())[0]);
+		renderer_->SetCamera((scene_->GetCameras())[0]);
 	}
 
 	Application::~Application()

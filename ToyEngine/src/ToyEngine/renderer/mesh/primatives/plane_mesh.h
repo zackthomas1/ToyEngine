@@ -2,10 +2,10 @@
 #include "ToyEngine/Renderer/mesh/mesh.h"
 namespace ToyEngine
 {
-	class Plane : public Mesh
+	class PlaneMesh : public Mesh
 	{
 	public:
-		Plane();
+		PlaneMesh();
 	private:
 		float vertices_[30] = {
 			// positions			// uv

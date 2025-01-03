@@ -3,11 +3,12 @@
 
 namespace ToyEngine
 {
-	class Cube : public Mesh
+
+	class CubeMesh : public Mesh
 	{
 	public:
-		Cube();
-		~Cube() {}
+		CubeMesh();
+		~CubeMesh() {}
 
 	private:
 		float vertices_[180] = {

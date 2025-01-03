@@ -2,13 +2,7 @@
 #include "renderer.h"
 
 #include "ToyEngine/renderer/render_api.h"
-#include "ToyEngine/renderer/mesh/primatives/plane.h"
-#include "ToyEngine/renderer/mesh/primatives/cube.h"
-#include "ToyEngine/renderer/mesh/primatives/triangle.h"
-
 #include "ToyEngine/services/locator.h"
-
-#include <glad/glad.h>
 
 namespace ToyEngine
 {
@@ -24,36 +18,31 @@ namespace ToyEngine
 
 	void Renderer::DrawScene(std::shared_ptr<Scene> scene)
 	{
-        // clear and set screen
-        // ------
-		glEnable(GL_DEPTH_TEST);
-		glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		RenderAPI::ClearSetBackground();
 		
+		RenderAPI::ShaderUse(shader_);
+
+		// send camera data to vertex shader
+		shader_->SetMat4("u_view", render_camera_->GetViewMatrix());
+		shader_->SetMat4("u_projection", render_camera_->GetProjectionMatrix());
+
 		// draw each model in the scene
-		for (std::shared_ptr<Model> model : *scene->GetModels())
+		for (std::shared_ptr<Model> model : scene->GetModels())
 		{
 			// activate shader and texture unites
-			RenderAPI::ShaderUse(shader_);
 			model->GetMaterial()->SetMaterialUniforms(shader_);
 			model->GetMaterial()->ActivateTextureUnits();
 		
 			// texture related unifroms 
-			RenderAPI::SetFloat(shader_, "u_alpha_tex", 0.5f);
-			RenderAPI::SetFloat(shader_, "u_scale_tex", 1.5f);
-			//shader_->SetFloat("u_alpha_tex", 0.5f);
-			//shader_->SetFloat("u_scale_tex", 1.5f);
+			shader_->SetFloat("u_alpha_tex", 0.5f);
+			shader_->SetFloat("u_scale_tex", 1.5f);
 			shader_->SetFloat2("u_pos_tex", 0.5f, 0.5f);
-
-			// send camera data to vertex shader
-			shader_->SetMat4("u_view", render_camera_->GetViewMatrix());
-			shader_->SetMat4("u_projection", render_camera_->GetProjectionMatrix());
 
 			// set model transforms in vertex shader
 			shader_->SetMat4("u_model", model->GetModelMatrix());
 			
 			// draw mesh
-			model->GetMesh()->Draw();
+			RenderAPI::DrawArrays(model->GetMesh());
 		}
 	}
 
