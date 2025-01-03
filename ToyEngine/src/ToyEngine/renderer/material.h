@@ -10,7 +10,7 @@ namespace ToyEngine
 		Material();
 		virtual ~Material() {}
 	
-		void SetMaterialUniforms(std::shared_ptr<Shader> shader);
+		void SetMaterialUniforms(Shader* shader);
 
 		std::vector<std::shared_ptr<Texture2D>>* GetTextures() { return &textures_; }
 		void AddTexture(std::shared_ptr<Texture2D> texture) { textures_.push_back(texture); }

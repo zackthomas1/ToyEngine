@@ -7,6 +7,7 @@ namespace ToyEngine
 	class Locator
 	{
 	public:
+		// time step service
 		static TimeStep* TimeStepService();
 		static void SetTimeStepProvider(TimeStep* time_step);
 		static void DeleteTimeStepProvider();

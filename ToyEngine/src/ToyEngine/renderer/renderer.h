@@ -12,7 +12,7 @@ namespace ToyEngine
 	{
 	public:
 		Renderer();
-		~Renderer() {}
+		~Renderer();
 
 		void DrawScene(std::shared_ptr<Scene> scene);
 
@@ -25,6 +25,6 @@ namespace ToyEngine
 		static std::unique_ptr<Renderer> Create();
 	private: 
 		std::shared_ptr<Camera> render_camera_;
-		std::shared_ptr<Shader> shader_;
+		Shader* shader_;
 	};
 }

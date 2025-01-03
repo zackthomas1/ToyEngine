@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "renderer.h"
 
+#include "ToyEngine/renderer/render_api.h"
 #include "ToyEngine/renderer/mesh/primatives/plane.h"
 #include "ToyEngine/renderer/mesh/primatives/cube.h"
 #include "ToyEngine/renderer/mesh/primatives/triangle.h"
@@ -13,7 +14,12 @@ namespace ToyEngine
 {
 	Renderer::Renderer()
 	{
-		shader_ = std::make_shared<Shader>("../assets/shaders/1_9_camera.vs", "../assets/shaders/1_9_camera.fs");
+		shader_ = new Shader("../assets/shaders/1_9_camera.vs", "../assets/shaders/1_9_camera.fs");
+	}
+
+	Renderer::~Renderer()
+	{
+		delete shader_;
 	}
 
 	void Renderer::DrawScene(std::shared_ptr<Scene> scene)
@@ -28,13 +34,15 @@ namespace ToyEngine
 		for (std::shared_ptr<Model> model : *scene->GetModels())
 		{
 			// activate shader and texture unites
-			shader_->Use();
+			RenderAPI::ShaderUse(shader_);
 			model->GetMaterial()->SetMaterialUniforms(shader_);
 			model->GetMaterial()->ActivateTextureUnits();
 		
 			// texture related unifroms 
-			shader_->SetFloat("u_alpha_tex", 0.5f);
-			shader_->SetFloat("u_scale_tex", 1.5f);
+			RenderAPI::SetFloat(shader_, "u_alpha_tex", 0.5f);
+			RenderAPI::SetFloat(shader_, "u_scale_tex", 1.5f);
+			//shader_->SetFloat("u_alpha_tex", 0.5f);
+			//shader_->SetFloat("u_scale_tex", 1.5f);
 			shader_->SetFloat2("u_pos_tex", 0.5f, 0.5f);
 
 			// send camera data to vertex shader

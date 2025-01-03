@@ -17,7 +17,7 @@ namespace ToyEngine
 		AddTexture(awesome_face_tex);
 	}
 
-	void Material::SetMaterialUniforms(std::shared_ptr<Shader> shader)
+	void Material::SetMaterialUniforms(Shader* shader)
 	{
 		for (int i = 0; i < GetTextures()->size(); i++) {
 			int sampler_location = ((*GetTextures())[i]->id()) - 1;

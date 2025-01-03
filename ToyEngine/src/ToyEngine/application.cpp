@@ -45,7 +45,6 @@ namespace ToyEngine
 		{
 			// update variable time step
 			Locator::TimeStepService()->Update();
-			TY_CORE_INFO("{}", Locator::TimeStepService()->GetTimeStep()); 
 
 			// handle any user input since the last call
 			window_->ProcessInput();

@@ -5,6 +5,7 @@ namespace ToyEngine
 {
 	// Concrete implementation of the TimeStep service 
 	// utilizing GLFW library
+	// variable time step implementation
 	class TimeStepGLFW : public TimeStep
 	{
 	public:
