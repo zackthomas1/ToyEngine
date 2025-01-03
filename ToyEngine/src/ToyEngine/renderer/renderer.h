@@ -17,14 +17,14 @@ namespace ToyEngine
 		void DrawScene(std::shared_ptr<Scene> scene);
 
 		// getter/setters 
-		void SetCamera(std::shared_ptr<Camera> camera) { render_camera_ = camera; }
+		void SetRenderCamera(Camera* camera) { render_camera_ = camera; }
 
 		// Observer methods
-		virtual void OnEvent(Event& event);
+		virtual void OnEvent(Event& event) override;
 
 		static std::unique_ptr<Renderer> Create();
 	private: 
-		std::shared_ptr<Camera> render_camera_;
+		Camera* render_camera_;
 		Shader* shader_;
 	};
 }

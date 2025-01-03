@@ -14,22 +14,22 @@ namespace ToyEngine
 	// This is for testing
 	glm::vec3 cube_positions[] = {
 		glm::vec3(0.0f,  0.0f,  0.0f),
-		glm::vec3(2.0f,  5.0f, -15.0f),
-		glm::vec3(-1.5f, -2.2f, -2.5f),
-		glm::vec3(-3.8f, -2.0f, -12.3f),
+		glm::vec3(1.5f,  0.2f, -1.5f),
+		glm::vec3(-1.3f,  1.0f, -1.5f),
 		glm::vec3(2.4f, -0.4f, -3.5f),
+		glm::vec3(-3.8f, -2.0f, -12.3f),
+		glm::vec3(-1.5f, -2.2f, -2.5f),
+		glm::vec3(2.0f,  5.0f, -15.0f),
+		glm::vec3(1.5f,  2.0f, -2.5f),
 		glm::vec3(-1.7f,  3.0f, -7.5f),
 		glm::vec3(1.3f, -2.0f, -2.5f),
-		glm::vec3(1.5f,  2.0f, -2.5f),
-		glm::vec3(1.5f,  0.2f, -1.5f),
-		glm::vec3(-1.3f,  1.0f, -1.5f)
 	};
 
 	Scene::Scene()
 	{
 		// Create scene cameras
-		cameras_.push_back(std::make_shared<FlyCamera>());
-		cameras_.push_back(std::make_shared<OrthographicCamera>());
+		cameras_.push_back(new FlyCamera());
+		cameras_.push_back(new OrthographicCamera());
 
 		// Create scene geometry
 		std::shared_ptr<CubeMesh> mesh = std::make_shared<CubeMesh>();
@@ -41,6 +41,7 @@ namespace ToyEngine
 
 			glm::mat4 transforms = glm::mat4(1.0f);
 			transforms = glm::translate(transforms, cube_positions[i]);
+			transforms = glm::rotate(transforms, 20.0f * i, glm::vec3(1.0f, 0.3f, 0.5f));
 			cube->SetModelMatrix(transforms);
 
 			models_.push_back(cube);
@@ -49,9 +50,27 @@ namespace ToyEngine
 
 	Scene::~Scene()
 	{
+		for (Camera* camera : cameras_) 
+		{
+			delete camera;
+		}
 	}
 
 	void Scene::Update(float time_delta)
+	{
+		for(int i = 0; i < GetModels().size(); i++)
+		{
+			std::shared_ptr<Model> model = GetModels()[i];
+			glm::mat4 transforms = model->GetModelMatrix();
+			
+			if (i % 2 == 0)
+				transforms = glm::rotate(transforms, glm::radians(180.0f * time_delta), glm::vec3(1.0f, 0.3f * i, 0.5f * i));
+			
+			model->SetModelMatrix(transforms);
+		}
+	}
+
+	void Scene::OnEvent(Event& event)
 	{
 	}
 

@@ -9,8 +9,8 @@ namespace ToyEngine
 			Camera(position, up, pitch, yaw, znear, zfar), 
 			left_(left), right_(right), bottom_(bottom), top_(top)
 	{
-
 	}
+
 	OrthographicCamera::OrthographicCamera(float pos_x, float pos_y, float pos_z,
 		float up_x, float up_y, float up_z,
 		float pitch, float yaw, float znear, float zfar,
@@ -18,7 +18,6 @@ namespace ToyEngine
 			Camera(glm::vec3(pos_x, pos_y, pos_z), glm::vec3(up_x, up_y, up_z), pitch, yaw, znear, zfar),
 				left_(left), right_(right), bottom_(bottom), top_(top)
 	{
-
 	}
 
 	// getters/setters

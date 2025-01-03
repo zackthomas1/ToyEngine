@@ -26,7 +26,7 @@ namespace ToyEngine
 
 		// initialize renderer
 		renderer_ = std::unique_ptr<Renderer>(Renderer::Create());
-		renderer_->SetCamera((scene_->GetCameras())[0]);
+		renderer_->SetRenderCamera(scene_->GetCameras()[0]);
 	}
 
 	Application::~Application()
@@ -64,5 +64,6 @@ namespace ToyEngine
 	void Application::EventHandler(Event& e)
 	{
 		s_instance->renderer_->OnEvent(e);
+		s_instance->scene_->OnEvent(e);
 	}
 }
