@@ -20,7 +20,9 @@ project "Sandbox"
         "%{IncludeDir.GLFW}",
         "%{IncludeDir.glad}",
         "%{IncludeDir.glm}",
-        "%{IncludeDir.spdlog}",  
+        "%{IncludeDir.spdlog}",
+        "%{IncludeDir.dearimgui}",
+        "%{IncludeDir.dearimgui}/backends",
     }
 
     links 

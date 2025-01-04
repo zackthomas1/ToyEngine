@@ -56,11 +56,6 @@ namespace ToyEngine
 		}
 	}
 
-	void WindowsWindow::SetInputMode()
-	{
-		glfwSetInputMode(window_, GLFW_CURSOR, GLFW_CURSOR_DISABLED);		// capture mouse cursor
-	}
-
 	void WindowsWindow::SwapBuffers()
 	{
 		glfwSwapBuffers(window_);
@@ -111,7 +106,7 @@ namespace ToyEngine
 		glfwSetWindowUserPointer(window_, &data_);
 
 		// set mouse capture
-		glfwSetInputMode(window_, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+		//glfwSetInputMode(window_, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
 	}
 

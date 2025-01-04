@@ -10,3 +10,7 @@
 [submodule "ToyEngine/vendor/spdlog"]
 	path = ToyEngine/vendor/spdlog
 	url = https://github.com/gabime/spdlog.git
+[submodule "ToyEngine/vendor/dearimgui"]
+	path = ToyEngine/vendor/dearimgui
+	url = https://github.com/ocornut/imgui.git
+	branch = docking

@@ -19,6 +19,7 @@ IncludeDir["glad"]      = "%{wks.location}/ToyEngine/vendor/glad/include"
 IncludeDir["stb"]       = "%{wks.location}/ToyEngine/vendor/stb"
 IncludeDir["glm"]       = "%{wks.location}/ToyEngine/vendor/glm"
 IncludeDir["spdlog"]    = "%{wks.location}/ToyEngine/vendor/spdlog/include"
+IncludeDir["dearimgui"] = "%{wks.location}/ToyEngine/vendor/dearimgui"
 
 group "Dependencies"
     include "ToyEngine/vendor/GLFW"
@@ -62,6 +63,8 @@ project "ToyEngine"
         "%{IncludeDir.stb}",
         "%{IncludeDir.glm}",
         "%{IncludeDir.spdlog}",
+        "%{IncludeDir.dearimgui}",
+        "%{IncludeDir.dearimgui}/backends",
     }
 
     links

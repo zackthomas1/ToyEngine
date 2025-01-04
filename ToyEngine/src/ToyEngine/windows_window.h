@@ -42,7 +42,6 @@ namespace ToyEngine
 
 		bool ShouldClose();
 		void ProcessInput();
-		void SetInputMode();
 		void SwapBuffers(); 
 		void PollEvents();
 		

@@ -5,6 +5,11 @@
 #include "ToyEngine/services/time_step_glfw.h"
 #include "ToyEngine/services/locator.h"
 
+#include "imgui.h"
+#include "imgui_impl_glfw.h"
+#include "imgui_impl_opengl3.h"
+
+
 namespace ToyEngine
 {
 	Application* Application::s_instance = nullptr;
@@ -14,9 +19,30 @@ namespace ToyEngine
 		TY_CORE_ASSERT(!s_instance, "Application already exist!")
 		s_instance = this;
 
-		// initialize window
+		// Initialize window
 		window_ = std::unique_ptr<WindowsWindow>(WindowsWindow::Create());
 		window_->SetCommandCallbackFn(Application::EventHandler);
+
+		// Setup Dear ImGui context
+		// -------------------------
+		IMGUI_CHECKVERSION(); 
+		ImGui::CreateContext();
+		ImGuiIO& io = ImGui::GetIO(); (void)io;
+		io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;	// Enable Keyboard Controls
+		io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;	// Enable Gamepad Controls 
+		io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;		// Enable Docking 
+		io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;		// Enable Multi-Viewport / Platform Windows
+
+		// Setup Dear ImGui style 
+		ImGui::StyleColorsDark(); 
+
+		ImGuiStyle& style = ImGui::GetStyle(); 
+		if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
+		{
+			style.WindowRounding = 0.0f; 
+			style.Colors[ImGuiCol_WindowBg].w = 1.0f;
+		}
+		// -------------------------
 
 		// initialize time step
 		Locator::SetTimeStepProvider(new TimeStepGLFW());
@@ -43,16 +69,30 @@ namespace ToyEngine
 	{
 		while (!window_->ShouldClose())
 		{
-			// update variable time step
+			// Update variable time step
 			Locator::TimeStepService()->Update();
 
-			// handle any user input since the last call
+			// Handle any user input since the last call
 			window_->ProcessInput();
 
-			// advance the game simulation one step
+			// ImGui
+			// ------------------------------
+			// Start the Dear Imgui frame
+			//ImGui_ImplOpenGL3_NewFrame(); 
+			//ImGui_ImplGlfw_NewFrame(); 
+			//ImGui::NewFrame();
+
+			//// Show simple window
+			//ImGui::Begin("Hello, World"); 
+			//ImGui::Text("This is some useful text"); 
+			//ImGui::End();
+			// ------------------------------
+
+
+			// Advance the game simulation one step
 			Update(Locator::TimeStepService()->GetTimeStep());
 
-			// draw the game
+			// Draw the game
 			renderer_->DrawScene(scene_);
 
 			//
