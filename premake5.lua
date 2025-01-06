@@ -24,13 +24,14 @@ IncludeDir["dearimgui"] = "%{wks.location}/ToyEngine/vendor/dearimgui"
 group "Dependencies"
     include "ToyEngine/vendor/GLFW"
     include "ToyEngine/vendor/glad"
+    include "ToyEngine/vendor/dearimgui"
 group ""
 
-group "Tools"
+group "Misc"
     include "Sandbox"
 group ""
 
--- Toy Engine project
+-- Toy Engine project --
 project "ToyEngine"
     location "ToyEngine"
     kind "StaticLib"
@@ -64,7 +65,6 @@ project "ToyEngine"
         "%{IncludeDir.glm}",
         "%{IncludeDir.spdlog}",
         "%{IncludeDir.dearimgui}",
-        "%{IncludeDir.dearimgui}/backends",
     }
 
     links
@@ -72,6 +72,7 @@ project "ToyEngine"
         "GLFW",
         "glad",
         "opengl32.lib",
+        "ImGui"
     }
 
     filter "system:windows"

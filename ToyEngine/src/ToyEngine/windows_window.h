@@ -38,7 +38,9 @@ namespace ToyEngine
 
 		static std::unique_ptr<WindowsWindow> Create(const WindowProps& props = WindowProps());
 
+		//
 		void SetCommandCallbackFn(const EventCallbackFn& callback) { data_.event_callback = callback; }
+		GLFWwindow* GetGLFWWindow() { return window_; }
 
 		bool ShouldClose();
 		void ProcessInput();

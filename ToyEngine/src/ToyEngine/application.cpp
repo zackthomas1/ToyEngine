@@ -6,9 +6,8 @@
 #include "ToyEngine/services/locator.h"
 
 #include "imgui.h"
-#include "imgui_impl_glfw.h"
-#include "imgui_impl_opengl3.h"
-
+#include "backends/imgui_impl_glfw.h"
+#include "backends/imgui_impl_opengl3.h"
 
 namespace ToyEngine
 {
@@ -31,7 +30,7 @@ namespace ToyEngine
 		io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;	// Enable Keyboard Controls
 		io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;	// Enable Gamepad Controls 
 		io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;		// Enable Docking 
-		io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;		// Enable Multi-Viewport / Platform Windows
+		io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;	// Enable Multi-Viewport / Platform Windows
 
 		// Setup Dear ImGui style 
 		ImGui::StyleColorsDark(); 
@@ -39,9 +38,13 @@ namespace ToyEngine
 		ImGuiStyle& style = ImGui::GetStyle(); 
 		if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
 		{
-			style.WindowRounding = 0.0f; 
+			style.WindowRounding = 10.0f; 
 			style.Colors[ImGuiCol_WindowBg].w = 1.0f;
 		}
+
+		// Setup Platform/Renderer backends 
+		ImGui_ImplGlfw_InitForOpenGL(window_->GetGLFWWindow(), true);
+		ImGui_ImplOpenGL3_Init("#version 330 core");
 		// -------------------------
 
 		// initialize time step
@@ -78,14 +81,19 @@ namespace ToyEngine
 			// ImGui
 			// ------------------------------
 			// Start the Dear Imgui frame
-			//ImGui_ImplOpenGL3_NewFrame(); 
-			//ImGui_ImplGlfw_NewFrame(); 
-			//ImGui::NewFrame();
+			ImGui_ImplOpenGL3_NewFrame(); 
+			ImGui_ImplGlfw_NewFrame(); 
+			ImGui::NewFrame();
 
-			//// Show simple window
-			//ImGui::Begin("Hello, World"); 
-			//ImGui::Text("This is some useful text"); 
-			//ImGui::End();
+			// Show the big demo window (Most of the sample code is in ImGui::ShowDemoWindow()! 
+			// You can browse its code to learn more about Dear ImGui!).
+			ImGui::ShowDemoWindow();
+
+			// Show simple window
+			ImGui::Begin("Hello, World"); 
+			ImGui::Text("This is some useful text"); 
+			//ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / io.Framerate, io.Framerate);
+			ImGui::End();
 			// ------------------------------
 
 
@@ -93,9 +101,21 @@ namespace ToyEngine
 			Update(Locator::TimeStepService()->GetTimeStep());
 
 			// Draw the game
+			ImGui::Render();
+
 			renderer_->DrawScene(scene_);
 
+			ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+
 			//
+			ImGuiIO& io = ImGui::GetIO(); (void)io;
+			if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
+			{
+				GLFWwindow* backup_current_context = glfwGetCurrentContext();
+				ImGui::UpdatePlatformWindows();
+				ImGui::RenderPlatformWindowsDefault();
+				glfwMakeContextCurrent(backup_current_context);
+			}
 			window_->SwapBuffers();
 			window_->PollEvents();
 		}

@@ -4,7 +4,7 @@
 #include "ToyEngine/renderer/renderer.h"
 #include "ToyEngine/windows_window.h"
 
-
+#include "imgui.h"
 
 namespace ToyEngine
 {
@@ -23,6 +23,7 @@ namespace ToyEngine
 		std::unique_ptr<WindowsWindow> window_;
 		std::unique_ptr<Renderer> renderer_;
 		std::shared_ptr<Scene> scene_;
+
 		static Application* s_instance;
 	};
 

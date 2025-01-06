@@ -19,7 +19,7 @@ namespace ToyEngine
 	void Renderer::DrawScene(std::shared_ptr<Scene> scene)
 	{
 		RenderAPI::ClearSetBackground();
-		
+
 		RenderAPI::ShaderUse(shader_);
 
 		// send camera data to vertex shader
