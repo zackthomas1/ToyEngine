@@ -8,7 +8,7 @@ namespace ToyEngine
 
 	void Log::Init()
 	{
-		spdlog::set_pattern("%^[%T] %n: %v%$");
+		spdlog::set_pattern("[%s:%#] \t %^[%T] %n: %v%$");
 
 		s_CoreLogger = spdlog::stdout_color_mt("ToyEngine");
 		s_CoreLogger->set_level(spdlog::level::trace);

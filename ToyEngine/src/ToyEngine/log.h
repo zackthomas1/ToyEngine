@@ -1,6 +1,9 @@
 #pragma once
+#define SPDLOG_ACTIVE_LEVEL SPDLOG_LEVEL_TRACE // Must: define SPDLOG_ACTIVE_LEVEL before `#include "spdlog/spdlog.h"
+
 #include "spdlog/spdlog.h"
 #include "spdlog/sinks/stdout_color_sinks.h"
+#include "spdlog/sinks/stdout_sinks.h"
 
 namespace ToyEngine
 {
@@ -19,18 +22,18 @@ namespace ToyEngine
 
 #ifdef TY_DEBUG
 	// Core log macros
-	#define TY_CORE_TRACE(...)	:: ToyEngine::Log::GetCoreLogger()->trace(__VA_ARGS__)
-	#define TY_CORE_INFO(...)	:: ToyEngine::Log::GetCoreLogger()->info(__VA_ARGS__)
-	#define TY_CORE_WARN(...)	:: ToyEngine::Log::GetCoreLogger()->warn(__VA_ARGS__)
-	#define TY_CORE_ERROR(...)	:: ToyEngine::Log::GetCoreLogger()->error(__VA_ARGS__)
-	#define TY_CORE_FATAL(...)	:: ToyEngine::Log::GetCoreLogger()->fatal(__VA_ARGS__)
+	#define TY_CORE_TRACE(...)		:: ToyEngine::Log::GetCoreLogger()->log(spdlog::source_loc{__FILE__, __LINE__, SPDLOG_FUNCTION}, spdlog::level::trace, __VA_ARGS__)
+	#define TY_CORE_INFO(...)		:: ToyEngine::Log::GetCoreLogger()->log(spdlog::source_loc{__FILE__, __LINE__, SPDLOG_FUNCTION}, spdlog::level::info, __VA_ARGS__)
+	#define TY_CORE_WARN(...)		:: ToyEngine::Log::GetCoreLogger()->log(spdlog::source_loc{__FILE__, __LINE__, SPDLOG_FUNCTION}, spdlog::level::warn, __VA_ARGS__)
+	#define TY_CORE_ERROR(...)		:: ToyEngine::Log::GetCoreLogger()->log(spdlog::source_loc{__FILE__, __LINE__, SPDLOG_FUNCTION}, spdlog::level::err, __VA_ARGS__)
+	#define TY_CORE_CRITICAL(...)	:: ToyEngine::Log::GetCoreLogger()->log(spdlog::source_loc{__FILE__, __LINE__, SPDLOG_FUNCTION}, spdlog::level::critical, __VA_ARGS__)
 
 	// client log macros
-	#define TY_TRACE(...)		:: ToyEngine::Log::GetlientLLogger()->trace(__VA_ARGS__)
-	#define TY_INFO(...)		:: ToyEngine::Log::GetClientLogger()->info(__VA_ARGS__)
-	#define TY_WARN(...)		:: ToyEngine::Log::GetClientLogger()->warn(__VA_ARGS__)
-	#define TY_ERROR(...)		:: ToyEngine::Log::GetlientLLogger()->error(__VA_ARGS__)
-	#define TY_FATAL(...)		:: ToyEngine::Log::GetlientLLogger()->fatal(__VA_ARGS__)
+	#define TY_TRACE(...)			:: ToyEngine::Log::GetClientLogger()->log(spdlog::source_loc{__FILE__, __LINE__, SPDLOG_FUNCTION}, spdlog::level::trace, __VA_ARGS__)
+	#define TY_INFO(...)			:: ToyEngine::Log::GetClientLogger()->log(spdlog::source_loc{__FILE__, __LINE__, SPDLOG_FUNCTION}, spdlog::level::info, __VA_ARGS__)
+	#define TY_WARN(...)			:: ToyEngine::Log::GetClientLogger()->log(spdlog::source_loc{__FILE__, __LINE__, SPDLOG_FUNCTION}, spdlog::level::warn, __VA_ARGS__)
+	#define TY_ERROR(...)			:: ToyEngine::Log::GetClientLogger()->log(spdlog::source_loc{__FILE__, __LINE__, SPDLOG_FUNCTION}, spdlog::level::err, __VA_ARGS__)
+	#define TY_CRITICAL(...)		:: ToyEngine::Log::GetClientLogger()->log(spdlog::source_loc{__FILE__, __LINE__, SPDLOG_FUNCTION}, spdlog::level::critical, __VA_ARGS__)
 #else
 	#define TY_CORE_TRACE(...)
 	#define TY_CORE_INFO(...)
