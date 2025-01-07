@@ -4,9 +4,21 @@
 
 namespace ToyEngine
 {
+	// The Locator is responsible for managing the life time of the service providers.
+
 	class Locator
 	{
 	public:
+		// Enforce static class
+		// Delete default, copy, and move constructors
+		Locator() = delete;					// Default constructor
+		Locator(const Locator&) = delete;	// Copy constructor
+		Locator(Locator&&) = delete;		// Move constructor
+
+		// Delete the assignment operators
+		Locator& operator=(const Locator&) = delete;
+		Locator& operator=(Locator&&) = delete;
+
 		// time step service
 		static TimeStep* TimeStepService();
 		static void SetTimeStepProvider(TimeStep* time_step);
