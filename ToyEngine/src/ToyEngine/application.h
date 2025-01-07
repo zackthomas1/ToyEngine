@@ -4,8 +4,6 @@
 #include "ToyEngine/renderer/renderer.h"
 #include "ToyEngine/windows_window.h"
 
-#include "imgui.h"
-
 namespace ToyEngine
 {
 	class Application

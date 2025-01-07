@@ -14,6 +14,7 @@
 #include <unordered_set>
 
 #include "ToyEngine/log.h"
+#include "ToyEngine/core.h"
 
 #ifdef TY_PLATFORM_WINDOWS
 	#include <Windows.h>

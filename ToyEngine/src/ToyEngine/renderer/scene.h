@@ -1,6 +1,5 @@
 #pragma once
 #include "pch.h"
-#include "ToyEngine/events/observer.h"
 
 #include "ToyEngine/renderer/model.h"
 #include "ToyEngine/renderer/light.h"
@@ -8,7 +7,7 @@
 
 namespace ToyEngine
 {
-	class Scene : public Observer
+	class Scene
 	{
 	public:
 		Scene();
@@ -16,9 +15,6 @@ namespace ToyEngine
 
 		void Update(float time_delta);
 		
-		// Observer methods
-		virtual void OnEvent(Event& event) override;
-
 		// scene modifiers
 		void AddModel(std::shared_ptr<Model> model);
 		//void AddLight(Light light); 

@@ -70,10 +70,6 @@ namespace ToyEngine
 		}
 	}
 
-	void Scene::OnEvent(Event& event)
-	{
-	}
-
 	void Scene::AddModel(std::shared_ptr<Model> model)
 	{
 		models_.push_back(model);

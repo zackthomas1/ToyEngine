@@ -46,8 +46,14 @@ namespace ToyEngine
 		}
 	}
 
+	// TODO: Remove OnEvent() method from renderer class. The renderer should only be responsible for drawing the graphics window. 
+	// It should NOT be responsible for any event handling nor should it be a child of the Observer class. 
+	// The Scene class should most likely be responsible for handling camera input.
 	void Renderer::OnEvent(Event& e)
 	{
+		// If the event has already been handled by another layer nothing
+		if (e.GetEventHandled() == true) { return; }
+
 		if(EventVerticalScroll* event = dynamic_cast<EventVerticalScroll*>(&e))
 		{
 			render_camera_->UpdateFOV(event->GetYOffset());
@@ -143,6 +149,9 @@ namespace ToyEngine
 				break;
 			}
 			}
+
+			// Set flag indiciating that event has been handled by current layer
+			e.SetEventHandled(true);
 		}
 	}
 

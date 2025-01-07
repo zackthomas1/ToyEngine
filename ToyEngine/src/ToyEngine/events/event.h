@@ -22,7 +22,12 @@ namespace ToyEngine
 	class Event
 	{
 	public:
+		Event() : isHandled_(false) {}
 		virtual ~Event() {}
+		bool GetEventHandled() { return isHandled_; }
+		void SetEventHandled(bool isHandled) { isHandled_ = isHandled; }
+	private: 
+		bool isHandled_;
 	};
 
 	class EventKeyInput : public Event
