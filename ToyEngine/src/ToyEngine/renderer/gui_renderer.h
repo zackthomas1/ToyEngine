@@ -7,12 +7,22 @@ namespace ToyEngine
 	class GuiRenderer
 	{
 	public:
+		// Enforce static class
+		// Delete default, copy, and move constructors
+		GuiRenderer() = delete;						// Default constructor
+		GuiRenderer(const GuiRenderer&) = delete;	// Copy constructor
+		GuiRenderer(GuiRenderer&&) = delete;		// Move constructor
+
+		// Delete the assignment operators
+		GuiRenderer& operator=(const GuiRenderer&) = delete;
+		GuiRenderer& operator=(GuiRenderer&&) = delete;
+
+
 		/// <summary>
-		/// Initates and configures gui. Creates context,
-		/// sets io config flags, sets gui style, 
-		/// and initializes plateform/renderer backends
+		/// Initates and configures gui. Creates context, sets io config flags, 
+		/// sets gui style, and initializes plateform/renderer backends
 		/// </summary>
-		/// <param name="window"></param>
+		/// <param name="window">- </param>
 		static void Init(GLFWwindow* window);
 		
 		/// <summary>
