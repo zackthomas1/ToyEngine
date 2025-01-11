@@ -15,24 +15,24 @@ namespace ToyEngine
 		// -------------------------
 		IMGUI_CHECKVERSION();
 		ImGui::CreateContext();
-		ImGuiIO& io = ImGui::GetIO(); (void)io;
-		io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;	// Enable Keyboard Controls
-		io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;	// Enable Gamepad Controls 
-		io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;		// Enable Docking 
-		io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;		// Enable Multi-Viewport / Platform Windows
+		ImGuiIO& io_ = ImGui::GetIO(); (void)io_;
+		io_.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;	// Enable Keyboard Controls
+		io_.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;	// Enable Gamepad Controls 
+		io_.ConfigFlags |= ImGuiConfigFlags_DockingEnable;		// Enable Docking 
+		io_.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;		// Enable Multi-Viewport / Platform Windows
 
 		// Setup Dear ImGui style 
 		ImGui::StyleColorsDark();
 
 		ImGuiStyle& style = ImGui::GetStyle();
-		if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
+		if (io_.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
 		{
 			style.WindowRounding = 10.0f;
 			style.Colors[ImGuiCol_WindowBg].w = 1.0f;
 		}
 
 		// Setup Platform/Renderer backends 
-		TY_CORE_ASSERT(io.BackendPlatformUserData == nullptr, "ImGui - Already initialized a platform backend.");
+		TY_CORE_ASSERT(io_.BackendPlatformUserData == nullptr, "ImGui - Already initialized a platform backend.");
 		ImGui_ImplGlfw_InitForOpenGL(window, true);
 		ImGui_ImplOpenGL3_Init("#version 330 core");
 		// -------------------------

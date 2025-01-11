@@ -30,9 +30,6 @@ namespace ToyEngine
 		// Initialize time step
 		Locator::SetTimeStepProvider(new TimeStepGLFW());
 
-		//// Create application layers and to layer manager
-		//LayerManager::AddLayer(new ImGuiLayer());
-
 		// Create a Scene
 		// TODO: Move scene creation on of the application class
 		scene_ = std::make_shared<Scene>();
