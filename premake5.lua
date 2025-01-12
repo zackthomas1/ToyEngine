@@ -1,3 +1,5 @@
+include ("dependencies.lua")
+
 --premake5.lua 
 workspace "ToyEngine" 
     architecture "x64"
@@ -12,19 +14,10 @@ workspace "ToyEngine"
 
 outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
 
--- Include directories relative to root folder (solution directory)
-IncludeDir = {}
-IncludeDir["GLFW"]      = "%{wks.location}/ToyEngine/vendor/GLFW/include"
-IncludeDir["glad"]      = "%{wks.location}/ToyEngine/vendor/glad/include"
-IncludeDir["stb"]       = "%{wks.location}/ToyEngine/vendor/stb"
-IncludeDir["glm"]       = "%{wks.location}/ToyEngine/vendor/glm"
-IncludeDir["spdlog"]    = "%{wks.location}/ToyEngine/vendor/spdlog/include"
-IncludeDir["dearimgui"] = "%{wks.location}/ToyEngine/vendor/dearimgui"
-
 group "Dependencies"
     include "ToyEngine/vendor/GLFW"
     include "ToyEngine/vendor/glad"
-    include "ToyEngine/vendor/dearimgui"
+    include("ToyEngine/vendor/dearimgui_premake.lua")
 group ""
 
 group "Misc"
