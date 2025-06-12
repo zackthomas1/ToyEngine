@@ -36,3 +36,28 @@ graph TD
     Model --> Mesh
     Model --> Material
 ```
+
+```mermaid
+graph TD
+    subgraph Runtime
+        main["entry_point.h<br><code>main()</code>"] --> LogInit["log.h<br>Log::Init()"]
+        main --> app["Application"]
+    end
+
+    app --> window["WindowsWindow"]
+    app --> layerMgr["LayerManager"]
+    app --> renderer["Renderer"]
+    app --> scene["Scene"]
+    app --> gui["GuiRenderer"]
+
+    window -- input events --> eventHandler["Application::EventHandler"]
+    eventHandler --> layerMgr
+    eventHandler --> renderer
+
+    layerMgr -- manages --> gui & layers["Game layers / ImGui layers"]
+    renderer -- draws --> scene
+    renderer --> camera["Camera"]
+    scene -- owns --> camera
+    scene -- contains --> models["Models"]
+
+```
