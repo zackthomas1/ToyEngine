@@ -11,8 +11,6 @@ ToyEngine/
 ├── Sandbox/
 │   ├── src/
 │   ├── premake5.lua
-│   ├── Sandbox.vcxproj
-│   └── Sandbox.vcxproj.user
 ├── scripts/
 ├── ToyEngine/
 │   ├── src/
@@ -44,10 +42,6 @@ ToyEngine/
 │       ├── glm
 │       ├── spdlog
 |       └── stb
-
-│   ├── ToyEngine.vcxproj
-│   ├── ToyEngine.vcxproj.filters
-│   └── ToyEngine.vcxproj.user
 ├── vendor/
 ├── .gitignore
 ├── .gitmodules
