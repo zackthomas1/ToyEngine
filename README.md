@@ -14,26 +14,26 @@ ToyEngine/
 ├── scripts/
 ├── ToyEngine/
 │   ├── src/
-│       ├── ToyEngine/
-│           ├── events/
-│           ├── layers/
-│           ├── renderer/
-│               ├── camera/
-│               ├── mesh/
-│               ├── texture/
-│           ├── services
-│           ├── application.cpp
-│           ├── application.h
-│           ├── core.h
-│           ├── entry_point.h
-│           ├── log.cpp
-│           ├── log.h
-│           ├── windows_window.cpp
-|           └── windows_window.h
-│       ├── pch.cpp
-│       ├── pch.h
-│       └── toy_engine.h
-│   ├── vendor/
+│   |   ├── ToyEngine/
+│   |   |   ├── events/
+│   |   |   ├── layers/
+│   |   |   ├── renderer/
+│   |   |   |   ├── camera/
+│   |   |   |   ├── mesh/
+│   |   |   |   ├── texture/
+│   |   |   ├── services
+│   |   |   ├── application.cpp
+│   |   |   ├── application.h
+│   |   |   ├── core.h
+│   |   |   ├── entry_point.h
+│   |   |   ├── log.cpp
+│   |   |   ├── log.h
+│   |   |   ├── windows_window.cpp
+│   |   |   └── windows_window.h
+│   |   ├── pch.cpp
+│   |   ├── pch.h
+│   |   └── toy_engine.h
+│   └── vendor/
 │       ├── bin/
 │       ├── bin-int/
 │       ├── dearimgui
