@@ -1,63 +1,72 @@
 # Toy Engine
 
-## Level 1: System Context
-```mermaid
-graph TD
-    developer[Developer] --> |"builds apps with"| ToyEngine
-    ToyEngine --> GLFW[(GLFW)]
-    ToyEngine --> OpenGL[(OpenGL)]
+## Project Structure 
 ```
-## Level 2: Container Diagram
-```mermaid
-graph TD
-    app["Application"] --> window["WindowsWindow"]
-    app --> renderer["Renderer"]
-    app --> scene["Scene"]
-    app --> layerMgr["LayerManager"]
-    app --> gui["GuiRenderer"]
+ToyEngine/
+├── assets/
+│   ├── shaders/
+│   ├── textures/
+├── bin/
+├── bin-int/
+├── Sandbox/
+│   ├── src/
+│   ├── premake5.lua
+│   ├── Sandbox.vcxproj
+│   └── Sandbox.vcxproj.user
+├── scripts/
+├── ToyEngine/
+│   ├── src/
+│       ├── ToyEngine/
+│           ├── events/
+│           ├── layers/
+│           ├── renderer/
+│               ├── camera/
+│               ├── mesh/
+│               ├── texture/
+│           ├── services
+│           ├── application.cpp
+│           ├── application.h
+│           ├── core.h
+│           ├── entry_point.h
+│           ├── log.cpp
+│           ├── log.h
+│           ├── windows_window.cpp
+|           └── windows_window.h
+│       ├── pch.cpp
+│       ├── pch.h
+│       └── toy_engine.h
+│   ├── vendor/
+│       ├── bin/
+│       ├── bin-int/
+│       ├── dearimgui
+│       ├── glad
+│       ├── GLFW
+│       ├── glm
+│       ├── spdlog
+|       └── stb
 
-    window -- input events --> app
-    renderer --> camera["Camera"]
-    renderer --> material["Material"]
-    renderer --> mesh["Mesh"]
-    scene -- contains --> model["Model"]
-    layerMgr -- manages --> gui & layers["Layers"]
-```
+│   ├── ToyEngine.vcxproj
+│   ├── ToyEngine.vcxproj.filters
+│   └── ToyEngine.vcxproj.user
+├── vendor/
+├── .gitignore
+├── .gitmodules
+├── dependencies.lua
+├── LICENSE
+├── premake5.lua
+├── README.md 
+└── ToyEngine.sln 
 
-## Level 3: Component Diagram (Renderer)
+## Dependencies
+Included Dependencies 
+- [dearimgui](https://github.com/ocornut/imgui) - graphical user interface birbary for C++
+- [glad](https://glad.dav1d.de/) - Generates loader for OpenGL functions.  Location of OpenGL functions not known at compile-time and needs to be queried at run-time.
+  manages function pointers for OpenGl, which is necessary beccause driver manufacturers implement OpenGL specification differently  
+- [GLFW](https://www.glfw.org/) - Open Source, multi-platform library for OpenGL development on the desktop.
+  Provides a simple API for creating windows, contexts and surfaces, receiving input and events
+- [glm](https://github.com/g-truc/glm) - header only C++ mathematics library for graphics software based on GLSL specification
+- [spdlog](https://github.com/gabime/spdlog) - Fast C++ logging library
+- [stb](https://github.com/nothings/stb) - for image loading
 
-```mermaid
-graph TD
-    Renderer --> RenderAPI["RenderAPI"]
-    Renderer --> Scene
-    Renderer --> GuiRenderer
-    Scene --> Model
-    Scene --> Camera
-    Model --> Mesh
-    Model --> Material
-```
-
-```mermaid
-graph TD
-    subgraph Runtime
-        main["entry_point.h<br><code>main()</code>"] --> LogInit["log.h<br>Log::Init()"]
-        main --> app["Application"]
-    end
-
-    app --> window["WindowsWindow"]
-    app --> layerMgr["LayerManager"]
-    app --> renderer["Renderer"]
-    app --> scene["Scene"]
-    app --> gui["GuiRenderer"]
-
-    window -- input events --> eventHandler["Application::EventHandler"]
-    eventHandler --> layerMgr
-    eventHandler --> renderer
-
-    layerMgr -- manages --> gui & layers["Game layers / ImGui layers"]
-    renderer -- draws --> scene
-    renderer --> camera["Camera"]
-    scene -- owns --> camera
-    scene -- contains --> models["Models"]
-
-```
+Non-Included Dependencies
+[Premake](https://premake.github.io/) - C++ project build configuration
