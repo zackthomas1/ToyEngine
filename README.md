@@ -54,6 +54,7 @@ ToyEngine/
 
 ## Dependencies
 Included Dependencies 
+
 - [dearimgui](https://github.com/ocornut/imgui) - graphical user interface birbary for C++
 - [glad](https://glad.dav1d.de/) - Generates loader for OpenGL functions.  Location of OpenGL functions not known at compile-time and needs to be queried at run-time.
   manages function pointers for OpenGl, which is necessary beccause driver manufacturers implement OpenGL specification differently  
@@ -63,4 +64,5 @@ Included Dependencies
 - [stb](https://github.com/nothings/stb) - for image loading
 
 Non-Included Dependencies
+
 [Premake](https://premake.github.io/) - C++ project build configuration
