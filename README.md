@@ -1,6 +1,8 @@
-# Toy Engine
-
-## Project Structure 
+# Overview
+## Purpose 
+## Features
+## Target Hardware
+# Project Structure 
 ```
 ToyEngine/
 ├── assets/
@@ -51,7 +53,10 @@ ToyEngine/
 ├── README.md 
 └── ToyEngine.sln 
 ```
-
+# Project Seup 
+## Development Environment 
+## Installation 
+## Building and Running
 ## Dependencies
 Included Dependencies 
 
@@ -66,3 +71,5 @@ Included Dependencies
 Non-Included Dependencies
 
 [Premake](https://premake.github.io/) - C++ project build configuration
+
+# TODO
