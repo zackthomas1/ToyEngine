@@ -1,0 +1,71 @@
+#pragma once
+#include <glad/glad.h>
+
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
+
+namespace ToyEngine
+{
+	// defines serveral possible options for camera movement.
+	// Use as an abstraction to stay away from window_system specific input methods
+	enum CameraMovement
+	{
+		kForward,
+		kBackward,
+		kLeft,
+		kRight,
+		kUp,
+		kDown,
+		kNone,
+	};
+
+	// default camera values
+	const glm::vec3 kWorldUp = glm::vec3(0.0f, 1.0f, 0.0f);
+	const glm::vec3 kCameraPosition = glm::vec3(0.0f, 0.0f, 3.0f),
+		kCameraFront = glm::vec3(0.0f, 0.0f, -1.0f),
+		kCameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
+	const float kPitch = 0.0f, kYaw = -90.0f,
+		kZnear = 0.1f, kZfar = 100.0f,
+		kMovementSpeed = 10.0f, kMouseSensitivity = 0.1f;
+
+	class Camera
+	{
+	public: 
+		Camera(glm::vec3 position, glm::vec3 up, 
+			float pitch, float yaw, 
+			float znear, float zfar);
+		virtual ~Camera() {}
+
+		// getter/setters
+		virtual glm::mat4 GetViewMatrix() const;
+		virtual glm::mat4 GetProjectionMatrix() const = 0;
+
+		void SetMovementSpeed(float speed); 
+		void SetMouseSensitivity(float sensitivity); 
+		void SetNear(float znear);
+		void SetFar(float zfar);
+
+		// update methods
+		//virtual void Update();
+		virtual void UpdatePosition(CameraMovement direction, float time_step);
+		virtual void UpdateLookDirection(float x_offset, float y_offset, GLboolean constrainPitch = TRUE) {}
+		virtual void UpdateFOV(float y_offset) {}
+	protected: 
+		// camera attributes
+		float pitch_, yaw_,	// Euler angles
+			znear_, zfar_,
+			movement_speed_, mouse_sensitivity_;
+
+		glm::vec3 camera_position_,
+			camera_front_,
+			camera_up_,
+			camera_right_;
+
+		CameraMovement movement_update;
+
+		// protected methods
+		virtual void UpdateCameraVectors();
+
+	};
+}
