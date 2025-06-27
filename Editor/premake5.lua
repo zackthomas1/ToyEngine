@@ -1,5 +1,5 @@
 -- Application Project
-project "Sandbox"
+project "Editor"
     kind "ConsoleApp"
     language "C++"
     cppdialect "C++17"

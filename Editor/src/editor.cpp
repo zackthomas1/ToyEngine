@@ -3,7 +3,7 @@
 #include "imgui.h"
 
 
-class SandboxGui : public ToyEngine::ImGuiLayer
+class EditorGui : public ToyEngine::ImGuiLayer
 {
 public:
 	void CreateWindows()
@@ -21,17 +21,17 @@ public:
 	}
 };
 
-class Sandbox : public ToyEngine::Application
+class Editor : public ToyEngine::Application
 {
 public:
-	Sandbox()
+	Editor()
 	{
 		TY_INFO("Initialize application");
 		
 		// Create application layers and to layer manager
-		ToyEngine::LayerManager::AddLayer(new SandboxGui());
+		ToyEngine::LayerManager::AddLayer(new EditorGui());
 	}
-	~Sandbox()
+	~Editor()
 	{
 
 	}
@@ -39,5 +39,5 @@ public:
 
 ToyEngine::Application* ToyEngine::CreateApplication()
 {
-	return new Sandbox();
+	return new Editor();
 }

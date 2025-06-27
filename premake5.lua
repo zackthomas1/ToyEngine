@@ -20,8 +20,8 @@ group "Dependencies"
     include("ToyEngine/vendor/dearimgui_premake.lua")
 group ""
 
-group "Misc"
-    include "Sandbox"
+group "Applications"
+    include "Editor"
 group ""
 
 -- Toy Engine project --
