@@ -2,7 +2,10 @@
 .vs/
 bin/
 bin-int/
-# FluidSimulator/vendor/
+
+/assets/**
+!/assets/shaders/
+!/assets/shaders/**
 
 #Files 
 *.user
