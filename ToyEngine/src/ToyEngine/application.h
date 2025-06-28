@@ -3,7 +3,7 @@
 #include "ToyEngine/events/event.h"
 #include "ToyEngine/renderer/renderer.h"
 #include "ToyEngine/windows_window.h"
-#include "ToyEngine/layers/layer.h"
+#include "ToyEngine/layers/layer_stack.h"
 
 namespace ToyEngine
 {
@@ -14,9 +14,13 @@ namespace ToyEngine
 		virtual ~Application(); 
 		
 		/// <summary>
-		/// contains main game-loop. Function continously runs until application closed
+		/// Contains main game-loop. Continously runs until application closed
 		/// </summary>
 		void Run();
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="e"></param>
 		void OnEvent(Event& e);
 		void PushLayer(Layer *layer);
 		void PushOverlay(Layer *layer);
@@ -24,7 +28,8 @@ namespace ToyEngine
 		inline static Application& Get() { return *s_instance; }
 	private:
 		std::unique_ptr<WindowsWindow> window_;
-		ImGuiLayer *m_imGuiLayer;
+		ImGuiLayer *imGuiLayer_;
+		LayerStack layerStack_;
 
 		std::unique_ptr<Renderer> renderer_;
 		std::shared_ptr<Scene> scene_;

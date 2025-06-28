@@ -16,7 +16,6 @@ namespace ToyEngine
 		TY_CORE_TRACE("ImGuiLayer attach");
 		TY_CORE_ASSERT(ImGui::GetCurrentContext() == nullptr, "ImGui - Already been initialized context.");
 		
-		
 		Application &app = Application::Get();
 		GLFWwindow* window = app.GetWindow().GetGLFWWindow();
 

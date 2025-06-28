@@ -26,7 +26,7 @@ public:
 	Editor()
 	{
 		TY_INFO("Initialize application");
-		PushLayer(new EditorLayer());		
+		PushLayer(new EditorLayer());
 	}
 	~Editor()
 	{

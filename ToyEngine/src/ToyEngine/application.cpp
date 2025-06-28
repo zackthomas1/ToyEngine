@@ -2,7 +2,7 @@
 #include "ToyEngine/application.h"
 #include "ToyEngine/events/event_handler.h"
 #include "ToyEngine/layers/layer.h"
-#include "ToyEngine/layers/layer_manager.h"
+#include "ToyEngine/layers/layer_stack.h"
 #include "ToyEngine/services/time_step_glfw.h"
 #include "ToyEngine/services/locator.h"
 
@@ -23,8 +23,8 @@ namespace ToyEngine
 		Locator::SetTimeStepProvider(new TimeStepGLFW());
 
 		//
-		m_imGuiLayer = new ImGuiLayer();
-		LayerManager::PushLayer(m_imGuiLayer);
+		imGuiLayer_ = new ImGuiLayer();
+		layerStack_.PushLayer(imGuiLayer_);
 
 		// Create a Scene
 		// TODO: Move scene creation on of the application class
@@ -38,9 +38,8 @@ namespace ToyEngine
 	Application::~Application()
 	{
 		Locator::DeleteTimeStepProvider();
-		LayerManager::DeleteLayers();
 		
-		// Note: window_, scene_, and render_ are smart pointers that also manage the memory they point to. 
+		// Note: window_, scene_, and render_ are smart pointers that manage the memory they point to.
 		// There is no need to manually deallocate memory for them.
 	}
 
@@ -56,16 +55,24 @@ namespace ToyEngine
 
 			// Advance the game simulation one step (update)
 			float time_delta = Locator::TimeStepService()->GetTimeStep();
-			LayerManager::UpdateLayers(time_delta);
+			
+			// Update
+			for (Layer *layer : layerStack_)
+			{
+				layer->Update(time_delta);
+			}
 			scene_->Update(time_delta);
 
 			// Draw the game
 			renderer_->DrawScene(scene_);
 
 			// Draw GUI
-			m_imGuiLayer->BeginDraw();
-			LayerManager::RenderGui();
-			m_imGuiLayer->EndDraw();
+			imGuiLayer_->BeginDraw();
+			for(Layer *layer: layerStack_)
+			{
+				layer->OnImGuiRender();
+			}
+			imGuiLayer_->EndDraw();
 
 			window_->SwapBuffers();
 			window_->PollEvents();
@@ -74,12 +81,14 @@ namespace ToyEngine
 
 	void Application::OnEvent(Event& e)
 	{
-		LayerManager::OnEvent(e);
+		for (Layer* layer : layerStack_) {
+			layer->OnEvent(e);
+		}
 		s_instance->renderer_->OnEvent(e);
 	}
 	void Application::PushLayer(Layer *layer)
 	{
-		LayerManager::PushLayer(layer);
+		layerStack_.PushLayer(layer);
 	}
 
 	void Application::PushOverlay(Layer *layer)
