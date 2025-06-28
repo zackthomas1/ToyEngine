@@ -3,7 +3,6 @@
 
 // GLFW
 #include <GLFW/glfw3.h>
-
 #include "imgui.h"
 
 namespace ToyEngine
@@ -12,8 +11,26 @@ namespace ToyEngine
 	{
 	public:
 		virtual ~Layer() {}
-		virtual void Update(float time_delta) = 0;
-		virtual void OnEvent(Event& e) = 0;
+		virtual void OnAttach() {};
+		virtual void OnDetatch() {};
+		/// <summary>
+		/// Called on every frame from Application::Run
+		/// Simulates one frame of the object’s behavior. 
+		/// Each frame, the engine updates every layer in m_layerStack
+		/// </summary>
+		/// <param name="time_delta"></param>
+		virtual void Update(float time_delta) {};
+		/// <summary>
+		/// Called in Application::Run after scene draw call.
+		/// GUI defined in client application project. 
+		/// ToyEngine maintains responsible for set up of dearimgui and lifetimes of layers.
+		/// </summary>
+		virtual void OnImGuiRender() {};
+		/// <summary>
+		/// Defines what events the layer consumes and how it responds.
+		/// </summary>
+		/// <param name="e"></param>
+		virtual void OnEvent(Event& e) {};
 	protected:
 		Layer() {}
 	};
@@ -23,16 +40,10 @@ namespace ToyEngine
 	public:
 		ImGuiLayer();
 		~ImGuiLayer() {}
-		virtual void Update(float time_delta) override; 
-		virtual void OnEvent(Event& e) override;
-	protected:
-		ImGuiIO& io_;
-
-		/// <summary>
-		/// Called by Lauer::Update(float time_delta) method. Defined in child class that inherits from ImGuiLayer.
-		/// This allows the user to define the GUI in the their own application project, but with ToyEngine 
-		/// still responsible for the set up of dearimgui and the lifetimes of the gui layers.
-		/// </summary>
-		virtual void CreateWindows() = 0;
+		virtual void OnAttach();
+		virtual void OnDetatch();
+		void BeginDraw();
+		void EndDraw();
+		virtual void OnEvent(Event& e);
 	};
 }

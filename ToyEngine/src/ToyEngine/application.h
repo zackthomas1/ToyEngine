@@ -3,6 +3,7 @@
 #include "ToyEngine/events/event.h"
 #include "ToyEngine/renderer/renderer.h"
 #include "ToyEngine/windows_window.h"
+#include "ToyEngine/layers/layer.h"
 
 namespace ToyEngine
 {
@@ -11,20 +12,28 @@ namespace ToyEngine
 	public:
 		Application();
 		virtual ~Application(); 
-
-		void Update(float time_delta);
+		
+		/// <summary>
+		/// contains main game-loop. Function continously runs until application closed
+		/// </summary>
 		void Run();
-
-	private:
-		static void EventHandler(Event& e);
+		void OnEvent(Event& e);
+		void PushLayer(Layer *layer);
+		void PushOverlay(Layer *layer);
+		inline WindowsWindow& GetWindow() { return *window_; }
+		inline static Application& Get() { return *s_instance; }
 	private:
 		std::unique_ptr<WindowsWindow> window_;
+		ImGuiLayer *m_imGuiLayer;
+
 		std::unique_ptr<Renderer> renderer_;
 		std::shared_ptr<Scene> scene_;
 
-		static Application* s_instance;
+		static Application *s_instance;
 	};
 
-	// defined by client
+	/// <summary>
+	/// This function is defined in the client application
+	/// </summary>
 	Application* CreateApplication();
 }

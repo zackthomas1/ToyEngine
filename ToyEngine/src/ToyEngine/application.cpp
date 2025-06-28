@@ -1,15 +1,10 @@
 #include "pch.h"
 #include "ToyEngine/application.h"
-
 #include "ToyEngine/events/event_handler.h"
-
 #include "ToyEngine/layers/layer.h"
 #include "ToyEngine/layers/layer_manager.h"
-
 #include "ToyEngine/services/time_step_glfw.h"
 #include "ToyEngine/services/locator.h"
-
-#include "ToyEngine/renderer/gui_renderer.h"
 
 namespace ToyEngine
 {
@@ -22,13 +17,14 @@ namespace ToyEngine
 
 		// Initialize window
 		window_ = std::unique_ptr<WindowsWindow>(WindowsWindow::Create());
-		window_->SetCommandCallbackFn(Application::EventHandler);
+		window_->SetCommandCallbackFn(TY_BINDFN(Application::OnEvent));
 
-		// Initialize Gui
-		GuiRenderer::Init(window_->GetGLFWWindow());
-		
 		// Initialize time step
 		Locator::SetTimeStepProvider(new TimeStepGLFW());
+
+		//
+		m_imGuiLayer = new ImGuiLayer();
+		LayerManager::PushLayer(m_imGuiLayer);
 
 		// Create a Scene
 		// TODO: Move scene creation on of the application class
@@ -41,18 +37,11 @@ namespace ToyEngine
 
 	Application::~Application()
 	{
-		GuiRenderer::Delete();
 		Locator::DeleteTimeStepProvider();
 		LayerManager::DeleteLayers();
 		
 		// Note: window_, scene_, and render_ are smart pointers that also manage the memory they point to. 
 		// There is no need to manually deallocate memory for them.
-	}
-
-	void Application::Update(float time_delta)
-	{
-		LayerManager::UpdateLayers(time_delta);
-		scene_->Update(time_delta);
 	}
 
 	void Application::Run()
@@ -65,21 +54,36 @@ namespace ToyEngine
 			// Handle any user input since the last call
 			window_->ProcessInput();
 
-			// Advance the game simulation one step
-			Update(Locator::TimeStepService()->GetTimeStep());
+			// Advance the game simulation one step (update)
+			float time_delta = Locator::TimeStepService()->GetTimeStep();
+			LayerManager::UpdateLayers(time_delta);
+			scene_->Update(time_delta);
 
 			// Draw the game
 			renderer_->DrawScene(scene_);
-			GuiRenderer::DrawGui();
+
+			// Draw GUI
+			m_imGuiLayer->BeginDraw();
+			LayerManager::RenderGui();
+			m_imGuiLayer->EndDraw();
 
 			window_->SwapBuffers();
 			window_->PollEvents();
 		}
 	}
 
-	void Application::EventHandler(Event& e)
+	void Application::OnEvent(Event& e)
 	{
 		LayerManager::OnEvent(e);
 		s_instance->renderer_->OnEvent(e);
+	}
+	void Application::PushLayer(Layer *layer)
+	{
+		LayerManager::PushLayer(layer);
+	}
+
+	void Application::PushOverlay(Layer *layer)
+	{
+		TY_CORE_WARN("TODO: Implement Application::PushOverlay");
 	}
 }

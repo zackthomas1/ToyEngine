@@ -21,3 +21,6 @@
 	#define TY_ASSERT(x, ...)
 	#define TY_CORE_ASSERT(x, ...)
 #endif
+
+#define TY_BINDFN(fn) [this](Event &e) { return fn(e); }
+//#define TY_BINDFN(fn) std::bind(&fn, this, std::placeholders::_1)
