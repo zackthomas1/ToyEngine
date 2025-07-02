@@ -1,5 +1,4 @@
 #pragma once
-#include "ToyEngine/events/observer.h"
 
 #include "ToyEngine/renderer/camera/camera.h"
 #include "ToyEngine/renderer/camera/fly_camera.h"
@@ -8,7 +7,7 @@
 
 namespace ToyEngine
 {
-	class Renderer : public Observer
+	class Renderer
 	{
 	public:
 		Renderer();
@@ -16,15 +15,8 @@ namespace ToyEngine
 
 		void DrawScene(std::shared_ptr<Scene> scene);
 
-		// getter/setters 
-		void SetRenderCamera(Camera* camera) { render_camera_ = camera; }
-
-		// Observer methods
-		virtual void OnEvent(Event& event) override;
-
 		static std::unique_ptr<Renderer> Create();
 	private: 
-		Camera* render_camera_;
 		Shader* shader_;
 	};
 }
