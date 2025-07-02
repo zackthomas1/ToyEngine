@@ -4,6 +4,7 @@
 #include "ToyEngine/layers/layer.h"
 #include "ToyEngine/layers/layer_stack.h"
 #include "ToyEngine/services/time_step_glfw.h"
+#include "ToyEngine/services/input_poll_glfw.h"
 #include "ToyEngine/services/locator.h"
 
 namespace ToyEngine
@@ -19,25 +20,28 @@ namespace ToyEngine
 		window_ = std::unique_ptr<WindowsWindow>(WindowsWindow::Create());
 		window_->SetCommandCallbackFn(TY_BINDFN(Application::OnEvent));
 
-		// Initialize time step
+		// Initialize time step service
 		Locator::SetTimeStepProvider(new TimeStepGLFW());
+		
+		// Initialize input polling service
+		Locator::SetInputPollProvider(new InputPollGLFW());
 
-		//
+		// Initalize imgui layer
 		imGuiLayer_ = new ImGuiLayer();
 		layerStack_.PushLayer(imGuiLayer_);
 
 		// Create a Scene
-		// TODO: Move scene creation on of the application class
+		// TODO: Move scene creation out of the application class
 		scene_ = std::make_shared<Scene>();
 
 		// initialize renderer
 		renderer_ = std::unique_ptr<Renderer>(Renderer::Create());
-		renderer_->SetRenderCamera(scene_->GetCameras()[0]);
 	}
 
 	Application::~Application()
 	{
 		Locator::DeleteTimeStepProvider();
+		Locator::DeleteInputPollProvider();
 		
 		// Note: window_, scene_, and render_ are smart pointers that manage the memory they point to.
 		// There is no need to manually deallocate memory for them.
@@ -45,23 +49,20 @@ namespace ToyEngine
 
 	void Application::Run()
 	{
-		while (!window_->ShouldClose())
+		while (isRunning_)
 		{
 			// Update variable time step
 			Locator::TimeStepService()->Update();
 
-			// Handle any user input since the last call
-			window_->ProcessInput();
-
 			// Advance the game simulation one step (update)
-			float time_delta = Locator::TimeStepService()->GetTimeStep();
+			TimeStep *time_step = Locator::TimeStepService();
 			
-			// Update
+			// Update layers
 			for (Layer *layer : layerStack_)
 			{
-				layer->Update(time_delta);
+				layer->Update(time_step);
 			}
-			scene_->Update(time_delta);
+			scene_->Update(time_step);
 
 			// Draw the game
 			renderer_->DrawScene(scene_);
@@ -74,17 +75,22 @@ namespace ToyEngine
 			}
 			imGuiLayer_->EndDraw();
 
-			window_->SwapBuffers();
-			window_->PollEvents();
+			window_->OnUpdate();
 		}
 	}
 
 	void Application::OnEvent(Event& e)
 	{
-		for (Layer* layer : layerStack_) {
-			layer->OnEvent(e);
+		if (EventApplicationClose* event = dynamic_cast<EventApplicationClose*>(&e)) {
+			e.SetEventHandled(OnClose());
 		}
-		s_instance->renderer_->OnEvent(e);
+
+		// Event handling starts at the top of the layer stack
+		// Layer in the foreground attempt handle events before background layers	
+		for (auto it = layerStack_.end(); it != layerStack_.end(); ) {
+			(*--it)->OnEvent(e);
+			if(e.GetEventHandled()) { break; }
+		}
 	}
 	void Application::PushLayer(Layer *layer)
 	{
@@ -95,4 +101,10 @@ namespace ToyEngine
 	{
 		TY_CORE_WARN("TODO: Implement Application::PushOverlay");
 	}
+
+	bool Application::OnClose() {
+		isRunning_ = false;
+		return !isRunning_;
+	}
+
 }

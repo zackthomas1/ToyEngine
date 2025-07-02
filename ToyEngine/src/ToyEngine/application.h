@@ -24,12 +24,15 @@ namespace ToyEngine
 		void OnEvent(Event& e);
 		void PushLayer(Layer *layer);
 		void PushOverlay(Layer *layer);
+		bool OnClose();
+
 		inline WindowsWindow& GetWindow() { return *window_; }
 		inline static Application& Get() { return *s_instance; }
 	private:
 		std::unique_ptr<WindowsWindow> window_;
-		ImGuiLayer *imGuiLayer_;
+		ImGuiLayer *imGuiLayer_;	// imGuiLayer is owned by the layerStack_. Deleted by layerStack_ destructor
 		LayerStack layerStack_;
+		bool isRunning_ = true;
 
 		std::unique_ptr<Renderer> renderer_;
 		std::shared_ptr<Scene> scene_;
