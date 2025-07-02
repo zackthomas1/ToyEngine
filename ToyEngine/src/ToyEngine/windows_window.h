@@ -35,25 +35,20 @@ namespace ToyEngine
 
 		WindowsWindow(const WindowProps& props);
 		~WindowsWindow();
-
 		static std::unique_ptr<WindowsWindow> Create(const WindowProps& props = WindowProps());
 
-		//
+		void OnUpdate();
+
 		void SetCommandCallbackFn(const EventCallbackFn& callback) { data_.event_callback = callback; }
 		GLFWwindow* GetGLFWWindow() { return window_; }
 
-		bool ShouldClose();
-		void ProcessInput();
-		void SwapBuffers(); 
-		void PollEvents();
-		
 	private:
 		void Init(const WindowProps& props);
 		void SetCallbackFns();
 		void Shutdown();
 	private: 
 		GLFWwindow* window_;
-
+		
 		struct WindowData
 		{
 			std::string title;
@@ -62,7 +57,6 @@ namespace ToyEngine
 			bool is_mouse_active;
 			float x_mouse_pos, y_mouse_pos;
 		};
-
 		WindowData data_;
 	};
 }

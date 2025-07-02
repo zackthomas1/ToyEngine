@@ -18,51 +18,9 @@ namespace ToyEngine
 		return std::make_unique<WindowsWindow>(props);
 	}
 
-	bool WindowsWindow::ShouldClose()
-	{
-		return glfwWindowShouldClose(window_);
-	}
-
-	void WindowsWindow::ProcessInput()
-	{
-		if (glfwGetKey(window_, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
-			glfwSetWindowShouldClose(window_, TRUE);
-			EventKeyInput key_press(KeyCode::kKeyEscape, KeyState::kPress);
-			data_.event_callback(key_press);
-		}
-		if (glfwGetKey(window_, GLFW_KEY_W) == GLFW_PRESS) {
-			EventKeyInput key_press(KeyCode::kKeyW, KeyState::kPress);
-			data_.event_callback(key_press);
-		}
-		if (glfwGetKey(window_, GLFW_KEY_S) == GLFW_PRESS) {
-			EventKeyInput key_press(KeyCode::kKeyS, KeyState::kPress);
-			data_.event_callback(key_press);
-		}
-		if (glfwGetKey(window_, GLFW_KEY_A) == GLFW_PRESS) {
-			EventKeyInput key_press(KeyCode::kKeyA, KeyState::kPress);
-			data_.event_callback(key_press);
-		}
-		if (glfwGetKey(window_, GLFW_KEY_D) == GLFW_PRESS) {
-			EventKeyInput key_press(KeyCode::kKeyD, KeyState::kPress);
-			data_.event_callback(key_press);
-		}
-		if (glfwGetKey(window_, GLFW_KEY_E) == GLFW_PRESS) {
-			EventKeyInput key_press(KeyCode::kKeyE, KeyState::kPress);
-			data_.event_callback(key_press);
-		}
-		if (glfwGetKey(window_, GLFW_KEY_Q) == GLFW_PRESS) {
-			EventKeyInput key_press(KeyCode::kKeyQ, KeyState::kPress);
-			data_.event_callback(key_press);
-		}
-	}
-
-	void WindowsWindow::SwapBuffers()
+	void WindowsWindow::OnUpdate()
 	{
 		glfwSwapBuffers(window_);
-	}
-
-	void WindowsWindow::PollEvents()
-	{
 		glfwPollEvents();
 	}
 
@@ -124,8 +82,27 @@ namespace ToyEngine
 			glViewport(0, 0, width, height);
 		});
 
+
+		glfwSetWindowCloseCallback(window_, [](GLFWwindow* window) {
+			WindowData& data = *(WindowData*)glfwGetWindowUserPointer(window);
+
+			EventApplicationClose app_close = EventApplicationClose();
+			data.event_callback(app_close);
+		});
+
 		glfwSetKeyCallback(window_, [](GLFWwindow* window, int key, int scancode, int action, int mods) {
-			// TODO: implement key call-back function"
+			WindowData& data = *(WindowData*)glfwGetWindowUserPointer(window);
+
+			//TY_CORE_TRACE("Key: {} Action: {}", key, action);
+			if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
+				EventApplicationClose app_close = EventApplicationClose();
+				data.event_callback(app_close);
+			}
+			else if (action != GLFW_RELEASE) {
+				glfwSetWindowShouldClose(window, TRUE);
+				EventKeyInput key_press (static_cast<KeyCode>(key), static_cast<KeyState>(action));
+				data.event_callback(key_press);
+			}
 		});
 
 		glfwSetScrollCallback(window_, [](GLFWwindow* window, double x_offset, double y_offset) {
@@ -160,7 +137,7 @@ namespace ToyEngine
 
 	void WindowsWindow::Shutdown()
 	{
-		TY_CORE_TRACE("Shutdown window");
+		TY_CORE_TRACE("Window shutdown");
 		glfwTerminate();
 	}
 }
