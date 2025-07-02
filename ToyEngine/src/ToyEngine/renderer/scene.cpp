@@ -8,6 +8,8 @@
 #include "ToyEngine/renderer/camera/fly_camera.h"
 #include "ToyEngine/renderer/camera/orthographic_camera.h"
 
+#include "ToyEngine/services/locator.h"
+
 namespace ToyEngine
 {
 	// TODO: Remove cube position array.
@@ -28,8 +30,7 @@ namespace ToyEngine
 	Scene::Scene()
 	{
 		// Create scene cameras
-		cameras_.push_back(new FlyCamera());
-		cameras_.push_back(new OrthographicCamera());
+		camera_ = new FlyCamera();
 
 		// Create scene geometry
 		std::shared_ptr<CubeMesh> mesh = std::make_shared<CubeMesh>();
@@ -50,24 +51,60 @@ namespace ToyEngine
 
 	Scene::~Scene()
 	{
-		for (Camera* camera : cameras_) 
-		{
-			delete camera;
-		}
+		delete camera_;
 	}
 
-	void Scene::Update(float time_delta)
+	void Scene::Update(TimeStep *time_step)
 	{
+		//Cube boxes
 		for(int i = 0; i < GetModels().size(); i++)
 		{
 			std::shared_ptr<Model> model = GetModels()[i];
 			glm::mat4 transforms = model->GetModelMatrix();
 			
 			if (i % 2 == 0)
-				transforms = glm::rotate(transforms, glm::radians(180.0f * time_delta), glm::vec3(1.0f, 0.3f * i, 0.5f * i));
+				transforms = glm::rotate(transforms, glm::radians(180.0f * time_step->GetTimeStep()), glm::vec3(1.0f, 0.3f * i, 0.5f * i));
 			
 			model->SetModelMatrix(transforms);
 		}
+
+		//Keyboard input polling
+		float step_value = Locator::TimeStepService()->GetTimeStep();
+		InputPoll *input = Locator::InputPollService();
+		if (input->Key(KeyCode::kKeyW) != KeyState::kRelease)
+		{
+			camera_->UpdatePosition(CameraMovement::kForward, step_value);
+		}
+		if (input->Key(KeyCode::kKeyS) != KeyState::kRelease)
+		{
+			camera_->UpdatePosition(CameraMovement::kBackward, step_value);
+		}
+		if (input->Key(KeyCode::kKeyA) != KeyState::kRelease)
+		{
+			camera_->UpdatePosition(CameraMovement::kLeft, step_value);
+		}
+		if (input->Key(KeyCode::kKeyD) != KeyState::kRelease)
+		{
+			camera_->UpdatePosition(CameraMovement::kRight, step_value);
+		}
+		if (input->Key(KeyCode::kKeyE) != KeyState::kRelease)
+		{
+			camera_->UpdatePosition(CameraMovement::kUp, step_value);
+		}
+		if (input->Key(KeyCode::kKeyQ) != KeyState::kRelease)
+		{
+			camera_->UpdatePosition(CameraMovement::kDown, step_value);
+		}
+
+		//// If the event has already been handled by another layer nothing
+		//if (e.GetEventHandled() == true) { return; }
+
+		//// Set flag indiciating that event has been handled by current layer
+		//e.SetEventHandled(true);
+		//if (EventVerticalScroll* event = dynamic_cast<EventVerticalScroll*>(&e)) {
+		//	const Camera* camera = scene->GetCamera();
+		//	render_camera_->UpdateFOV(event->GetYOffset());
+		//}
 	}
 
 	void Scene::AddModel(std::shared_ptr<Model> model)

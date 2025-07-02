@@ -4,6 +4,7 @@
 #include "ToyEngine/renderer/model.h"
 #include "ToyEngine/renderer/light.h"
 #include "ToyEngine/renderer/camera/camera.h"
+#include "ToyEngine/services/time_step.h"
 
 namespace ToyEngine
 {
@@ -13,18 +14,18 @@ namespace ToyEngine
 		Scene();
 		~Scene();
 
-		void Update(float time_delta);
-		
+		void Update(TimeStep *time_step);
+
 		// scene modifiers
 		void AddModel(std::shared_ptr<Model> model);
 		//void AddLight(Light light); 
 
 		// getter/setter
 		const std::vector<std::shared_ptr<Model>>& GetModels() const { return models_; }
-		const std::vector<Camera*>& GetCameras() const { return cameras_; }
+		const Camera* GetCamera() const { return camera_; }
 
 	private:
-		std::vector<Camera*> cameras_;
+		Camera* camera_;
 		std::vector<std::shared_ptr<Model>> models_; 
 		//std::vector<Light> lights_; 
 
