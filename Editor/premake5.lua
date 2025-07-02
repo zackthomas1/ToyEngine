@@ -30,6 +30,11 @@ project "Editor"
         "ToyEngine"
     }
 
+    postbuildcommands
+    {
+        ("{COPYDIR} %{wks.location}/assets %{cfg.targetdir}/../assets")
+    }
+
     filter "system:windows"
         staticruntime "On"
         systemversion "latest"
