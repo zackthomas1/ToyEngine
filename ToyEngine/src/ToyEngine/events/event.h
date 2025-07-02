@@ -3,20 +3,20 @@ namespace ToyEngine
 {
 	enum KeyCode
 	{
-		kKeyEscape = 256, 
-		kKeyW = 87, 
-		kKeyS = 83,
-		kKeyA = 65,
-		kKeyD = 68,
-		kKeyE = 69,
-		kKeyQ = 81,
+		kKeyEscape	= 256,
+		kKeyW		= 87,
+		kKeyS		= 83,
+		kKeyA		= 65,
+		kKeyD		= 68,
+		kKeyE		= 69,
+		kKeyQ		= 81,
 	};
 
 	enum KeyState
 	{
-		kPress, 
-		kHold, 
-		kRelease
+		kRelease	= 0,
+		kPress		= 1,
+		kHold		= 2,
 	};
 
 	class Event
@@ -60,5 +60,11 @@ namespace ToyEngine
 		double GetYOffset() { return y_offset_; }
 	private:
 		double x_offset_, y_offset_;
+	};
+
+	class EventApplicationClose : public Event 
+	{
+	public:
+		EventApplicationClose() {}
 	};
 }

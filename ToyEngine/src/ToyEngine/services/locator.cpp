@@ -3,8 +3,11 @@
 
 namespace ToyEngine
 {
-	TimeStep* Locator::time_step_ = nullptr; 
+	// Service provider pointers
+	TimeStep* Locator::time_step_	= nullptr;
+	InputPoll* Locator::input_poll_	= nullptr;
 
+	// Time Step service methods
 	TimeStep* Locator::TimeStepService()
 	{
 		return time_step_;
@@ -30,4 +33,25 @@ namespace ToyEngine
 		}
 	}
 
+	// Input Poll service methods
+	InputPoll* Locator::InputPollService()
+	{
+		return input_poll_;
+	}
+
+	void Locator::SetInputPollProvider(InputPoll* input_poll)
+	{
+		if (input_poll_ != nullptr) { DeleteInputPollProvider(); }
+		input_poll_ = input_poll;
+	}
+
+	void Locator::DeleteInputPollProvider()
+	{
+		TY_CORE_TRACE("Deleted InputPoll Provider");
+		if (input_poll_ != nullptr)
+		{
+			delete input_poll_;
+			input_poll_ = nullptr;
+		}
+	}
 }

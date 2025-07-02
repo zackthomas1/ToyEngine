@@ -1,6 +1,7 @@
 #pragma once
 #include "ToyEngine/services/time_step.h"
 #include "ToyEngine/services/time_step_glfw.h"
+#include "ToyEngine/services/input_poll.h"
 
 namespace ToyEngine
 {
@@ -23,7 +24,14 @@ namespace ToyEngine
 		static TimeStep* TimeStepService();
 		static void SetTimeStepProvider(TimeStep* time_step);
 		static void DeleteTimeStepProvider();
+
+		// Input polling service
+		static InputPoll* InputPollService();
+		static void SetInputPollProvider(InputPoll* input_poll); 
+		static void DeleteInputPollProvider();
+		
 	private:
 		static TimeStep* time_step_;
+		static InputPoll* input_poll_;
 	};
 }
