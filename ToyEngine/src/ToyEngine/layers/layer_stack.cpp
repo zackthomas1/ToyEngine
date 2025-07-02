@@ -13,6 +13,7 @@ namespace ToyEngine
 		TY_CORE_TRACE("Destory LayerStack");
 		for (Layer *layer : layers_)
 		{
+			layer->OnDetatch();
 			delete layer;
 			layer = nullptr;
 		}
@@ -30,9 +31,11 @@ namespace ToyEngine
 		layerInsertionIndex_++;
 	}
 
-	void LayerStack::PopLayer(Layer* layer)
+	void LayerStack::PopLayer()
 	{
-		layers_[layerInsertionIndex_--]->OnDetatch();
+		Layer *layer = layers_.back();
+		layer->OnDetatch();
+		layers_.pop_back();
 	}
 
 	void LayerStack::PushOverlay(Layer* layer)
@@ -40,7 +43,7 @@ namespace ToyEngine
 		TY_CORE_WARN("TODO: Implement PushOverlay.");
 	}
 
-	void LayerStack::PopOverlay(Layer* layer)
+	void LayerStack::PopOverlay()
 	{
 		TY_CORE_WARN("TODO: Implement PopOverlay.");
 	}
