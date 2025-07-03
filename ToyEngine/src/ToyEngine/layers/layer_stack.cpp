@@ -10,7 +10,7 @@ namespace ToyEngine
 	LayerStack::LayerStack() {}
 	LayerStack::~LayerStack()
 	{
-		TY_CORE_TRACE("Destory LayerStack");
+		TY_CORE_TRACE("Destroy LayerStack");
 		for (Layer *layer : layers_)
 		{
 			layer->OnDetatch();

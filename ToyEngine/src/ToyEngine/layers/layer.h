@@ -40,6 +40,7 @@ namespace ToyEngine
 	public:
 		ImGuiLayer();
 		~ImGuiLayer() {}
+
 		virtual void OnAttach() override;
 		virtual void OnDetatch() override;
 		void BeginDraw();

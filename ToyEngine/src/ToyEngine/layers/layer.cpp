@@ -15,7 +15,6 @@ namespace ToyEngine
 
 	void ImGuiLayer::OnAttach()
 	{
-		TY_CORE_TRACE("ImGuiLayer attach");
 		TY_CORE_ASSERT(ImGui::GetCurrentContext() == nullptr, "ImGui - Already been initialized context.");
 		
 		Application &app = Application::Get();
@@ -50,7 +49,6 @@ namespace ToyEngine
 
 	void ImGuiLayer::OnDetatch()
 	{
-		TY_CORE_TRACE("ImGuiLayer detach");
 		// Cleanup imgui
 		ImGui_ImplOpenGL3_Shutdown();
 		ImGui_ImplGlfw_Shutdown();
