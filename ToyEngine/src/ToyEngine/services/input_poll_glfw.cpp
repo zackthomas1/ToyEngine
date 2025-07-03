@@ -12,9 +12,9 @@ namespace ToyEngine {
         window_ = Application::Get().GetWindow().GetGLFWWindow();
     }
 
-    KeyState ToyEngine::InputPollGLFW::Key(KeyCode key)
+    eKeyState ToyEngine::InputPollGLFW::Key(eKeyCode key)
     {
-        KeyState key_state = static_cast<KeyState>(glfwGetKey(window_, static_cast<int>(key)));
+        eKeyState key_state = static_cast<eKeyState>(glfwGetKey(window_, static_cast<int>(key)));
         return key_state;
     }
 

@@ -10,7 +10,7 @@ namespace ToyEngine {
         InputPollGLFW();
         ~InputPollGLFW() {}
 
-        virtual KeyState Key(KeyCode key) override;
+        virtual eKeyState Key(eKeyCode key) override;
         virtual float MouseVerticalScroll() override;
         virtual std::pair<float, float> MousePos() override;
     private:

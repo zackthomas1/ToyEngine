@@ -1,14 +1,16 @@
 #pragma once
 #include <utility>
-#include "ToyEngine/events/event.h"
+#include "ToyEngine/enum/key_enum.h"
 
 namespace ToyEngine {
     class InputPoll {
     public:
         virtual ~InputPoll() {}
         
-        virtual KeyState Key(KeyCode key) = 0;
+        virtual eKeyState Key(eKeyCode key) = 0;
         virtual float MouseVerticalScroll() = 0;
         virtual std::pair<float, float> MousePos() = 0;
+    protected: 
+        InputPoll() {}
     };
 }
