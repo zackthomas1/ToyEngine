@@ -1,6 +1,6 @@
 -- dearimgui project --
 project "imgui"
-    location "ToyEngine/vendor/dearimgui"
+    location "dearimgui"
     kind "StaticLib"
     language "C++"
 
