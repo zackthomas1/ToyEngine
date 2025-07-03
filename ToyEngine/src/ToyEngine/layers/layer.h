@@ -1,13 +1,13 @@
 #pragma once
-#include "ToyEngine/events/observer.h"
+#include "ToyEngine/events/event.h"
 #include "ToyEngine/services/time_step.h"
-// GLFW
+// imgui
 #include <GLFW/glfw3.h>
 #include "imgui.h"
 
 namespace ToyEngine
 {
-	class Layer :public Observer
+	class Layer
 	{
 	public:
 		virtual ~Layer() {}
@@ -15,7 +15,7 @@ namespace ToyEngine
 		virtual void OnDetatch() {};
 		/// <summary>
 		/// Called on every frame from Application::Run
-		/// Simulates one frame of the object’s behavior. 
+		/// Simulates one frame of the object behavior. 
 		/// Each frame, the engine updates every layer in m_layerStack
 		/// </summary>
 		/// <param name="time_delta"></param>
@@ -45,18 +45,5 @@ namespace ToyEngine
 		void BeginDraw();
 		void EndDraw();
 		virtual void OnEvent(Event& e) override;
-	};
-
-	class SceneLayer : public Layer
-	{
-	public:
-		SceneLayer();
-		~SceneLayer() {}
-
-		virtual void OnAttach() override;
-		virtual void OnDetatch() override;
-		virtual void Update(TimeStep* time_step) override;
-		virtual void OnEvent(Event& e) override;
-
 	};
 }
