@@ -13,7 +13,7 @@ namespace ToyEngine
 		Renderer();
 		~Renderer();
 
-		void DrawScene(std::shared_ptr<Scene> scene);
+		void DrawScene(SceneLayer* scene);
 
 		static std::unique_ptr<Renderer> Create();
 	private: 

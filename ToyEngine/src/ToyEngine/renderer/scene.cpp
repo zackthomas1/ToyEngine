@@ -27,11 +27,17 @@ namespace ToyEngine
 		glm::vec3(1.3f, -2.0f, -2.5f),
 	};
 
-	Scene::Scene()
-	{
-		// Create scene cameras
-		camera_ = new FlyCamera();
+	SceneLayer::SceneLayer() : camera_(new FlyCamera())
+	{		
+	}
 
+	SceneLayer::~SceneLayer()
+	{
+		delete camera_;
+	}
+
+	void SceneLayer::OnAttach()
+	{
 		// Create scene geometry
 		std::shared_ptr<CubeMesh> mesh = std::make_shared<CubeMesh>();
 		std::shared_ptr<Material> material = std::make_shared<Material>();
@@ -49,28 +55,24 @@ namespace ToyEngine
 		}
 	}
 
-	Scene::~Scene()
+	void SceneLayer::OnDetatch()
 	{
-		delete camera_;
+		TY_CORE_TRACE("SceneLayer detatch");
 	}
 
-	void Scene::Update(TimeStep *time_step)
+	void SceneLayer::Update(TimeStep* time_step)
 	{
 		//Cube boxes
-		for(int i = 0; i < GetModels().size(); i++)
+		for (std::shared_ptr<Model> model : models_)
 		{
-			std::shared_ptr<Model> model = GetModels()[i];
 			glm::mat4 transforms = model->GetModelMatrix();
-			
-			if (i % 2 == 0)
-				transforms = glm::rotate(transforms, glm::radians(180.0f * time_step->GetTimeStep()), glm::vec3(1.0f, 0.3f * i, 0.5f * i));
-			
+			transforms = glm::rotate(transforms, glm::radians(180.0f * time_step->GetTimeStep()), glm::vec3(1.0f, 0.3f, 0.5f));
 			model->SetModelMatrix(transforms);
 		}
 
 		//Keyboard input polling
 		float step_value = Locator::TimeStepService()->GetTimeStep();
-		InputPoll *input = Locator::InputPollService();
+		InputPoll* input = Locator::InputPollService();
 		if (input->Key(KeyCode::kKeyW) != KeyState::kRelease)
 		{
 			camera_->UpdatePosition(CameraMovement::kForward, step_value);
@@ -95,20 +97,20 @@ namespace ToyEngine
 		{
 			camera_->UpdatePosition(CameraMovement::kDown, step_value);
 		}
-
-		//// If the event has already been handled by another layer nothing
-		//if (e.GetEventHandled() == true) { return; }
-
-		//// Set flag indiciating that event has been handled by current layer
-		//e.SetEventHandled(true);
-		//if (EventVerticalScroll* event = dynamic_cast<EventVerticalScroll*>(&e)) {
-		//	const Camera* camera = scene->GetCamera();
-		//	render_camera_->UpdateFOV(event->GetYOffset());
-		//}
 	}
 
-	void Scene::AddModel(std::shared_ptr<Model> model)
+	void SceneLayer::OnEvent(Event& e)
 	{
-		models_.push_back(model);
+		// Set flag indiciating that event has been handled by current layer
+		e.SetEventHandled(true);
+		if (EventVerticalScroll* event = dynamic_cast<EventVerticalScroll*>(&e)) {
+			camera_->UpdateFOV(event->GetYOffset());
+		}
+
+		if (EventCursorPos* event = dynamic_cast<EventCursorPos*>(&e))
+		{
+			//TY_CORE_INFO("EventCursorPos: x_offset-{} y_offset-{}", event->GetXOffset(), event->GetYOffset());
+			camera_->UpdateLookDirection(static_cast<float>(event->GetXOffset()), static_cast<float>(event->GetYOffset()));
+		}
 	}
 }

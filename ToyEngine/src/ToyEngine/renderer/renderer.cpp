@@ -16,18 +16,18 @@ namespace ToyEngine
 		delete shader_;
 	}
 
-	void Renderer::DrawScene(std::shared_ptr<Scene> scene)
+	void Renderer::DrawScene(SceneLayer* scene)
 	{
 		RenderAPI::ClearSetBackground();
 		RenderAPI::ShaderUse(shader_);
 
-		const Camera *camera = scene->GetCamera();
+		const Camera *camera = scene->camera_;
 		// send camera data to vertex shader
 		shader_->SetMat4("u_view", camera->GetViewMatrix());
 		shader_->SetMat4("u_projection", camera->GetProjectionMatrix());
 
 		// draw each model in the scene
-		for (std::shared_ptr<Model> model : scene->GetModels())
+		for (std::shared_ptr<Model> model : scene->models_)
 		{
 			// activate shader and texture unites
 			model->GetMaterial()->SetMaterialUniforms(shader_);
@@ -50,5 +50,4 @@ namespace ToyEngine
 	{
 		return std::make_unique<Renderer>();
 	}
-
 }

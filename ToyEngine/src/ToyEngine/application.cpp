@@ -1,8 +1,6 @@
 #include "pch.h"
 #include "ToyEngine/application.h"
-#include "ToyEngine/events/event_handler.h"
 #include "ToyEngine/layers/layer.h"
-#include "ToyEngine/layers/layer_stack.h"
 #include "ToyEngine/services/time_step_glfw.h"
 #include "ToyEngine/services/input_poll_glfw.h"
 #include "ToyEngine/services/locator.h"
@@ -26,13 +24,13 @@ namespace ToyEngine
 		// Initialize input polling service
 		Locator::SetInputPollProvider(new InputPollGLFW());
 
+		// Initalize scene layer
+		scene_ = new SceneLayer();
+		layerStack_.PushLayer(scene_);
+
 		// Initalize imgui layer
 		imGuiLayer_ = new ImGuiLayer();
 		layerStack_.PushLayer(imGuiLayer_);
-
-		// Create a Scene
-		// TODO: Move scene creation out of the application class
-		scene_ = std::make_shared<Scene>();
 
 		// initialize renderer
 		renderer_ = std::unique_ptr<Renderer>(Renderer::Create());
@@ -62,9 +60,8 @@ namespace ToyEngine
 			{
 				layer->Update(time_step);
 			}
-			scene_->Update(time_step);
 
-			// Draw the game
+			// Draw the scene
 			renderer_->DrawScene(scene_);
 
 			// Draw GUI
@@ -87,7 +84,7 @@ namespace ToyEngine
 
 		// Event handling starts at the top of the layer stack
 		// Layer in the foreground attempt handle events before background layers	
-		for (auto it = layerStack_.end(); it != layerStack_.end(); ) {
+		for (auto it = layerStack_.end(); it != layerStack_.begin(); ) {
 			(*--it)->OnEvent(e);
 			if(e.GetEventHandled()) { break; }
 		}

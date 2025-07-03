@@ -1,6 +1,7 @@
 #pragma once
 #include "pch.h"
 
+#include "ToyEngine/layers/layer.h"
 #include "ToyEngine/renderer/model.h"
 #include "ToyEngine/renderer/light.h"
 #include "ToyEngine/renderer/camera/camera.h"
@@ -8,26 +9,21 @@
 
 namespace ToyEngine
 {
-	class Scene
+	class SceneLayer : public Layer
 	{
 	public:
-		Scene();
-		~Scene();
+		SceneLayer();
+		~SceneLayer();
 
-		void Update(TimeStep *time_step);
+		virtual void OnAttach() override;
+		virtual void OnDetatch() override;
+		virtual void Update(TimeStep* time_step) override;
+		void OnDraw();
+		virtual void OnEvent(Event& e) override;
 
-		// scene modifiers
-		void AddModel(std::shared_ptr<Model> model);
-		//void AddLight(Light light); 
-
-		// getter/setter
-		const std::vector<std::shared_ptr<Model>>& GetModels() const { return models_; }
-		const Camera* GetCamera() const { return camera_; }
-
-	private:
+	public:
 		Camera* camera_;
-		std::vector<std::shared_ptr<Model>> models_; 
+		std::vector<std::shared_ptr<Model>> models_;
 		//std::vector<Light> lights_; 
-
 	};
 }
