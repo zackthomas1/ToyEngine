@@ -17,5 +17,7 @@ namespace ToyEngine
 		/// </summary>
 		virtual void Update() = 0;
 		virtual float GetTimeStep() = 0;
+	protected: 
+		TimeStep() {}
 	};
 }
