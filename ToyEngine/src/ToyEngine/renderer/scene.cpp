@@ -28,7 +28,7 @@ namespace ToyEngine
 	};
 
 	SceneLayer::SceneLayer() : camera_(new FlyCamera())
-	{		
+	{
 	}
 
 	SceneLayer::~SceneLayer()
@@ -57,7 +57,6 @@ namespace ToyEngine
 
 	void SceneLayer::OnDetatch()
 	{
-		TY_CORE_TRACE("SceneLayer detatch");
 	}
 
 	void SceneLayer::Update(TimeStep* time_step)
@@ -73,27 +72,27 @@ namespace ToyEngine
 		//Keyboard input polling
 		float step_value = Locator::TimeStepService()->GetTimeStep();
 		InputPoll* input = Locator::InputPollService();
-		if (input->Key(KeyCode::kKeyW) != KeyState::kRelease)
+		if (input->Key(eKeyCode::kKeyW) != eKeyState::kRelease)
 		{
 			camera_->UpdatePosition(CameraMovement::kForward, step_value);
 		}
-		if (input->Key(KeyCode::kKeyS) != KeyState::kRelease)
+		if (input->Key(eKeyCode::kKeyS) != eKeyState::kRelease)
 		{
 			camera_->UpdatePosition(CameraMovement::kBackward, step_value);
 		}
-		if (input->Key(KeyCode::kKeyA) != KeyState::kRelease)
+		if (input->Key(eKeyCode::kKeyA) != eKeyState::kRelease)
 		{
 			camera_->UpdatePosition(CameraMovement::kLeft, step_value);
 		}
-		if (input->Key(KeyCode::kKeyD) != KeyState::kRelease)
+		if (input->Key(eKeyCode::kKeyD) != eKeyState::kRelease)
 		{
 			camera_->UpdatePosition(CameraMovement::kRight, step_value);
 		}
-		if (input->Key(KeyCode::kKeyE) != KeyState::kRelease)
+		if (input->Key(eKeyCode::kKeyE) != eKeyState::kRelease)
 		{
 			camera_->UpdatePosition(CameraMovement::kUp, step_value);
 		}
-		if (input->Key(KeyCode::kKeyQ) != KeyState::kRelease)
+		if (input->Key(eKeyCode::kKeyQ) != eKeyState::kRelease)
 		{
 			camera_->UpdatePosition(CameraMovement::kDown, step_value);
 		}

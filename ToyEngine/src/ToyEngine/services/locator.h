@@ -20,16 +20,19 @@ namespace ToyEngine
 		Locator& operator=(const Locator&) = delete;
 		Locator& operator=(Locator&&) = delete;
 
+		static void DestoryServiceProviders();
+
 		// time step service
 		static TimeStep* TimeStepService();
 		static void SetTimeStepProvider(TimeStep* time_step);
-		static void DeleteTimeStepProvider();
 
 		// Input polling service
 		static InputPoll* InputPollService();
 		static void SetInputPollProvider(InputPoll* input_poll); 
+	
+	private:
+		static void DeleteTimeStepProvider();
 		static void DeleteInputPollProvider();
-		
 	private:
 		static TimeStep* time_step_;
 		static InputPoll* input_poll_;

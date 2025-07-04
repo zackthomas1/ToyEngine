@@ -14,15 +14,17 @@ namespace ToyEngine
 		TY_CORE_ASSERT(!s_instance, "Application already exist!")
 		s_instance = this;
 
+#ifdef TY_PLATFORM_WINDOWS
 		// Initialize window
 		window_ = std::unique_ptr<WindowsWindow>(WindowsWindow::Create());
 		window_->SetCommandCallbackFn(TY_BINDFN(Application::OnEvent));
 
 		// Initialize time step service
 		Locator::SetTimeStepProvider(new TimeStepGLFW());
-		
+
 		// Initialize input polling service
 		Locator::SetInputPollProvider(new InputPollGLFW());
+#endif TY_PLATFORM_WINDOWS
 
 		// Initalize scene layer
 		scene_ = new SceneLayer();
@@ -38,8 +40,7 @@ namespace ToyEngine
 
 	Application::~Application()
 	{
-		Locator::DeleteTimeStepProvider();
-		Locator::DeleteInputPollProvider();
+		Locator::DestoryServiceProviders();
 		
 		// Note: window_, scene_, and render_ are smart pointers that manage the memory they point to.
 		// There is no need to manually deallocate memory for them.
@@ -83,7 +84,7 @@ namespace ToyEngine
 		}
 
 		// Event handling starts at the top of the layer stack
-		// Layer in the foreground attempt handle events before background layers	
+		// Layer in the foreground attempt handle events before background layers
 		for (auto it = layerStack_.end(); it != layerStack_.begin(); ) {
 			(*--it)->OnEvent(e);
 			if(e.GetEventHandled()) { break; }

@@ -7,6 +7,12 @@ namespace ToyEngine
 	TimeStep* Locator::time_step_	= nullptr;
 	InputPoll* Locator::input_poll_	= nullptr;
 
+	void Locator::DestoryServiceProviders()
+	{
+		DeleteTimeStepProvider();
+		DeleteInputPollProvider();
+	}
+
 	// Time Step service methods
 	TimeStep* Locator::TimeStepService()
 	{

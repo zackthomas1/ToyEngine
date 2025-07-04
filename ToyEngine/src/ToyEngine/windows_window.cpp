@@ -100,7 +100,7 @@ namespace ToyEngine
 			}
 			else if (action != GLFW_RELEASE) {
 				glfwSetWindowShouldClose(window, TRUE);
-				EventKeyInput key_press (static_cast<KeyCode>(key), static_cast<KeyState>(action));
+				EventKeyInput key_press (static_cast<eKeyCode>(key), static_cast<eKeyState>(action));
 				data.event_callback(key_press);
 			}
 		});
