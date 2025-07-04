@@ -1,11 +1,15 @@
 -- dearimgui project --
+local imguidir  = (vendordir .. "/dearimgui")
+local bindir    = (imguidir .. "/bin/" .. outputdir .. "/%{prj.name}")
+local binintdir = (imguidir .. "/bin-int/" .. outputdir .. "/%{prj.name}")
+
 project "imgui"
-    location "dearimgui"
+    location (imguidir)
     kind "StaticLib"
     language "C++"
 
-    targetdir ("bin/" .. outputdir .. "/%{prj.name}")
-    objdir ("bin-int/" .. outputdir .. "/%{prj.name}")
+    targetdir (bindir)
+    objdir (binintdir)
 
     files
     {

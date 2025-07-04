@@ -1,23 +1,25 @@
-include ("dependencies.lua")
-
 --premake5.lua 
 workspace "ToyEngine" 
     architecture "x64"
-    startproject "Sandbox"
+    startproject "Editor"
 
     configurations 
     { 
-        "Debug", 
-        "Release", 
+        "Debug",
+        "Release",
         "Dist"
     }
 
 outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
+vendordir = "%{wks.location}/ToyEngine/vendor"
+
+include ("dependencies.lua")
 
 group "Dependencies"
     include "ToyEngine/vendor/GLFW"
     include "ToyEngine/vendor/glad"
-    include("ToyEngine/vendor/dearimgui_premake.lua")
+    include "ToyEngine/vendor/_premake/dearimgui.lua"
+    include "ToyEngine/vendor/_premake/assimp.lua"
 group ""
 
 group "Applications"
@@ -58,14 +60,22 @@ project "ToyEngine"
         "%{IncludeDir.glm}",
         "%{IncludeDir.spdlog}",
         "%{IncludeDir.dearimgui}",
+        "%{IncludeDir.assimp}",
+        "%{IncludeDir.assimp_build}",
     }
 
+    libdirs
+    {
+        "%{LibDir.assimp}",
+    }
+    
     links
     {
         "GLFW",
         "glad",
         "opengl32.lib",
-        "ImGui"
+        "ImGui",
+        "assimp",
     }
 
     filter "system:windows"
@@ -83,13 +93,16 @@ project "ToyEngine"
             defines {"TY_DEBUG", "TY_ENABLE_ASSERTS"}
             runtime "Debug"
             symbols "on"
+            links { "zlibstaticd" } -- link the debug‐suffix zlib
 
         filter "configurations:Release"
             defines {"TY_RELEASE"}
             runtime "Release"
             optimize "on"
+            links { "zlibstatic" }  -- link the release zlib
 
         filter "configurations:Dist"
             defines {"TY_DIST"}
             runtime "Release"
             optimize "on"
+            links { "zlibstatic" }  -- link the release zlib
