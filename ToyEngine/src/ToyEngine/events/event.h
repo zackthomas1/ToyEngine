@@ -1,5 +1,5 @@
 #pragma once
-#include "ToyEngine/enum/key_enum.h"
+#include "ToyEngine/enum.h"
 
 namespace ToyEngine
 {
