@@ -1,4 +1,5 @@
 #pragma once
+#include "ToyEngine/enum.h"
 #include <glad/glad.h>
 
 #include <glm/glm.hpp>
@@ -7,19 +8,6 @@
 
 namespace ToyEngine
 {
-	// defines serveral possible options for camera movement.
-	// Use as an abstraction to stay away from window_system specific input methods
-	enum CameraMovement
-	{
-		kForward,
-		kBackward,
-		kLeft,
-		kRight,
-		kUp,
-		kDown,
-		kNone,
-	};
-
 	// default camera values
 	const glm::vec3 kWorldUp = glm::vec3(0.0f, 1.0f, 0.0f);
 	const glm::vec3 kCameraPosition = glm::vec3(0.0f, 0.0f, 3.0f),
