@@ -6,7 +6,7 @@
 #include "ToyEngine/services/locator.h"
 #include "ToyEngine/renderer/camera/fly_camera.h"
 #include "ToyEngine/renderer/model.h"
-#include "ToyEngine/renderer/shader_s.h"
+#include "ToyEngine/platform/opengl/shader_s.h"
 #include "ToyEngine/renderer/renderer.h"
 
 //----------- entry point -------------

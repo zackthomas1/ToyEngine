@@ -1,6 +1,6 @@
 #pragma once
 #include "ToyEngine/services/time_step.h"
-#include "ToyEngine/services/time_step_glfw.h"
+#include "ToyEngine/platform/windows/time_step_glfw.h"
 #include "ToyEngine/services/input_poll.h"
 
 namespace ToyEngine

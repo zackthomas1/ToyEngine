@@ -1,6 +1,6 @@
 #pragma once
-#include "ToyEngine/renderer/texture/texture_2d.h"
-#include "ToyEngine/renderer/shader_s.h"
+#include "ToyEngine/platform/opengl/texture_2d.h"
+#include "ToyEngine/platform/opengl/shader_s.h"
 namespace ToyEngine
 {
 	class Material

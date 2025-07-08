@@ -1,8 +1,8 @@
 #include "pch.h"
 #include "ToyEngine/application.h"
 #include "ToyEngine/layers/layer.h"
-#include "ToyEngine/services/time_step_glfw.h"
-#include "ToyEngine/services/input_poll_glfw.h"
+#include "ToyEngine/platform/windows/time_step_glfw.h"
+#include "ToyEngine/platform/windows/input_poll_glfw.h"
 #include "ToyEngine/services/locator.h"
 
 namespace ToyEngine
