@@ -28,42 +28,28 @@ public:
 
 	}
 
-	virtual void Update(ToyEngine::TimeStep* time_step)
+	virtual void Update(float delta_time)
 	{
 		//Keyboard input polling
-		float step_value = time_step->GetTimeStep();
 		ToyEngine::InputPoll* input = ToyEngine::Locator::InputPollService();
 		if (input->Key(ToyEngine::eKeyCode::kKeyW) != ToyEngine::eKeyState::kRelease)
-		{
-			m_camera->UpdatePosition(ToyEngine::eCameraMovement::kForward, step_value);
-		}
+			m_camera->UpdatePosition(ToyEngine::eCameraMovement::kForward, delta_time);
 		if (input->Key(ToyEngine::eKeyCode::kKeyS) != ToyEngine::eKeyState::kRelease)
-		{
-			m_camera->UpdatePosition(ToyEngine::eCameraMovement::kBackward, step_value);
-		}
+			m_camera->UpdatePosition(ToyEngine::eCameraMovement::kBackward, delta_time);
 		if (input->Key(ToyEngine::eKeyCode::kKeyA) != ToyEngine::eKeyState::kRelease)
-		{
-			m_camera->UpdatePosition(ToyEngine::eCameraMovement::kLeft, step_value);
-		}
+			m_camera->UpdatePosition(ToyEngine::eCameraMovement::kLeft, delta_time);
 		if (input->Key(ToyEngine::eKeyCode::kKeyD) != ToyEngine::eKeyState::kRelease)
-		{
-			m_camera->UpdatePosition(ToyEngine::eCameraMovement::kRight, step_value);
-		}
+			m_camera->UpdatePosition(ToyEngine::eCameraMovement::kRight, delta_time);
 		if (input->Key(ToyEngine::eKeyCode::kKeyE) != ToyEngine::eKeyState::kRelease)
-		{
-			m_camera->UpdatePosition(ToyEngine::eCameraMovement::kUp, step_value);
-		}
+			m_camera->UpdatePosition(ToyEngine::eCameraMovement::kUp, delta_time);
 		if (input->Key(ToyEngine::eKeyCode::kKeyQ) != ToyEngine::eKeyState::kRelease)
-		{
-			m_camera->UpdatePosition(ToyEngine::eCameraMovement::kDown, step_value);
-		}
+			m_camera->UpdatePosition(ToyEngine::eCameraMovement::kDown, delta_time);
 
 		// Draw Scene
 		ToyEngine::Renderer::BeginScene(m_camera);
 		for(auto model: m_models)
 			ToyEngine::Renderer::Submit(m_shader_lib->Get("flat_texture"), model);
 		ToyEngine::Renderer::EndScene();
-
 	}
 
 	virtual void OnImGuiRender() 
