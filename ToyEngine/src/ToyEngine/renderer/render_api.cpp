@@ -12,14 +12,18 @@ namespace ToyEngine
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	}
 
-	void RenderAPI::ShaderUse(const Shader* shader)
-	{
-		glUseProgram(shader->id());
-	}
-
 	// Textures
 
 	// Mesh 
+	void RenderAPI::BindVertexArray(unsigned int vao)
+	{
+		glBindVertexArray(static_cast<GLuint>(vao));
+	}
+	void RenderAPI::DeleteVertexArray(unsigned int id)
+	{
+		glDeleteVertexArrays(1, &static_cast<GLuint>(id));
+	}
+
 	void RenderAPI::CreateVertexBuffer(unsigned int* vbo, float* vertex_array, const int size)
 	{
 		// create Vertex Buffer Object (VBO)
@@ -29,33 +33,38 @@ namespace ToyEngine
 		glBufferData(GL_ARRAY_BUFFER, size, vertex_array, GL_STATIC_DRAW);
 	}
 
-	void RenderAPI::CreateVertexAttrib(unsigned int* vao, const std::vector<AttribPointerData>& attributes)
+	void RenderAPI::DeleteBuffer(unsigned int id)
 	{
-		// generate vertex array object (VAO) to store vertex attributes
-		glGenVertexArrays(1, vao);
-		glBindVertexArray(*vao);
-
-		// define attribute pointers
-		for (int i = 0; i < attributes.size(); i++)
-		{
-			glVertexAttribPointer(i, attributes[i].size, GL_FLOAT, GL_FALSE, attributes[i].stride, (void*)attributes[i].offset); 
-			glEnableVertexAttribArray(i);
-		}
+		glDeleteBuffers(1, &static_cast<GLuint>(id));
 	}
 
-	void RenderAPI::DeleteMesh(Mesh* mesh)
+	void RenderAPI::DrawArrays(unsigned int vertices)
 	{
-		GLuint glVAO = static_cast<GLuint>(mesh->GetVAO()); 
-		GLuint glVBO = static_cast<GLuint>(mesh->GetVBO());
-
-		glDeleteVertexArrays(1, &glVAO);
-		glDeleteBuffers(1, &glVBO);
+		glDrawArrays(GL_TRIANGLES, 0, vertices); 
 	}
 
-	void RenderAPI::DrawArrays(std::shared_ptr<Mesh> mesh)
+	void RenderAPI::DrawIndexed(unsigned int indices)
 	{
-		glBindVertexArray(mesh->GetVAO());
-		glDrawArrays(GL_TRIANGLES, 0, mesh->GetVertexCount());
+		glDrawElements(GL_TRIANGLES, (indices), GL_UNSIGNED_INT, 0);
+	}
+
+	void RenderAPI::PolygonMode(uint32_t face, uint32_t mode)
+	{
+		//face options:
+		// GL_FRONT_AND_BACK
+		
+		//mode options:
+		//GL_POINT
+		//	Polygon vertices that are marked as the start of a boundary edge are drawn as points.
+		//	Point attributes such as GL_POINT_SIZE and GL_POINT_SMOOTH control the rasterization of the points.
+		//GL_LINE
+		//	Boundary edges of the polygon are drawn as line segments.
+		//	Line attributes such as GL_LINE_WIDTH and GL_LINE_SMOOTH control the rasterization of the lines.
+		//GL_FILL	
+		//	The interior of the polygon is filled.
+		//	Polygon attributes such as GL_POLYGON_SMOOTH control the rasterization of the polygon.
+
+		glPolygonMode(face, mode);	// render primitives as wireframes
 	}
 }
 

@@ -3,7 +3,7 @@
 
 namespace ToyEngine{
 	Model::Model(const char* path, bool flip_vertically, bool gamma) :
-		flip_vertically_(flip_vertically), gamma_(gamma), m_model_mat(1.0f)
+		flip_vertically_(flip_vertically), gamma_(gamma), m_model_mat(glm::mat4(1.0f))
 	{
 		loadModel(path);
 	}

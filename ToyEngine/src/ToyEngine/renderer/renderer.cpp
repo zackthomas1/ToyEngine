@@ -6,48 +6,47 @@
 
 namespace ToyEngine
 {
-	Renderer::Renderer()
+	Renderer* Renderer::s_instance = nullptr; 
+
+	Renderer::Renderer(SceneData data) : m_data(data)
 	{
-		shader_ = new Shader("../assets/shaders/1_9_camera.vs", "../assets/shaders/1_9_camera.fs");
 	}
 
 	Renderer::~Renderer()
 	{
-		delete shader_;
 	}
 
-	void Renderer::DrawScene(SceneLayer* scene)
+	void Renderer::BeginScene(Ref<Camera> camera)
 	{
 		RenderAPI::ClearSetBackground();
-		RenderAPI::ShaderUse(shader_);
+		s_instance->m_data.view = camera->GetViewMatrix();
+		s_instance->m_data.projection = camera->GetProjectionMatrix();
+	}
 
-		const Camera *camera = scene->camera_;
-		// send camera data to vertex shader
-		shader_->SetMat4("u_view", camera->GetViewMatrix());
-		shader_->SetMat4("u_projection", camera->GetProjectionMatrix());
+	void Renderer::Submit(Ref<Shader> shader, Ref<Model> model)
+	{
+		shader->Use();
+		shader->SetMat4("uView", s_instance->m_data.view);
+		shader->SetMat4("uProjection", s_instance->m_data.projection);
+		for (Ref<Mesh> mesh : model->m_meshes) {
+			shader->SetMat4("uModel", model->m_model_mat);
 
-		// draw each model in the scene
-		for (std::shared_ptr<Model> model : scene->models_)
-		{
-			// activate shader and texture unites
-			model->GetMaterial()->SetMaterialUniforms(shader_);
-			model->GetMaterial()->ActivateTextureUnits();
-		
-			// texture related unifroms 
-			shader_->SetFloat("u_alpha_tex", 0.5f);
-			shader_->SetFloat("u_scale_tex", 1.5f);
-			shader_->SetFloat2("u_pos_tex", 0.5f, 0.5f);
+			mesh->m_material->BindTextures(shader);
 
-			// set model transforms in vertex shader
-			shader_->SetMat4("u_model", model->GetModelMatrix());
-			
 			// draw mesh
-			RenderAPI::DrawArrays(model->GetMesh());
+			RenderAPI::BindVertexArray(mesh->m_vao);
+			RenderAPI::DrawIndexed(mesh->m_indices.size());
+			RenderAPI::BindVertexArray(0);
 		}
 	}
 
-	std::unique_ptr<Renderer> Renderer::Create()
+	void Renderer::EndScene()
 	{
-		return std::make_unique<Renderer>();
+	}
+
+	void Renderer::Init()
+	{
+		TY_CORE_ASSERT(!s_instance, "Renderer already exist!")
+		s_instance = new Renderer();
 	}
 }
