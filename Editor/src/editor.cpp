@@ -1,7 +1,71 @@
 #include <toy_engine.h>
 
-class EditorLayer : public ToyEngine::Layer 
+class Scene : public ToyEngine::Layer
 {
+public:
+	Scene()
+	{
+		m_camera = ToyEngine::MakeRef<ToyEngine::FlyCamera>();
+		m_shader_lib = ToyEngine::MakeRef<ToyEngine::ShaderLibrary>();
+
+		TY_INFO("Initializing/Compiling shaders...");
+		m_shader_lib->Load(ToyEngine::Shader::Create("flat_color", "../assets/shaders/flat_color.vs", "../assets/shaders/flat_color.fs"));
+		m_shader_lib->Load(ToyEngine::Shader::Create("flat_texture", "../assets/shaders/flat_texture.vs", "../assets/shaders/flat_texture.fs"));
+		TY_INFO("Shader compilation complete");
+	}
+
+	virtual void OnAttach() 
+	{
+		// Create scene geometry
+		TY_INFO("Loading scene geometry...");
+		//m_models.push_back(ToyEngine::Model::Create("../assets/models/backpack/backpack.obj", true));
+		m_models.push_back(ToyEngine::Model::Create("../assets/models/cyborg/cyborg.obj", true));
+		TY_INFO("Scene loading complete");
+	}
+
+	virtual void OnDetach()
+	{
+
+	}
+
+	virtual void Update(ToyEngine::TimeStep* time_step)
+	{
+		//Keyboard input polling
+		float step_value = time_step->GetTimeStep();
+		ToyEngine::InputPoll* input = ToyEngine::Locator::InputPollService();
+		if (input->Key(ToyEngine::eKeyCode::kKeyW) != ToyEngine::eKeyState::kRelease)
+		{
+			m_camera->UpdatePosition(ToyEngine::CameraMovement::kForward, step_value);
+		}
+		if (input->Key(ToyEngine::eKeyCode::kKeyS) != ToyEngine::eKeyState::kRelease)
+		{
+			m_camera->UpdatePosition(ToyEngine::CameraMovement::kBackward, step_value);
+		}
+		if (input->Key(ToyEngine::eKeyCode::kKeyA) != ToyEngine::eKeyState::kRelease)
+		{
+			m_camera->UpdatePosition(ToyEngine::CameraMovement::kLeft, step_value);
+		}
+		if (input->Key(ToyEngine::eKeyCode::kKeyD) != ToyEngine::eKeyState::kRelease)
+		{
+			m_camera->UpdatePosition(ToyEngine::CameraMovement::kRight, step_value);
+		}
+		if (input->Key(ToyEngine::eKeyCode::kKeyE) != ToyEngine::eKeyState::kRelease)
+		{
+			m_camera->UpdatePosition(ToyEngine::CameraMovement::kUp, step_value);
+		}
+		if (input->Key(ToyEngine::eKeyCode::kKeyQ) != ToyEngine::eKeyState::kRelease)
+		{
+			m_camera->UpdatePosition(ToyEngine::CameraMovement::kDown, step_value);
+		}
+
+		// Draw Scene
+		ToyEngine::Renderer::BeginScene(m_camera);
+		for(auto model: m_models)
+			ToyEngine::Renderer::Submit(m_shader_lib->Get("flat_texture"), model);
+		ToyEngine::Renderer::EndScene();
+
+	}
+
 	virtual void OnImGuiRender() 
 	{
 		// Define the GUI windows
@@ -18,6 +82,27 @@ class EditorLayer : public ToyEngine::Layer
 		ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / io_.Framerate, io_.Framerate);
 		ImGui::End();
 	}
+
+	virtual void OnEvent(ToyEngine::Event& e)
+	{
+		// Set flag indiciating that event has been handled by current layer
+		e.SetEventHandled(true);
+		if (ToyEngine::EventVerticalScroll* event = dynamic_cast<ToyEngine::EventVerticalScroll*>(&e)) {
+			m_camera->UpdateFOV(event->GetYOffset());
+		}
+
+		if (ToyEngine::EventCursorPos* event = dynamic_cast<ToyEngine::EventCursorPos*>(&e))
+		{
+			//TY_CORE_INFO("EventCursorPos: x_offset-{} y_offset-{}", event->GetXOffset(), event->GetYOffset());
+			m_camera->UpdateLookDirection(static_cast<float>(event->GetXOffset()), static_cast<float>(event->GetYOffset()));
+		}
+	}
+public: 
+	ToyEngine::Ref<ToyEngine::Camera> m_camera;
+	ToyEngine::Vector<ToyEngine::Ref<ToyEngine::Model>> m_models;
+	ToyEngine::Ref<ToyEngine::ShaderLibrary> m_shader_lib;
+	//std::vector<Light> lights_;
+
 };
 
 class Editor : public ToyEngine::Application
@@ -26,7 +111,7 @@ public:
 	Editor()
 	{
 		TY_INFO("Initialize application");
-		PushLayer(new EditorLayer());
+		PushLayer(new Scene());
 	}
 	~Editor()
 	{
