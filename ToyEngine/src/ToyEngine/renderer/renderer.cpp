@@ -30,7 +30,6 @@ namespace ToyEngine
 		shader->SetMat4("uProjection", s_instance->m_data.projection);
 		for (Ref<Mesh> mesh : model->m_meshes) {
 			shader->SetMat4("uModel", model->m_model_mat);
-
 			mesh->m_material->BindTextures(shader);
 
 			// draw mesh

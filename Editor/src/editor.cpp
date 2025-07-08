@@ -18,8 +18,8 @@ public:
 	{
 		// Create scene geometry
 		TY_INFO("Loading scene geometry...");
-		//m_models.push_back(ToyEngine::Model::Create("../assets/models/backpack/backpack.obj", true));
-		m_models.push_back(ToyEngine::Model::Create("../assets/models/cyborg/cyborg.obj", true));
+		m_models.push_back(ToyEngine::Model::Create("../assets/models/backpack/backpack.obj", true));
+		//m_models.push_back(ToyEngine::Model::Create("../assets/models/cyborg/cyborg.obj", true));
 		TY_INFO("Scene loading complete");
 	}
 
@@ -35,27 +35,27 @@ public:
 		ToyEngine::InputPoll* input = ToyEngine::Locator::InputPollService();
 		if (input->Key(ToyEngine::eKeyCode::kKeyW) != ToyEngine::eKeyState::kRelease)
 		{
-			m_camera->UpdatePosition(ToyEngine::CameraMovement::kForward, step_value);
+			m_camera->UpdatePosition(ToyEngine::eCameraMovement::kForward, step_value);
 		}
 		if (input->Key(ToyEngine::eKeyCode::kKeyS) != ToyEngine::eKeyState::kRelease)
 		{
-			m_camera->UpdatePosition(ToyEngine::CameraMovement::kBackward, step_value);
+			m_camera->UpdatePosition(ToyEngine::eCameraMovement::kBackward, step_value);
 		}
 		if (input->Key(ToyEngine::eKeyCode::kKeyA) != ToyEngine::eKeyState::kRelease)
 		{
-			m_camera->UpdatePosition(ToyEngine::CameraMovement::kLeft, step_value);
+			m_camera->UpdatePosition(ToyEngine::eCameraMovement::kLeft, step_value);
 		}
 		if (input->Key(ToyEngine::eKeyCode::kKeyD) != ToyEngine::eKeyState::kRelease)
 		{
-			m_camera->UpdatePosition(ToyEngine::CameraMovement::kRight, step_value);
+			m_camera->UpdatePosition(ToyEngine::eCameraMovement::kRight, step_value);
 		}
 		if (input->Key(ToyEngine::eKeyCode::kKeyE) != ToyEngine::eKeyState::kRelease)
 		{
-			m_camera->UpdatePosition(ToyEngine::CameraMovement::kUp, step_value);
+			m_camera->UpdatePosition(ToyEngine::eCameraMovement::kUp, step_value);
 		}
 		if (input->Key(ToyEngine::eKeyCode::kKeyQ) != ToyEngine::eKeyState::kRelease)
 		{
-			m_camera->UpdatePosition(ToyEngine::CameraMovement::kDown, step_value);
+			m_camera->UpdatePosition(ToyEngine::eCameraMovement::kDown, step_value);
 		}
 
 		// Draw Scene

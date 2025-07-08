@@ -36,7 +36,7 @@ namespace ToyEngine
 
 		// update methods
 		//virtual void Update();
-		virtual void UpdatePosition(CameraMovement direction, float time_step);
+		virtual void UpdatePosition(eCameraMovement direction, float time_step);
 		virtual void UpdateLookDirection(float x_offset, float y_offset, GLboolean constrainPitch = TRUE) {}
 		virtual void UpdateFOV(float y_offset) {}
 	protected: 
@@ -50,7 +50,7 @@ namespace ToyEngine
 			camera_up_,
 			camera_right_;
 
-		CameraMovement movement_update;
+		eCameraMovement movement_update;
 
 		// protected methods
 		virtual void UpdateCameraVectors();

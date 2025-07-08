@@ -2,7 +2,7 @@
 namespace ToyEngine
 {
 	// Defines key codes
-	enum eKeyCode
+	enum class eKeyCode
 	{
 		kKeyEscape	= 256,
 		kKeyW		= 87,
@@ -13,7 +13,7 @@ namespace ToyEngine
 		kKeyQ		= 81,
 	};
 
-	enum eKeyState
+	enum class eKeyState
 	{
 		kRelease	= 0,
 		kPress		= 1,
@@ -22,7 +22,7 @@ namespace ToyEngine
 
 	// defines serveral possible options for camera movement.
 	// Use as an abstraction to stay away from window_system specific input methods
-	enum CameraMovement
+	enum class eCameraMovement
 	{
 		kForward,
 		kBackward,
@@ -34,7 +34,7 @@ namespace ToyEngine
 	};
 
 	//
-	enum eTextureType
+	enum class eTextureType
 	{
 		kDiffuse = 1,
 		kSpecular = 2,
