@@ -3,19 +3,14 @@
 
 namespace ToyEngine
 {
-	WindowsWindow::WindowsWindow(const WindowProps& props)
+	WindowsWindow::WindowsWindow(const WindowProps& props) : Window(props)
 	{
-		Init(props);
+		Init();
 	}
 
 	WindowsWindow::~WindowsWindow()
 	{
 		Shutdown();
-	}
-
-	Scope<WindowsWindow> WindowsWindow::Create(const WindowProps& props)
-	{
-		return MakeScope<WindowsWindow>(props);
 	}
 
 	void WindowsWindow::OnUpdate()
@@ -24,15 +19,8 @@ namespace ToyEngine
 		glfwPollEvents();
 	}
 
-	void WindowsWindow::Init(const WindowProps& props)
+	void WindowsWindow::Init()
 	{
-		// Set the property
-		data_.title = props.title;
-		data_.width = props.width;
-		data_.height = props.height;
-		data_.x_mouse_pos = props.x_mouse_pos; 
-		data_.y_mouse_pos = props.y_mouse_pos;
-
 		// GLFW: initialize and configure
 		glfwInit();
 		glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);

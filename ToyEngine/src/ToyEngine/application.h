@@ -1,7 +1,7 @@
 #pragma once
 #include "core.h"
 #include "ToyEngine/events/event.h"
-#include "ToyEngine/platform/windows/windows_window.h"
+#include "ToyEngine/window.h"
 #include "ToyEngine/layers/layer_stack.h"
 
 namespace ToyEngine
@@ -25,10 +25,10 @@ namespace ToyEngine
 		void PushOverlay(Layer *layer);
 		bool OnClose();
 
-		inline WindowsWindow& GetWindow() { return *window_; }
+		inline Window& GetWindow() { return *window_; }
 		inline static Application& Get() { return *s_instance; }
 	private:
-		Scope<WindowsWindow> window_;
+		Scope<Window> window_;
 		ImGuiLayer *imGuiLayer_;	// imGuiLayer is owned by the layerStack_. Deleted by layerStack_ destructor
 		LayerStack layerStack_;
 		bool isRunning_ = true;

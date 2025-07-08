@@ -13,11 +13,9 @@ namespace ToyEngine
 		TY_CORE_ASSERT(!s_instance, "Application already exist!")
 		s_instance = this;
 
-#ifdef TY_PLATFORM_WINDOWS
 		// Initialize window
-		window_ = Scope<WindowsWindow>(WindowsWindow::Create());
+		window_ = Scope<Window>(Window::Create());
 		window_->SetCommandCallbackFn(TY_BINDFN(Application::OnEvent));
-#endif TY_PLATFORM_WINDOWS
 
 		// Initialize time step and input polling services
 		TY_CORE_INFO("Initialize time step service");
@@ -49,12 +47,11 @@ namespace ToyEngine
 			Locator::TimeStepService()->Update();
 
 			// Advance the game simulation one step (update)
-			TimeStep *time_step = Locator::TimeStepService();
-			
+			float delta_time = Locator::TimeStepService()->GetTimeStep();
 			// Update layers
 			for (Layer *layer : layerStack_)
 			{
-				layer->Update(time_step);
+				layer->Update(delta_time);
 			}
 
 			// Draw GUI
