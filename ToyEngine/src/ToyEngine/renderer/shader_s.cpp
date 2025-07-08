@@ -5,7 +5,8 @@
 
 namespace ToyEngine
 {
-	Shader::Shader(const char* vertex_path, const char* fragment_path)
+	Shader::Shader(const char* name, const char* vertex_path, const char* fragment_path) :
+		m_name(name)
 	{
 		// read shader from file
 		std::string vertex_shader_code = ReadSourceFile(vertex_path);
@@ -53,7 +54,6 @@ namespace ToyEngine
 		glUniformMatrix4fv(glGetUniformLocation(id_, name.c_str()), 1, GL_FALSE, glm::value_ptr(value));
 	}
 
-
 	std::string Shader::ReadSourceFile(const char* path)
 	{
 		// retrieve source code from filePath
@@ -84,7 +84,6 @@ namespace ToyEngine
 		}
 		return source_code;
 	}
-
 
 	void Shader::CompileShaderProgram(const char* vertex_source, const char* fragement_source, unsigned int& shader_program)
 	{
@@ -134,5 +133,26 @@ namespace ToyEngine
 		// They are linked into our program now and no longer necessary.
 		glDeleteShader(vertex_shader);
 		glDeleteShader(fragment_shader);
+	}
+
+	Ref<Shader> Shader::Create(const char* shader_name, const char* vertex_path, const char* fragment_path)
+	{
+		return MakeRef<Shader>(shader_name, vertex_path, fragment_path);
+	}
+
+	void ShaderLibrary::Load(Ref<Shader> shader)
+	{
+		library_.emplace(std::make_pair(std::string(shader->m_name), shader));
+	}
+	
+	Ref<Shader> ShaderLibrary::Get(const std::string& name)
+	{
+		auto it = library_.find(name);
+		Ref<Shader> shader;
+		if (it != library_.end()) {
+			shader = it->second;
+		}
+		TY_CORE_ASSERT(shader, "Shader library returned NULL. Shader not found.")
+		return shader;
 	}
 }
