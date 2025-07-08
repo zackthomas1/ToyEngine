@@ -17,6 +17,6 @@ out vec4 FragColor;
 
 void main()
 {
-    vec3 diffuseColor = diffuse.rgb;
+    vec3 diffuseColor = vec3(0.0, 1.0, 1.0);
     FragColor = vec4(diffuseColor, 1.0);
 }

@@ -10,13 +10,17 @@ struct Material{
     // (like a function parameter) GLSL could throw strange errors; 
     // the same thus applies to any struct holding such opaque types.
     sampler2D texture_diffuse1;
-
-}; uniform Material material;
+    sampler2D texture_diffuse2;
+    sampler2D texture_specular1;
+    sampler2D texture_specular2;
+};
+ uniform Material material;
 
 out vec4 FragColor;
 
 void main()
 {
-    vec3 diffuseColor = texture(material.texture_diffuse1, texCoords).rgb;
+    vec3 diffuseColor   = texture(material.texture_diffuse1, texCoords).rgb;
+    vec3 specularColor  = texture(material.texture_specular1, texCoords).rgb;
     FragColor = vec4(diffuseColor, 1.0);
 }
