@@ -1,21 +1,18 @@
 #pragma once
 #include "ToyEngine/renderer/texture/texture_2d.h"
 #include "ToyEngine/renderer/shader_s.h"
-
 namespace ToyEngine
 {
 	class Material
 	{
 	public:
 		Material();
-		virtual ~Material() {}
-	
-		void SetMaterialUniforms(Shader* shader);
+		Material(const Vector<Ref<Texture2D>>& textues);
 
-		std::vector<std::shared_ptr<Texture2D>>* GetTextures() { return &textures_; }
-		void AddTexture(std::shared_ptr<Texture2D> texture) { textures_.push_back(texture); }
-		void ActivateTextureUnits();
+		virtual ~Material() {}
+		const Vector<Ref<Texture2D>>& getTextures() const { return textures_; }
+		void BindTextures(Ref<Shader> shader);
 	private:
-		std::vector<std::shared_ptr<Texture2D>> textures_;
+		Vector<Ref<Texture2D>> textures_;
 	};
 }

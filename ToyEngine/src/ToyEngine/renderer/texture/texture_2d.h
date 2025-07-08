@@ -1,23 +1,22 @@
 #pragma once
+#include "ToyEngine/enum.h"
+
 namespace ToyEngine
 {
 	class Texture2D
 	{
 	public:
-		Texture2D(const char* path, bool flip_vertically = false);
+		Texture2D(std::string &path, eTextureType type, bool flip_vertically = false);
 		~Texture2D();
 
-		void Activate() const;
+		void Bind(unsigned int texture_unit) const;
+		void Unbind() const;
 		void SetParameters(uint32_t wrap_s, uint32_t wrap_t, uint32_t min_filter, uint32_t mag_filter);
-
-		unsigned int id() const { return id_; };
-		unsigned int width() const { return width_; };
-		unsigned int height() const { return height_; };
+	public:
+		unsigned int id_, width_, height_;
+		std::string m_path;
+		eTextureType m_type;
 	private:
-		void Bind() const;
-	private:
-		unsigned int id_;
-		unsigned int width_, height_, nr_channels_;
-		const char* path_;
+		unsigned int nr_channels_;
 	};
 }

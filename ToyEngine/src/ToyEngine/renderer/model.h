@@ -1,32 +1,32 @@
 #pragma once
-#include "ToyEngine/renderer/shader_s.h"
 #include "ToyEngine/renderer/mesh/mesh.h"
 #include "ToyEngine/renderer/material.h"
-
-#include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
-#include <glm/gtc/type_ptr.hpp>
+#include "ToyEngine/renderer/camera/camera.h"
+#include <assimp/Importer.hpp>
+#include <assimp/scene.h>
+#include <assimp/postprocess.h>
 
 namespace ToyEngine
 {
 	class Model
 	{
 	public:
-		Model() : model_mat_() {}
-		Model(std::shared_ptr<Mesh> mesh, std::shared_ptr<Material> material) :
-			model_mat_(glm::mat4(1.0f)), mesh_(mesh), material_(material) {}
-		virtual ~Model() {}
+		Model(const char* path, bool flip_vertically = false, bool gamma = false);
 
-		// getter/setter
-		glm::mat4 GetModelMatrix() const { return model_mat_; }
-		std::shared_ptr<Mesh> GetMesh() const { return mesh_; }
-		std::shared_ptr<Material> GetMaterial() const { return material_; }
-
-		void SetModelMatrix(glm::mat4 transformation) { model_mat_ = transformation; }
-
-	private: 
-		glm::mat4 model_mat_;
-		std::shared_ptr<Mesh> mesh_;
-		std::shared_ptr<Material> material_;
+		static Ref<Model> Create(const char* path, bool flip_vertically = false, bool gamma = false);
+	public:
+		// Model data
+		glm::mat4 m_model_mat;
+		Vector<Ref<Mesh>> m_meshes;
+		Vector<Ref<Texture2D>> m_textures;
+	private:
+		//
+		void loadModel(std::string path);
+		void processNode(aiNode* node, const aiScene* scene);
+		Ref<Mesh> processMesh(aiMesh* mesh, const aiScene* scene);
+		void loadMaterialTextures(aiMaterial* mat, aiTextureType type, Vector<Ref<Texture2D>> &textures);
+	private:
+		std::string directory_;
+		bool flip_vertically_, gamma_;
 	};
 }
