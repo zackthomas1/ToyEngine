@@ -35,7 +35,7 @@ namespace ToyEngine
 
 		WindowsWindow(const WindowProps& props);
 		~WindowsWindow();
-		static std::unique_ptr<WindowsWindow> Create(const WindowProps& props = WindowProps());
+		static Scope<WindowsWindow> Create(const WindowProps& props = WindowProps());
 
 		void OnUpdate();
 

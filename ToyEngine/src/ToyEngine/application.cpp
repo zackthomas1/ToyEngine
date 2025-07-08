@@ -16,7 +16,7 @@ namespace ToyEngine
 
 #ifdef TY_PLATFORM_WINDOWS
 		// Initialize window
-		window_ = std::unique_ptr<WindowsWindow>(WindowsWindow::Create());
+		window_ = Scope<WindowsWindow>(WindowsWindow::Create());
 		window_->SetCommandCallbackFn(TY_BINDFN(Application::OnEvent));
 
 		// Initialize time step service
@@ -26,16 +26,12 @@ namespace ToyEngine
 		Locator::SetInputPollProvider(new InputPollGLFW());
 #endif TY_PLATFORM_WINDOWS
 
-		// Initalize scene layer
-		scene_ = new SceneLayer();
-		layerStack_.PushLayer(scene_);
-
 		// Initalize imgui layer
 		imGuiLayer_ = new ImGuiLayer();
 		layerStack_.PushLayer(imGuiLayer_);
 
 		// initialize renderer
-		renderer_ = std::unique_ptr<Renderer>(Renderer::Create());
+		Renderer::Init();
 	}
 
 	Application::~Application()
@@ -61,9 +57,6 @@ namespace ToyEngine
 			{
 				layer->Update(time_step);
 			}
-
-			// Draw the scene
-			renderer_->DrawScene(scene_);
 
 			// Draw GUI
 			imGuiLayer_->BeginDraw();

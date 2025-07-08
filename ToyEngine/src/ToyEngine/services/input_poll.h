@@ -1,6 +1,6 @@
 #pragma once
 #include <utility>
-#include "ToyEngine/enum/key_enum.h"
+#include "ToyEngine/enum.h"
 
 namespace ToyEngine {
     class InputPoll {

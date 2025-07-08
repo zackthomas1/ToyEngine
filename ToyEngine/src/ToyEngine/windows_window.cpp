@@ -13,9 +13,9 @@ namespace ToyEngine
 		Shutdown();
 	}
 
-	std::unique_ptr<WindowsWindow> WindowsWindow::Create(const WindowProps& props)
+	Scope<WindowsWindow> WindowsWindow::Create(const WindowProps& props)
 	{
-		return std::make_unique<WindowsWindow>(props);
+		return MakeScope<WindowsWindow>(props);
 	}
 
 	void WindowsWindow::OnUpdate()
