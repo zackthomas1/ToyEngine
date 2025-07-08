@@ -1,8 +1,7 @@
 #include "pch.h"
 #include "ToyEngine/application.h"
+#include "ToyEngine/renderer/renderer.h"
 #include "ToyEngine/layers/layer.h"
-#include "ToyEngine/platform/windows/time_step_glfw.h"
-#include "ToyEngine/platform/windows/input_poll_glfw.h"
 #include "ToyEngine/services/locator.h"
 
 namespace ToyEngine
@@ -18,13 +17,13 @@ namespace ToyEngine
 		// Initialize window
 		window_ = Scope<WindowsWindow>(WindowsWindow::Create());
 		window_->SetCommandCallbackFn(TY_BINDFN(Application::OnEvent));
-
-		// Initialize time step service
-		Locator::SetTimeStepProvider(new TimeStepGLFW());
-
-		// Initialize input polling service
-		Locator::SetInputPollProvider(new InputPollGLFW());
 #endif TY_PLATFORM_WINDOWS
+
+		// Initialize time step and input polling services
+		TY_CORE_INFO("Initialize time step service");
+		Locator::TimeStepService()->Init();
+		TY_CORE_INFO("Initialize input poll service");
+		Locator::InputPollService()->Init();
 
 		// Initalize imgui layer
 		imGuiLayer_ = new ImGuiLayer();

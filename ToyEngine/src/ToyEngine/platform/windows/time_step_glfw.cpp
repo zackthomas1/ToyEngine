@@ -1,11 +1,12 @@
 #include "pch.h"
-#include "time_step_glfw.h"
+#include "ToyEngine/services/time_step.h"
 #include <GLFW/glfw3.h>
 
 namespace ToyEngine
 {
-	TimeStepGLFW::TimeStepGLFW()
+	void TimeStepGLFW::Init()
 	{
+		TY_CORE_INFO("GLFW time step provider");
 		current_time_ = static_cast<float>(glfwGetTime());
 		last_frame_time_ = current_time_;
 		time_step_ = 0.0f;

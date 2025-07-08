@@ -8,7 +8,7 @@ public:
 		m_camera = ToyEngine::MakeRef<ToyEngine::FlyCamera>();
 		m_shader_lib = ToyEngine::MakeRef<ToyEngine::ShaderLibrary>();
 
-		TY_INFO("Initializing/Compiling shaders...");
+		TY_INFO("Compiling shaders...");
 		m_shader_lib->Load(ToyEngine::Shader::Create("flat_color", "../assets/shaders/flat_color.vs", "../assets/shaders/flat_color.fs"));
 		m_shader_lib->Load(ToyEngine::Shader::Create("flat_texture", "../assets/shaders/flat_texture.vs", "../assets/shaders/flat_texture.fs"));
 		TY_INFO("Shader compilation complete");
