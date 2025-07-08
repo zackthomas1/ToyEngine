@@ -14,3 +14,6 @@
 	path = ToyEngine/vendor/dearimgui
 	url = https://github.com/ocornut/imgui.git
 	branch = docking
+[submodule "ToyEngine/vendor/assimp"]
+	path = ToyEngine/vendor/assimp
+	url = https://github.com/assimp/assimp.git
