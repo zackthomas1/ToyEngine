@@ -33,6 +33,12 @@ namespace ToyEngine
 		kNone,
 	};
 
+	enum class eCameraType
+    {
+        kFlyCamera			= 1,
+        kOrthographicCamera = 2,
+    };
+
 	//
 	enum class eTextureType
 	{

@@ -3,63 +3,57 @@
 
 namespace ToyEngine
 {
-	Camera::Camera(glm::vec3 position, glm::vec3 up,
-		float pitch, float yaw, float znear, float zfar) :
-			camera_position_(position), camera_up_(up),
-			pitch_(pitch), yaw_(yaw), znear_(znear), zfar_(zfar)
+	Camera::Camera(const CameraProps& props) : m_data(props)
 	{
-		movement_speed_ = kMovementSpeed;
-		mouse_sensitivity_ = kMouseSensitivity;
-
 		UpdateCameraVectors();
 	}
 
 	// getter/setter
 	glm::mat4 Camera::GetViewMatrix() const
 	{
-		return glm::lookAt(camera_position_, camera_position_ + camera_front_, camera_up_);
+		return glm::lookAt(m_data.position, m_data.position + m_data.front, m_data.up);
 	}
 
 	void Camera::SetMovementSpeed(float speed)
 	{
-		movement_speed_ = speed;
+		m_data.movementSpeed = speed;
 	}
 	void Camera::SetMouseSensitivity(float sensitivity)
 	{
-		mouse_sensitivity_ = sensitivity;
+		m_data.mouseSensitivity = sensitivity;
 	}
 	void Camera::SetNear(float znear)
 	{
-		znear_ = znear;
+		m_data.znear = znear;
 	}
 	void Camera::SetFar(float zfar)
 	{
-		zfar_ = zfar;
+		m_data.zfar = zfar;
 	}
 
 	// call-back
 	void Camera::UpdatePosition(eCameraMovement direction, float time_step)
 	{
-		float velocity = movement_speed_ * time_step;
+		float velocity = m_data.movementSpeed * time_step;
 		switch (direction)
 		{
 		case eCameraMovement::kForward:
-			camera_position_ += velocity * camera_front_;
+			m_data.position += velocity * m_data.front;
 			break;
 		case eCameraMovement::kBackward:
-			camera_position_ -= velocity * camera_front_;
+			m_data.position -= velocity * m_data.front;
 			break;
 		case eCameraMovement::kLeft:
-			camera_position_ -= velocity * camera_right_;
+			m_data.position -= velocity * m_data.right;
 			break;
 		case eCameraMovement::kRight:
-			camera_position_ += velocity * camera_right_;
+			m_data.position += velocity * m_data.right;
 			break;
 		case eCameraMovement::kUp:
-			camera_position_ += velocity * camera_up_;
+			m_data.position += velocity * m_data.up;
 			break;
 		case eCameraMovement::kDown:
-			camera_position_ -= velocity * camera_up_;
+			m_data.position -= velocity * m_data.up;
 			break;
 		}
 
@@ -71,13 +65,13 @@ namespace ToyEngine
 	{
 		// Calculate camera front vector from Euler rotations
 		glm::vec3 camera_direction;
-		camera_direction.x = cos(glm::radians(yaw_)) * cos(glm::radians(pitch_));
-		camera_direction.y = sin(glm::radians(pitch_));
-		camera_direction.z = sin(glm::radians(yaw_)) * cos(glm::radians(pitch_));
-		camera_front_ = glm::normalize(camera_direction);
+		camera_direction.x = cos(glm::radians(m_data.yaw)) * cos(glm::radians(m_data.pitch));
+		camera_direction.y = sin(glm::radians(m_data.pitch));
+		camera_direction.z = sin(glm::radians(m_data.yaw)) * cos(glm::radians(m_data.pitch));
+		m_data.front = glm::normalize(camera_direction);
 
-		camera_right_ = glm::normalize(glm::cross(camera_front_, kWorldUp));
-		camera_up_ = glm::normalize(glm::cross(camera_right_, camera_front_));
+		m_data.right = glm::normalize(glm::cross(m_data.front, TY_DEFAULT_WORLD_UP));
+		m_data.up = glm::normalize(glm::cross(m_data.right, m_data.front));
 	}
 
 }
