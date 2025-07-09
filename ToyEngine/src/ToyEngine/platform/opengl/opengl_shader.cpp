@@ -1,91 +1,60 @@
 #include "pch.h"
-#include "shader_s.h"
-
+#include "opengl_shader.h"
+#include "ToyEngine/file_manager.h"
 #include <glad/glad.h>
 
 namespace ToyEngine
 {
-	Shader::Shader(const char* name, const char* vertex_path, const char* fragment_path) :
-		m_name(name)
+	OpenGLShader::OpenGLShader(const char* name, const char* vertex_path, const char* fragment_path) :
+		Shader(name)
 	{
 		// read shader from file
-		std::string vertex_shader_code = ReadSourceFile(vertex_path);
-		std::string fragment_shader_code = ReadSourceFile(fragment_path);
+		std::string vertex_shader_code		= FileManager::ReadSourceFile(vertex_path);
+		std::string fragment_shader_code	= FileManager::ReadSourceFile(fragment_path);
 
 		// compile the shaders
 		CompileShaderProgram(vertex_shader_code.c_str(), fragment_shader_code.c_str(), id_);
 	}
 
-	void Shader::Use()
+	void OpenGLShader::Use()
 	{
 		glUseProgram(id_);
 	}
 
-	void Shader::SetBool(const std::string& name, bool value) const
+	void OpenGLShader::SetBool(const std::string& name, bool value) const
 	{
 		glUniform1i(glGetUniformLocation(id_, name.c_str()), (int)value);
 	}
-	void Shader::SetInt(const std::string& name, int value) const
+	void OpenGLShader::SetInt(const std::string& name, int value) const
 	{
 		glUniform1i(glGetUniformLocation(id_, name.c_str()), value);
 	}
-	void Shader::SetFloat(const std::string& name, float value) const
+	void OpenGLShader::SetFloat(const std::string& name, float value) const
 	{
 		glUniform1f(glGetUniformLocation(id_, name.c_str()), value);
 	}
 
-	void Shader::SetFloat2(const std::string& name, float v0, float v1) const
+	void OpenGLShader::SetFloat2(const std::string& name, float v0, float v1) const
 	{
 		glUniform2f(glGetUniformLocation(id_, name.c_str()), v0, v1);
 	}
 
-	void Shader::SetFloat3(const std::string& name, float v0, float v1, float v2) const
+	void OpenGLShader::SetFloat3(const std::string& name, float v0, float v1, float v2) const
 	{
 		glUniform3f(glGetUniformLocation(id_, name.c_str()), v0, v1, v2);
 	}
 
-	void Shader::SetFloat4(const std::string& name, float v1, float v2, float v3, float v4) const
+	void OpenGLShader::SetFloat4(const std::string& name, float v1, float v2, float v3, float v4) const
 	{
 		glUniform4f(glGetUniformLocation(id_, name.c_str()), v1, v2, v3, v4);
 	}
 
-	void Shader::SetMat4(const std::string& name, glm::mat4 value)
+	void OpenGLShader::SetMat4(const std::string& name, glm::mat4 value) const
 	{
 		glUniformMatrix4fv(glGetUniformLocation(id_, name.c_str()), 1, GL_FALSE, glm::value_ptr(value));
 	}
 
-	std::string Shader::ReadSourceFile(const char* path)
-	{
-		// retrieve source code from filePath
-		std::string source_code;
-		std::ifstream shader_file;
-
-		// ensure ifstream objects can throw exceptions
-		shader_file.exceptions(std::ifstream::failbit | std::ifstream::badbit);
-
-		try
-		{
-			// open files
-			shader_file.open(path);
-
-			// read file's buffer contents into streams 
-			std::stringstream shader_stream;
-			shader_stream << shader_file.rdbuf();
-
-			// close file handlers 
-			shader_file.close();
-
-			// convert stream into string 
-			source_code = shader_stream.str();
-		}
-		catch (std::ifstream::failure e)
-		{
-			TY_CORE_ERROR("ERROR::SHADER::FILE_NOT_SUCCESFULLY_READ");
-		}
-		return source_code;
-	}
-
-	void Shader::CompileShaderProgram(const char* vertex_source, const char* fragement_source, uint32_t& shader_program)
+	void OpenGLShader::CompileShaderProgram(const char* vertex_source, const char* fragement_source, uint32_t& shader_program)
 	{
 		int success;
 		char info_log[512];
@@ -133,26 +102,5 @@ namespace ToyEngine
 		// They are linked into our program now and no longer necessary.
 		glDeleteShader(vertex_shader);
 		glDeleteShader(fragment_shader);
-	}
-
-	Ref<Shader> Shader::Create(const char* shader_name, const char* vertex_path, const char* fragment_path)
-	{
-		return MakeRef<Shader>(shader_name, vertex_path, fragment_path);
-	}
-
-	void ShaderLibrary::Load(Ref<Shader> shader)
-	{
-		library_.emplace(std::make_pair(std::string(shader->m_name), shader));
-	}
-	
-	Ref<Shader> ShaderLibrary::Get(const std::string& name)
-	{
-		auto it = library_.find(name);
-		Ref<Shader> shader;
-		if (it != library_.end()) {
-			shader = it->second;
-		}
-		TY_CORE_ASSERT(shader, "Shader library returned NULL. Shader not found.")
-		return shader;
 	}
 }

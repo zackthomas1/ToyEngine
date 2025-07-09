@@ -54,7 +54,7 @@ namespace ToyEngine{
 	Ref<Mesh> Model::processMesh(aiMesh* mesh, const aiScene* scene)
 	{
 		// process vertices (position, normal, texcoord)
-		std::vector<Vertex> vertices;
+		Vector<Vertex> vertices;
 		vertices.reserve(mesh->mNumVertices);
 		for (unsigned int i = 0; i < mesh->mNumVertices; i++) {
 			if (mesh->mTextureCoords[0]) {
@@ -74,7 +74,7 @@ namespace ToyEngine{
 		}
 
 		//process indices 
-		std::vector<unsigned int> indices;
+		Vector<unsigned int> indices;
 		indices.reserve(mesh->mNumFaces * 3);
 		for (unsigned int i = 0; i < mesh->mNumFaces; i++) {
 			aiFace face = mesh->mFaces[i];

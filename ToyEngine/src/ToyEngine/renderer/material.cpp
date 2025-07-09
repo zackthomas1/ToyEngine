@@ -1,6 +1,6 @@
 #include "pch.h"
 #include "material.h"
-#include "ToyEngine/platform/opengl/shader_s.h"
+#include "ToyEngine/renderer/shader.h"
 #include <glad/glad.h>
 
 namespace ToyEngine

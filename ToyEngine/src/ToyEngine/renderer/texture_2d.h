@@ -6,8 +6,7 @@ namespace ToyEngine
 	class Texture2D
 	{
 	public:
-		Texture2D(const std::string &path, eTextureType type);
-		~Texture2D() {}
+		virtual ~Texture2D() {}
 
 		virtual uint32_t GetWidth() const { return width_; }
 		virtual uint32_t GetHight() const { return height_;}
@@ -19,6 +18,7 @@ namespace ToyEngine
 		std::string m_path;
 		eTextureType m_type;
 	protected:
+		Texture2D(const std::string& path, eTextureType type);
 		uint32_t nr_channels_;
 	};
 }

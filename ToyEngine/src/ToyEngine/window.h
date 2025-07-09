@@ -35,7 +35,6 @@ namespace ToyEngine {
 
 		virtual void OnUpdate() = 0;
 		
-	
 		/// <summary>
 		/// Sets the callback function that will be invoked when an event occurs in the window.
 		/// The callback receives a reference to an Event object, allowing custom event handling logic.
