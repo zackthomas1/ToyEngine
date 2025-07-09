@@ -1,6 +1,5 @@
 #pragma once
 #include "ToyEngine/renderer/shader.h"
-#include "ToyEngine/renderer/model.h"
 
 namespace ToyEngine
 {

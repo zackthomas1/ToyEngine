@@ -1,6 +1,6 @@
 #pragma once
-#include "ToyEngine/renderer/mesh/mesh.h"
-#include "ToyEngine/renderer/material.h"
+#include "ToyEngine/model/mesh.h"
+#include "ToyEngine/model/material.h"
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>

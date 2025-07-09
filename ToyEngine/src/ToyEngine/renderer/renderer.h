@@ -1,7 +1,6 @@
 #pragma once
-
+#include "ToyEngine/model/model.h"
 #include "ToyEngine/renderer/camera.h"
-#include "ToyEngine/renderer/model.h"
 #include "ToyEngine/renderer/shader.h"
 
 namespace ToyEngine
