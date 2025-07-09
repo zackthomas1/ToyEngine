@@ -17,7 +17,7 @@ namespace ToyEngine
 	{
 		TY_CORE_ASSERT(ImGui::GetCurrentContext() == nullptr, "ImGui - Already been initialized context.");
 		
-		GLFWwindow* window = dynamic_cast<WindowsWindow*>(&Application::Get().GetWindow())->GetGLFWWindow();
+		GLFWwindow* window = dynamic_cast<WindowsWindow*>(&Application::AccessWindow())->GetGLFWWindow();
 
 		// Setup Dear ImGui context
 		// -------------------------

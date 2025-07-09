@@ -17,30 +17,45 @@ namespace ToyEngine
 
 	void LayerStack::PushLayer(Layer* layer)
 	{
-		// Layers are pushed to the back of the layers_ array.
-		// This means the currently added layer processes events AFTER previously added layers. 
-		// If a previously added layer has already handled the event the current layer will NOT process it
-		// even if the layer has a statement for handling that specific event. 
-		// The order of layers in the array matters and effects how events are handled.
+
+		// Layers are inserted at layerInsertionIndex_ so overlays remain at the end.
+		// Newer layers receive events before older ones. 
+		// Layers in the foreground(newer) handle or consume events before they reach background layers.
+
+		// Layers are inserted at the position of layerInsertionIndex_.
+		// This ensures that overlays (added after all layers) remain at the end of the array.
 		layer->OnAttach();
-		layers_.push_back(layer);
+		layers_.insert(layers_.begin() + layerInsertionIndex_, layer);
 		layerInsertionIndex_++;
 	}
 
 	void LayerStack::PopLayer()
 	{
-		Layer *layer = layers_.back();
+		if (layerInsertionIndex_ == 0)
+			return; // No regular layers to pop
+
+		// The layer to remove is at (layerInsertionIndex_ - 1)
+		auto it = layers_.begin() + (layerInsertionIndex_ - 1);
+		Layer* layer = *it;
 		layer->OnDetatch();
-		layers_.pop_back();
-	}
+		delete layer; // Prevent memory leak
+		layers_.erase(it);
+		layerInsertionIndex_--;
+}
 
 	void LayerStack::PushOverlay(Layer* layer)
 	{
-		TY_CORE_WARN("TODO: Implement PushOverlay.");
+		// Overlays are pushed to the end of the layers_ array, after all regular layers.
+		// They are always rendered and updated BEFORE all regular layers.
+		layer->OnAttach();
+		layers_.push_back(layer);
 	}
 
 	void LayerStack::PopOverlay()
 	{
-		TY_CORE_WARN("TODO: Implement PopOverlay.");
+		Layer* layer = layers_.back();
+		layer->OnDetatch();
+		delete layer; // Prevent memory leak
+		layers_.pop_back();
 	}
 }

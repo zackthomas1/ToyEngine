@@ -10,6 +10,7 @@ namespace ToyEngine
 	{
 	public:
 		Application();
+		virtual ~Application();
 
 		// Delete copy/move to prevent reassignment
 		// Enforce Singleton pattern
@@ -50,11 +51,7 @@ namespace ToyEngine
 
 		// Accessors return const references to prevent modification
 		inline static Window& AccessWindow() { return *Application::s_instance->window_; }
-		inline static Application& Get() { return *s_instance; }
-	
-	protected:
-		// Make destructor protected to prevent deletion via pointer
-		virtual ~Application(); 
+		inline static Application& Get() { return *s_instance; }	
 	private:
 		bool OnClose();
 		bool OnResize(unsigned int width, unsigned int height);

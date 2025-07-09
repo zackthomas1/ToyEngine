@@ -34,9 +34,6 @@ namespace ToyEngine
 	Application::~Application()
 	{
 		Locator::DestoryServiceProviders();
-		
-		// Note: window_ are smart pointers that manage the memory they point to.
-		// There is no need to manually deallocate memory for them.
 	}
 
 	void Application::Run()
@@ -74,8 +71,9 @@ namespace ToyEngine
 		if (EventWindowResize* event = dynamic_cast<EventWindowResize*>(&e)) {
 			e.SetEventHandled(OnResize(event->GetWidth(), event->GetHeight()));
 		}
-		// Event handling starts at the top of the layer stack
-		// Layer in the foreground attempt handle events before background layers
+		
+		// Events are propagated from the topmost (foreground) layer to the bottom (background) layer.
+		// This allows layers in the foreground to handle or consume events before they reach background layers.
 		for (auto it = layerStack_.end(); it != layerStack_.begin(); ) {
 			(*--it)->OnEvent(e);
 			if(e.GetEventHandled()) { break; }
@@ -88,15 +86,17 @@ namespace ToyEngine
 
 	void Application::PushOverlay(Layer *layer)
 	{
-		TY_CORE_WARN("TODO: Implement Application::PushOverlay");
+		layerStack_.PushOverlay(layer);
 	}
 
-	bool Application::OnClose() {
+	bool Application::OnClose() 
+	{
 		isRunning_ = false;
 		return !isRunning_;
 	}
 
-	bool Application::OnResize(unsigned int width, unsigned int height) {
+	bool Application::OnResize(unsigned int width, unsigned int height) 
+	{
 		window_->SetWindowSize(width, height);
 		return true;
 	}
