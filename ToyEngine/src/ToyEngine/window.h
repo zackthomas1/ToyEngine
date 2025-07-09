@@ -2,6 +2,8 @@
 #include "ToyEngine/events/event.h"
 
 namespace ToyEngine {
+	constexpr int TY_DEFAULT_WINDOW_WIDTH = 800;
+	constexpr int TY_DEFAULT_WINDOW_HEIGHT = 600;
 
 	struct WindowProps
 	{
@@ -12,11 +14,11 @@ namespace ToyEngine {
 		float x_mouse_pos, y_mouse_pos;
 
 		WindowProps(const std::string& title = "Learn OpenGL",
-			unsigned int width = 800,
-			unsigned int height = 600,
+			unsigned int width = TY_DEFAULT_WINDOW_WIDTH,
+			unsigned int height = TY_DEFAULT_WINDOW_HEIGHT,
 			bool is_mouse_active = false,
-			float x_mouse_pos = 800.0f / 2.0f,
-			float y_mouse_pos = 600.0f / 2.0f)
+			float x_mouse_pos = TY_DEFAULT_WINDOW_WIDTH / 2.0f,
+			float y_mouse_pos = TY_DEFAULT_WINDOW_HEIGHT / 2.0f)
 			: title(title), width(width), height(height),
 			is_mouse_active(is_mouse_active), x_mouse_pos(x_mouse_pos), y_mouse_pos(y_mouse_pos)
 		{
@@ -33,6 +35,8 @@ namespace ToyEngine {
 
 		virtual void OnUpdate() = 0;
 		virtual void SetCommandCallbackFn(const EventCallbackFn& callback) = 0;
+		float GetAspectRatio() const { return static_cast<float>(data_.width) / static_cast<float>(data_.height); }
+		void SetWindowSize(unsigned int width, unsigned int height) { data_.width = width; data_.height = height; }
 	protected:
 		Window() {}
 		Window(const WindowProps& props);

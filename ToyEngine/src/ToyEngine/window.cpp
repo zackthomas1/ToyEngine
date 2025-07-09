@@ -14,12 +14,12 @@ namespace ToyEngine {
 	}
 
 	Window::Window(const WindowProps& props)
-    {
+	{
 		// Set the property
 		data_.title = props.title;
 		data_.width = props.width;
 		data_.height = props.height;
 		data_.x_mouse_pos = props.x_mouse_pos;
 		data_.y_mouse_pos = props.y_mouse_pos;
-    }
+	}
 }

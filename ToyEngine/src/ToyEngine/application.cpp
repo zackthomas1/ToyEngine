@@ -14,7 +14,7 @@ namespace ToyEngine
 		s_instance = this;
 
 		// Initialize window
-		window_ = Scope<Window>(Window::Create());
+		window_ = Window::Create();
 		window_->SetCommandCallbackFn(TY_BINDFN(Application::OnEvent));
 
 		// Initialize time step and input polling services
@@ -35,7 +35,7 @@ namespace ToyEngine
 	{
 		Locator::DestoryServiceProviders();
 		
-		// Note: window_, scene_, and render_ are smart pointers that manage the memory they point to.
+		// Note: window_ are smart pointers that manage the memory they point to.
 		// There is no need to manually deallocate memory for them.
 	}
 
@@ -71,7 +71,9 @@ namespace ToyEngine
 		if (EventApplicationClose* event = dynamic_cast<EventApplicationClose*>(&e)) {
 			e.SetEventHandled(OnClose());
 		}
-
+		if (EventWindowResize* event = dynamic_cast<EventWindowResize*>(&e)) {
+			e.SetEventHandled(OnResize(event->GetWidth(), event->GetHeight()));
+		}
 		// Event handling starts at the top of the layer stack
 		// Layer in the foreground attempt handle events before background layers
 		for (auto it = layerStack_.end(); it != layerStack_.begin(); ) {
@@ -92,6 +94,11 @@ namespace ToyEngine
 	bool Application::OnClose() {
 		isRunning_ = false;
 		return !isRunning_;
+	}
+
+	bool Application::OnResize(unsigned int width, unsigned int height) {
+		window_->SetWindowSize(width, height);
+		return true;
 	}
 
 }
