@@ -15,16 +15,16 @@ namespace ToyEngine
 	// Textures
 
 	// Mesh 
-	void RenderAPI::BindVertexArray(unsigned int vao)
+	void RenderAPI::BindVertexArray(uint32_t vao)
 	{
 		glBindVertexArray(static_cast<GLuint>(vao));
 	}
-	void RenderAPI::DeleteVertexArray(unsigned int id)
+	void RenderAPI::DeleteVertexArray(uint32_t id)
 	{
 		glDeleteVertexArrays(1, &static_cast<GLuint>(id));
 	}
 
-	void RenderAPI::CreateVertexBuffer(unsigned int* vbo, float* vertex_array, const int size)
+	void RenderAPI::CreateVertexBuffer(uint32_t* vbo, float* vertex_array, const int size)
 	{
 		// create Vertex Buffer Object (VBO)
 		glGenBuffers(1, vbo);
@@ -33,17 +33,17 @@ namespace ToyEngine
 		glBufferData(GL_ARRAY_BUFFER, size, vertex_array, GL_STATIC_DRAW);
 	}
 
-	void RenderAPI::DeleteBuffer(unsigned int id)
+	void RenderAPI::DeleteBuffer(uint32_t id)
 	{
 		glDeleteBuffers(1, &static_cast<GLuint>(id));
 	}
 
-	void RenderAPI::DrawArrays(unsigned int vertices)
+	void RenderAPI::DrawArrays(uint32_t vertices)
 	{
 		glDrawArrays(GL_TRIANGLES, 0, vertices); 
 	}
 
-	void RenderAPI::DrawIndexed(unsigned int indices)
+	void RenderAPI::DrawIndexed(uint32_t indices)
 	{
 		glDrawElements(GL_TRIANGLES, (indices), GL_UNSIGNED_INT, 0);
 	}

@@ -50,7 +50,7 @@ namespace ToyEngine
 		glDeleteTextures(1, &id_);
 	}
 
-	void Texture2D::Bind(unsigned int texture_unit) const
+	void Texture2D::Bind(uint32_t texture_unit) const
 	{
 		// activate texture unit before binding
 		glActiveTexture(GL_TEXTURE0 + texture_unit);

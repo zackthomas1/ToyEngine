@@ -85,13 +85,13 @@ namespace ToyEngine
 		return source_code;
 	}
 
-	void Shader::CompileShaderProgram(const char* vertex_source, const char* fragement_source, unsigned int& shader_program)
+	void Shader::CompileShaderProgram(const char* vertex_source, const char* fragement_source, uint32_t& shader_program)
 	{
 		int success;
 		char info_log[512];
 
 		// compile vertex shader
-		unsigned int vertex_shader;
+		uint32_t vertex_shader;
 		vertex_shader = glCreateShader(GL_VERTEX_SHADER);
 		glShaderSource(vertex_shader, 1, &vertex_source, NULL);
 		glCompileShader(vertex_shader);
@@ -104,7 +104,7 @@ namespace ToyEngine
 		}
 
 		// compile fragment shader
-		unsigned int fragment_shader;
+		uint32_t fragment_shader;
 		fragment_shader = glCreateShader(GL_FRAGMENT_SHADER);
 		glShaderSource(fragment_shader, 1, &fragement_source, NULL);
 		glCompileShader(fragment_shader);

@@ -14,7 +14,7 @@ namespace ToyEngine
 		// use/activate the shader 
 		void Use();
 
-		unsigned int id() const { return id_; }
+		uint32_t id() const { return id_; }
 
 		// utility uniform functions
 		void SetBool(const std::string& name, bool value) const;
@@ -30,9 +30,9 @@ namespace ToyEngine
 		const char* m_name;
 	private:
 		std::string ReadSourceFile(const char* path);
-		void CompileShaderProgram(const char* vertex_source, const char* fragement_source, unsigned int& shader_program);
+		void CompileShaderProgram(const char* vertex_source, const char* fragement_source, uint32_t& shader_program);
 	private:
-		unsigned int id_;
+		uint32_t id_;
 	};
 
 	class ShaderLibrary

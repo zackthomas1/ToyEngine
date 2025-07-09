@@ -54,7 +54,7 @@ namespace ToyEngine
 		inline static Application& Get() { return *s_instance; }	
 	private:
 		bool OnClose();
-		bool OnResize(unsigned int width, unsigned int height);
+		bool OnResize(uint32_t width, uint32_t height);
 	private:
 		Scope<Window> window_;
 		ImGuiLayer *imGuiLayer_;	// imGuiLayer is owned by the layerStack_. Deleted by layerStack_ destructor

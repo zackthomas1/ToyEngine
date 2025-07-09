@@ -95,7 +95,7 @@ namespace ToyEngine
 		return !isRunning_;
 	}
 
-	bool Application::OnResize(unsigned int width, unsigned int height) 
+	bool Application::OnResize(uint32_t width, uint32_t height) 
 	{
 		window_->SetWindowSize(width, height);
 		return true;
