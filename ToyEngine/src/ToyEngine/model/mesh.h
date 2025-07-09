@@ -23,10 +23,10 @@ namespace ToyEngine
 
 	public:
 		// mesh data 
-        uint32_t m_vao, m_vbo, m_ebo;
-		Vector<Vertex>         m_vertices;
-        Vector<uint32_t>   m_indices;
-		Ref<Material> m_material;
+		uint32_t m_vao, m_vbo, m_ebo;
+		Vector<Vertex>		m_vertices;
+		Vector<uint32_t>	m_indices;
+		Ref<Material>		m_material;
 	private:
 		void setupMesh();
 	};
