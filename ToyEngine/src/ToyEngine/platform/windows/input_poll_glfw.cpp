@@ -14,7 +14,7 @@ namespace ToyEngine {
 
     eKeyState ToyEngine::InputPollGLFW::Key(eKeyCode key)
     {
-        GLFWwindow* window = dynamic_cast<WindowsWindow*>(&Application::Get().GetWindow())->GetGLFWWindow();
+        GLFWwindow* window = dynamic_cast<WindowsWindow*>(&Application::AccessWindow())->GetGLFWWindow();
         TY_CORE_ASSERT(window, "GLFWwindow is Null. Initialize windowing before calling input polling service provider.");
         eKeyState key_state = static_cast<eKeyState>(glfwGetKey(window, static_cast<int>(key)));
         return key_state;
@@ -27,7 +27,7 @@ namespace ToyEngine {
 
     std::pair<float, float> ToyEngine::InputPollGLFW::MousePos()
     {
-        GLFWwindow* window = dynamic_cast<WindowsWindow*>(&Application::Get().GetWindow())->GetGLFWWindow();
+        GLFWwindow* window = dynamic_cast<WindowsWindow*>(&Application::AccessWindow())->GetGLFWWindow();
         TY_CORE_ASSERT(window, "GLFWwindow is Null. Initialize windowing before calling input polling service provider.");
 
         double xpos, ypos;

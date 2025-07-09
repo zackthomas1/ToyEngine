@@ -28,7 +28,7 @@ namespace ToyEngine
 		switch (m_data.type)
 		{
 		case eCameraType::kFlyCamera: {
-			float aspect = Application::Get().GetWindow().GetAspectRatio();
+			float aspect = Application::AccessWindow().GetAspectRatio();
 			return glm::perspective(glm::radians(m_data.fov), aspect, m_data.znear, m_data.zfar);
 		};
 		case eCameraType::kOrthographicCamera: {
