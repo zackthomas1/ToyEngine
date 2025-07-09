@@ -12,41 +12,43 @@ namespace ToyEngine
 
 	struct CameraProps
 	{
-		eCameraType type;
+					// The type of camera (e.g., perspective, orthographic, fly camera, etc.)
+					eCameraType type;
 
-		glm::vec3 position;
-		glm::vec3 front;
-		glm::vec3 right;
-		glm::vec3 up;
+					glm::vec3 position;	// Camera position in world space
+					glm::vec3 front;	// The direction the camera is facing
+					glm::vec3 right;	// The right vector relative to the camera's orientation
+					glm::vec3 up;		// The up vector relative to the camera's orientation
 
-		// Perspective camera attributes
-		float fov;
+					float fov;			// Field of view for perspective cameras (in degrees)
 
-		// Orthographic camera attributes
-		float left_bound, right_bound, bottom_bound, top_bound;
-		
-		// Camera attributes
-		float pitch, yaw, znear, zfar;
-		
-		float movementSpeed;
-		float mouseSensitivity;
+					// Orthographic camera bounds (left, right, bottom, top)
+					float left_bound, right_bound, bottom_bound, top_bound;
+					
+					// Camera orientation and clipping planes
+					float pitch;			// Pitch: rotation around the X axis (up/down look)
+					float yaw;				// Yaw: rotation around the Y axis (left/right look)
+					float znear;			// Near clipping plane distance
+					float zfar;				// Far clipping plane distance
+					float movementSpeed;	// Camera movement speed (units per second)
+					float mouseSensitivity;	// Mouse sensitivity for camera rotation
 
-		CameraProps(
-			eCameraType type = eCameraType::kFlyCamera,
-			glm::vec3& position = glm::vec3(0.0f, 0.0f, 3.0f),
-			glm::vec3& front = glm::vec3(0.0f, 0.0f, -1.0f),
-			glm::vec3& right = glm::vec3(0.0f),
-			glm::vec3& up = glm::vec3(0.0f, 1.0f, 0.0f),
-			float fov = 45.0f,
-			float left_bound = -4.0f, float right_bound = 4.0f, float bottom_bound = -3.0f, float top_bound = 3.0f,
-			float pitch = 0.0f, float yaw = -90.0f,	float znear = 0.1f, float zfar = 100.0f,
-			float movementSpeed = 10.0f, float mouseSensitivity = 0.1f
-		) : type(type), position(position), front(front), right(right), up(up),
-			fov(fov),
-			left_bound(left_bound), right_bound(right_bound), bottom_bound(bottom_bound), top_bound(top_bound),
-			pitch(pitch), yaw(yaw), znear(znear), zfar(zfar),
-			movementSpeed(movementSpeed), mouseSensitivity(mouseSensitivity)
-		{}
+					CameraProps(
+						eCameraType type = eCameraType::kFlyCamera,
+						glm::vec3& position = glm::vec3(0.0f, 0.0f, 3.0f),
+						glm::vec3& front = glm::vec3(0.0f, 0.0f, -1.0f),
+						glm::vec3& right = glm::vec3(0.0f),
+						glm::vec3& up = glm::vec3(0.0f, 1.0f, 0.0f),
+						float fov = 45.0f,
+						float left_bound = -4.0f, float right_bound = 4.0f, float bottom_bound = -3.0f, float top_bound = 3.0f,
+						float pitch = 0.0f, float yaw = -90.0f,	float znear = 0.1f, float zfar = 100.0f,
+						float movementSpeed = 10.0f, float mouseSensitivity = 0.1f
+					) : type(type), position(position), front(front), right(right), up(up),
+						fov(fov),
+						left_bound(left_bound), right_bound(right_bound), bottom_bound(bottom_bound), top_bound(top_bound),
+						pitch(pitch), yaw(yaw), znear(znear), zfar(zfar),
+						movementSpeed(movementSpeed), mouseSensitivity(mouseSensitivity)
+					{}
 	};
 
 	class Camera
@@ -75,7 +77,6 @@ namespace ToyEngine
 		static inline bool IsValidCameraType(eCameraType type);
 	private: 
 		CameraProps m_data;
-		eCameraMovement movement_update;
 	};
 
 }
