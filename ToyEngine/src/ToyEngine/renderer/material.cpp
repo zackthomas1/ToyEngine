@@ -32,7 +32,6 @@ namespace ToyEngine
 				break;
 			}
 			}
-			texture->Unbind();
 		}
 	}
 }

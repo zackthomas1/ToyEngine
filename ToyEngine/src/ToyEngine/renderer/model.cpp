@@ -130,7 +130,7 @@ namespace ToyEngine{
 
 				// Load texture
 				std::string filename = directory_ + "/" + std::string(str.C_Str());
-				Ref<Texture2D> texture =  MakeRef<Texture2D>(filename, static_cast<eTextureType>(type), true);
+				Ref<Texture2D> texture =  Texture2D::Create(filename, static_cast<eTextureType>(type), flip_vertically_);
 				textures.emplace_back(texture);
 				m_textures.push_back(texture);
 			}

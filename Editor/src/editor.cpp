@@ -20,7 +20,7 @@ public:
 		// Create scene geometry
 		TY_INFO("Loading scene geometry...");
 		m_models.push_back(ToyEngine::Model::Create("../assets/models/backpack/backpack.obj", true));
-		//m_models.push_back(ToyEngine::Model::Create("../assets/models/cyborg/cyborg.obj", true));
+		m_models.push_back(ToyEngine::Model::Create("../assets/models/cyborg/cyborg.obj", false));
 		TY_INFO("Scene loading complete");
 	}
 

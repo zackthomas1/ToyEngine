@@ -5,8 +5,8 @@
 
 namespace ToyEngine
 {
-	OpenGLTexture2D::OpenGLTexture2D(std::string &path, eTextureType type, bool flip_vertically)
-		: Texture2D(path, type, flip_vertically)
+	OpenGLTexture2D::OpenGLTexture2D(const std::string &path, eTextureType type, bool flip_vertically)
+		: Texture2D(path, type)
 	{
 		// generate texture sampler
 		glGenTextures(1, &id_);

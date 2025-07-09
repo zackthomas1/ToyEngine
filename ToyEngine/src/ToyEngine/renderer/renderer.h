@@ -13,9 +13,10 @@ namespace ToyEngine
 		static void BeginScene(Ref<Camera> camera);
 		static void Submit(Ref<Shader> shader, Ref<Model> model);
 		static void EndScene();
-		static void Init();
+		static void Init(eRenderAPI api = eRenderAPI::kOpenGL);
 
 		static Renderer* s_instance;
+		static eRenderAPI API() { return Renderer::s_instance->api_; }
 
 		struct SceneData{
 			glm::mat4 view;
@@ -25,7 +26,9 @@ namespace ToyEngine
 		};
 		SceneData m_data;
 	protected:
-		Renderer(SceneData data = SceneData());
+		Renderer(eRenderAPI api, SceneData data = SceneData());
 		~Renderer();
+	private:
+		eRenderAPI api_;
 	};
 }

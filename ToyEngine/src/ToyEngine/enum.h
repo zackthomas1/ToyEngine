@@ -47,4 +47,9 @@ namespace ToyEngine
 		kDiffuse = 1,
 		kSpecular = 2,
 	};
+
+	enum class eRenderAPI
+	{
+		kOpenGL = 1,
+	};
 }

@@ -8,13 +8,11 @@ namespace ToyEngine
 {
 	Renderer* Renderer::s_instance = nullptr; 
 
-	Renderer::Renderer(SceneData data) : m_data(data)
+	Renderer::Renderer(eRenderAPI api, SceneData data) : api_(api), m_data(data)
 	{
 	}
 
-	Renderer::~Renderer()
-	{
-	}
+	Renderer::~Renderer() {}
 
 	void Renderer::BeginScene(Ref<Camera> camera)
 	{
@@ -39,13 +37,11 @@ namespace ToyEngine
 		}
 	}
 
-	void Renderer::EndScene()
-	{
-	}
+	void Renderer::EndScene() {}
 
-	void Renderer::Init()
+	void Renderer::Init(eRenderAPI api)
 	{
 		TY_CORE_ASSERT(!s_instance, "Renderer already exist!")
-		s_instance = new Renderer();
+		s_instance = new Renderer(api);
 	}
 }
