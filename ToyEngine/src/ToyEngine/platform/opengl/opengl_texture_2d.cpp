@@ -11,8 +11,20 @@ namespace ToyEngine
 		// generate texture sampler
 		glGenTextures(1, &id_);
 		glBindTexture(GL_TEXTURE_2D, id_);
+		
+		// Set texture wrapping parameters:
+		// GL_TEXTURE_WRAP_S: wrapping mode on the S (X) axis (e.g., GL_REPEAT, GL_CLAMP_TO_EDGE)
+		// GL_TEXTURE_WRAP_T: wrapping mode on the T (Y) axis
+		uint32_t wrap_s = GL_CLAMP_TO_EDGE, wrap_t = GL_CLAMP_TO_EDGE;
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, wrap_s);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, wrap_t);
 
-		SetParameters(GL_CLAMP_TO_EDGE, GL_CLAMP_TO_EDGE, GL_LINEAR_MIPMAP_LINEAR, GL_LINEAR);
+		// Set texture filtering parameters:
+		// GL_TEXTURE_MIN_FILTER: filtering when texture is minified (e.g., GL_LINEAR, GL_NEAREST, mipmap options)
+		// GL_TEXTURE_MAG_FILTER: filtering when texture is magnified
+		uint32_t min_filter = GL_LINEAR_MIPMAP_LINEAR, mag_filter = GL_LINEAR;
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, min_filter);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, mag_filter);
 
 		// load image
 		int width, height, nr_channels;
@@ -52,21 +64,14 @@ namespace ToyEngine
 
 	void OpenGLTexture2D::Bind(uint32_t texture_unit) const
 	{
-		// activate texture unit before binding
+		// In OpenGL, textures must be bound to a texture unit before use in shaders.
+		// glActiveTexture selects the active texture unit (e.g., GL_TEXTURE0 + texture_unit).
+		// glBindTexture binds the texture object to the GL_TEXTURE_2D target for the selected unit.
+
 		glActiveTexture(GL_TEXTURE0 + texture_unit);
 		glBindTexture(GL_TEXTURE_2D, id_);
 
 		// Alternatively: glBindTextureUnit combines functionality of glActiveTexture and glBindTexture into a single call
 		// Example: glBindTextureUnit(texture_unit, id_)
-	}
-
-	void OpenGLTexture2D::SetParameters(uint32_t wrap_s, uint32_t wrap_t, uint32_t min_filter, uint32_t mag_filter)
-	{
-		glBindTexture(GL_TEXTURE_2D, id_);
-
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, wrap_s);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, wrap_t);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, min_filter);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, mag_filter);
 	}
 }
