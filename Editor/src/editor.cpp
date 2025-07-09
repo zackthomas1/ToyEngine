@@ -5,6 +5,7 @@ class Scene : public ToyEngine::Layer
 public:
 	Scene()
 	{
+		TY_INFO("Initialize Camera");
 		m_camera = ToyEngine::MakeRef<ToyEngine::Camera>(ToyEngine::eCameraType::kFlyCamera);
 		m_shader_lib = ToyEngine::MakeRef<ToyEngine::ShaderLibrary>();
 

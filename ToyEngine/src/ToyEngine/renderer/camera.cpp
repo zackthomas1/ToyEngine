@@ -7,33 +7,21 @@ namespace ToyEngine
 	Camera::Camera(eCameraType type, const CameraProps& props) : m_data(props)
 	{
 		m_data.type = type;
+		TY_CORE_INFO("Create {}", CameraTypeToString(m_data.type));
 		UpdateCameraVectors();
 	}
 
 	Camera::Camera(const CameraProps& props) : m_data(props)
 	{
+		TY_CORE_INFO("Create {}", CameraTypeToString(m_data.type));
 		UpdateCameraVectors();
 	}
 
-	// getter/setter
 	glm::mat4 Camera::GetViewMatrix() const
 	{
 		return glm::lookAt(m_data.position, m_data.position + m_data.front, m_data.up);
 	}
-
-
-	// Bitwise validity check:
-	inline bool IsValidCameraType(eCameraType type) 
-	{
-		constexpr uint32_t kAllFlags = static_cast<uint32_t>(eCameraType::kFlyCamera) |
-										static_cast<uint32_t>(eCameraType::kOrthographicCamera);
-		uint32_t t = static_cast<uint32_t>(type);
-		// (t & kAllFlags) == t: Checks if all bits set in t are also set in kAllFlags, i.e., t is a valid flag.
-		// If type is kFlyCamera(1): kAllFlags = 1 | 2 = 3 (binary 11) -> t & kAllFlags = 1 & 3 = 1, which equals t(valid)
-		// If type is 4 (not defined):	t & kAllFlags = 4 & 3 = 0, which does not equal t(invalid)
-		return t != 0 && (t & kAllFlags) == t;
-	}
-
+	
 	glm::mat4 Camera::GetProjectionMatrix() const
 	{
 		TY_CORE_ASSERT(IsValidCameraType(m_data.type), "eCameraType enum invalid");
@@ -95,7 +83,6 @@ namespace ToyEngine
 			m_data.position -= velocity * m_data.up;
 			break;
 		}
-
 		UpdateCameraVectors();
 	}
 
@@ -111,7 +98,6 @@ namespace ToyEngine
 			m_data.pitch = 89.0f;
 		else if (m_data.pitch < -89.0f)
 			m_data.pitch = -89.0f;
-
 		UpdateCameraVectors();
 	}
 
@@ -124,7 +110,7 @@ namespace ToyEngine
 			m_data.fov = 90.0f;
 	}
 
-	// protected functions
+	// private functions
 	void Camera::UpdateCameraVectors()
 	{
 		// Calculate camera front vector from Euler rotations
@@ -136,5 +122,26 @@ namespace ToyEngine
 
 		m_data.right = glm::normalize(glm::cross(m_data.front, TY_DEFAULT_WORLD_UP));
 		m_data.up = glm::normalize(glm::cross(m_data.right, m_data.front));
+	}
+
+	char* Camera::CameraTypeToString(eCameraType type)
+	{
+		switch (type) {
+		case eCameraType::kFlyCamera: return "Fly Camera";
+		case eCameraType::kOrthographicCamera: return "Orthographic Camera";
+		default: return "Unknown Camera Type";
+		}
+	}
+
+	// Bitwise validity check:
+	inline bool Camera::IsValidCameraType(eCameraType type)
+	{
+		constexpr uint32_t kAllFlags = static_cast<uint32_t>(eCameraType::kFlyCamera) |
+			static_cast<uint32_t>(eCameraType::kOrthographicCamera);
+		uint32_t t = static_cast<uint32_t>(type);
+		// (t & kAllFlags) == t: Checks if all bits set in t are also set in kAllFlags, i.e., t is a valid flag.
+		// If type is kFlyCamera(1): kAllFlags = 1 | 2 = 3 (binary 11) -> t & kAllFlags = 1 & 3 = 1, which equals t(valid)
+		// If type is 4 (not defined):	t & kAllFlags = 4 & 3 = 0, which does not equal t(invalid)
+		return t != 0 && (t & kAllFlags) == t;
 	}
 }

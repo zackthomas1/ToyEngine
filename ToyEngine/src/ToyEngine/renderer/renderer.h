@@ -1,6 +1,6 @@
 #pragma once
 
-#include "ToyEngine/renderer/camera/camera.h"
+#include "ToyEngine/renderer/camera.h"
 #include "ToyEngine/renderer/model.h"
 #include "ToyEngine/platform/opengl/shader_s.h"
 

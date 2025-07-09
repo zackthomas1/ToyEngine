@@ -66,12 +66,13 @@ namespace ToyEngine
 		void SetFar(float zfar);
 
 		// update methods
-		//virtual void Update();
 		virtual void UpdatePosition(eCameraMovement direction, float time_step);
 		virtual void UpdateLookDirection(float x_offset, float y_offset);
 		virtual void UpdateFOV(float y_offset);
 	private:
 		virtual void UpdateCameraVectors();
+		static char* CameraTypeToString(eCameraType type);
+		static inline bool IsValidCameraType(eCameraType type);
 	private: 
 		CameraProps m_data;
 		eCameraMovement movement_update;
