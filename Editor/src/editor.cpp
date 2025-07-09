@@ -26,27 +26,30 @@ public:
 
 	virtual void OnDetach() {}
 
-	virtual void Update(float delta_time)
+	virtual void Update(const ToyEngine::TimeStep& time_step)
 	{
 		//Keyboard input polling
-		ToyEngine::InputPoll* input = ToyEngine::Locator::InputPollService();
-		if (input->Key(ToyEngine::eKeyCode::kKeyW) != ToyEngine::eKeyState::kRelease)
+		float delta_time = time_step.GetTimeDelta();
+		ToyEngine::InputPoll& input = ToyEngine::Locator::InputPollService();
+		if (input.Key(ToyEngine::eKeyCode::kKeyW) != ToyEngine::eKeyState::kRelease)
 			m_camera->UpdatePosition(ToyEngine::eCameraMovement::kForward, delta_time);
-		if (input->Key(ToyEngine::eKeyCode::kKeyS) != ToyEngine::eKeyState::kRelease)
+		if (input.Key(ToyEngine::eKeyCode::kKeyS) != ToyEngine::eKeyState::kRelease)
 			m_camera->UpdatePosition(ToyEngine::eCameraMovement::kBackward, delta_time);
-		if (input->Key(ToyEngine::eKeyCode::kKeyA) != ToyEngine::eKeyState::kRelease)
+		if (input.Key(ToyEngine::eKeyCode::kKeyA) != ToyEngine::eKeyState::kRelease)
 			m_camera->UpdatePosition(ToyEngine::eCameraMovement::kLeft, delta_time);
-		if (input->Key(ToyEngine::eKeyCode::kKeyD) != ToyEngine::eKeyState::kRelease)
+		if (input.Key(ToyEngine::eKeyCode::kKeyD) != ToyEngine::eKeyState::kRelease)
 			m_camera->UpdatePosition(ToyEngine::eCameraMovement::kRight, delta_time);
-		if (input->Key(ToyEngine::eKeyCode::kKeyE) != ToyEngine::eKeyState::kRelease)
+		if (input.Key(ToyEngine::eKeyCode::kKeyE) != ToyEngine::eKeyState::kRelease)
 			m_camera->UpdatePosition(ToyEngine::eCameraMovement::kUp, delta_time);
-		if (input->Key(ToyEngine::eKeyCode::kKeyQ) != ToyEngine::eKeyState::kRelease)
+		if (input.Key(ToyEngine::eKeyCode::kKeyQ) != ToyEngine::eKeyState::kRelease)
 			m_camera->UpdatePosition(ToyEngine::eCameraMovement::kDown, delta_time);
 
 		// Draw Scene
 		ToyEngine::Renderer::BeginScene(m_camera);
-		for(ToyEngine::Ref<ToyEngine::Model> model: m_models)
+		for(ToyEngine::Ref<ToyEngine::Model> model: m_models){
+			model->m_model_mat = glm::rotate(model->m_model_mat, glm::radians(glm::sin(time_step.GetTimeCurrent())), glm::vec3(0.0f,1.0f,0.0f));
 			ToyEngine::Renderer::Submit(m_shader_lib->Get("flat_texture"), model);
+		}
 		ToyEngine::Renderer::EndScene();
 	}
 

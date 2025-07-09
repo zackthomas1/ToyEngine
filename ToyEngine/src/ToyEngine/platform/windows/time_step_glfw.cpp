@@ -19,8 +19,6 @@ namespace ToyEngine
 		last_frame_time_ = current_time_;
 	}
 
-	float TimeStepGLFW::GetTimeStep()
-	{
-		return time_step_;
-	}
+	float TimeStepGLFW::GetTimeDelta() const { return time_step_; }
+	float TimeStepGLFW::GetTimeCurrent() const { return current_time_; }
 }

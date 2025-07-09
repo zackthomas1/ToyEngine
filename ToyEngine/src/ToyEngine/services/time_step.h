@@ -16,7 +16,8 @@ namespace ToyEngine
 		/// The time step should only be modified in the main game loop.
 		/// </summary>
 		virtual void Update() = 0;
-		virtual float GetTimeStep() = 0;
+		virtual float GetTimeDelta() const = 0;
+		virtual float GetTimeCurrent() const = 0;
 	protected: 
 		TimeStep() {}
 	};
@@ -31,7 +32,8 @@ namespace ToyEngine
 			TY_CORE_WARN( "Platform Invalid. Null service provider - Time step service disabled." );
 		}
 		virtual void Update() override {}
-		virtual float GetTimeStep() override { return 0.0f; }
+		virtual float GetTimeDelta() const override { return 0.0f; }
+		virtual float GetTimeCurrent() const override { return 0.0f; }
 	};
 
 	// Concrete implementation of the TimeStep service 
@@ -45,7 +47,8 @@ namespace ToyEngine
 
 		virtual void Init() override;
 		virtual void Update() override;
-		virtual float GetTimeStep() override;
+		virtual float GetTimeDelta() const override;
+		virtual float GetTimeCurrent() const override;
 	private:
 		float current_time_, last_frame_time_, time_step_;
 	};

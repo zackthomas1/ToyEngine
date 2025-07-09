@@ -20,7 +20,7 @@ namespace ToyEngine
 		/// Each frame, the engine updates every layer in m_layerStack
 		/// </summary>
 		/// <param name="time_delta"></param>
-		virtual void Update(float delta_time) {};
+		virtual void Update(const TimeStep& time_step) {};
 		/// <summary>
 		/// Called in Application::Run after scene draw call.
 		/// GUI defined in client application project. 

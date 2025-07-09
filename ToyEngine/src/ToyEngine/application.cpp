@@ -19,9 +19,9 @@ namespace ToyEngine
 
 		// Initialize time step and input polling services
 		TY_CORE_INFO("Initialize time step service");
-		Locator::TimeStepService()->Init();
+		Locator::TimeStepService().Init();
 		TY_CORE_INFO("Initialize input poll service");
-		Locator::InputPollService()->Init();
+		Locator::InputPollService().Init();
 
 		// Initalize imgui layer
 		imGuiLayer_ = new ImGuiLayer();
@@ -41,14 +41,13 @@ namespace ToyEngine
 		while (isRunning_)
 		{
 			// Update variable time step
-			Locator::TimeStepService()->Update();
+			Locator::TimeStepService().Update();
 
 			// Advance the game simulation one step (update)
-			float delta_time = Locator::TimeStepService()->GetTimeStep();
 			// Update layers
 			for (Layer *layer : layerStack_)
 			{
-				layer->Update(delta_time);
+				layer->Update(Locator::TimeStepService());
 			}
 
 			// Draw GUI

@@ -20,11 +20,6 @@ namespace ToyEngine
 
 	// Time Step service methods
 	// --------------------------
-	TimeStep* Locator::TimeStepService()
-	{
-		return time_step_;
-	}
-
 	void Locator::SetTimeStepProvider(TimeStep* time_step)
 	{
 		// If there is currently an active time step provider deallocate 
@@ -48,11 +43,6 @@ namespace ToyEngine
 
 	// Input Poll 
 	// --------------------------
-	InputPoll* Locator::InputPollService()
-	{
-		return input_poll_;
-	}
-
 	void Locator::SetInputPollProvider(InputPoll* input_poll)
 	{
 		if (input_poll_ != nullptr) { DeleteInputPollProvider(); }

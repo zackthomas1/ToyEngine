@@ -22,11 +22,11 @@ namespace ToyEngine
 		static void DestoryServiceProviders();
 
 		// time step service
-		static TimeStep* TimeStepService();
+		static TimeStep& TimeStepService() { TY_CORE_ASSERT(time_step_, "TimeStep provider not set"); return *time_step_; };
 		static void SetTimeStepProvider(TimeStep* time_step);
 
 		// input polling service
-		static InputPoll* InputPollService();
+		static InputPoll& InputPollService() { TY_CORE_ASSERT(input_poll_, "InputPoll provider not set"); return *input_poll_; }
 		static void SetInputPollProvider(InputPoll* input_poll); 
 	private:
 		static void DeleteTimeStepProvider();
