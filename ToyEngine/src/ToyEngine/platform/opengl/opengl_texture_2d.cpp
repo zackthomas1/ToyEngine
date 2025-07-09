@@ -1,12 +1,12 @@
 #include "pch.h"
-#include "texture_2d.h"
+#include "opengl_texture_2d.h"
 #include <glad/glad.h>
-#include "stb_image.h"
+#include "ToyEngine/stb_image.cpp"
 
 namespace ToyEngine
 {
-	Texture2D::Texture2D(std::string &path, eTextureType type, bool flip_vertically)
-		: m_path(path), m_type(type)
+	OpenGLTexture2D::OpenGLTexture2D(std::string &path, eTextureType type, bool flip_vertically)
+		: Texture2D(path, type, flip_vertically)
 	{
 		// generate texture sampler
 		glGenTextures(1, &id_);
@@ -45,12 +45,12 @@ namespace ToyEngine
 		stbi_image_free(data);
 	}
 
-	Texture2D::~Texture2D()
+	OpenGLTexture2D::~OpenGLTexture2D()
 	{
 		glDeleteTextures(1, &id_);
 	}
 
-	void Texture2D::Bind(uint32_t texture_unit) const
+	void OpenGLTexture2D::Bind(uint32_t texture_unit) const
 	{
 		// activate texture unit before binding
 		glActiveTexture(GL_TEXTURE0 + texture_unit);
@@ -60,13 +60,7 @@ namespace ToyEngine
 		// Example: glBindTextureUnit(texture_unit, id_)
 	}
 
-	void Texture2D::Unbind() const
-	{
-		//set textuer unit back to defaults once configured
-		glActiveTexture(GL_TEXTURE0); 
-	}
-
-	void Texture2D::SetParameters(uint32_t wrap_s, uint32_t wrap_t, uint32_t min_filter, uint32_t mag_filter)
+	void OpenGLTexture2D::SetParameters(uint32_t wrap_s, uint32_t wrap_t, uint32_t min_filter, uint32_t mag_filter)
 	{
 		glBindTexture(GL_TEXTURE_2D, id_);
 

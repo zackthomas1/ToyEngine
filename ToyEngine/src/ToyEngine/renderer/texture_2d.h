@@ -9,14 +9,14 @@ namespace ToyEngine
 		Texture2D(std::string &path, eTextureType type, bool flip_vertically = false);
 		~Texture2D();
 
-		void Bind(uint32_t texture_unit) const;
-		void Unbind() const;
-		void SetParameters(uint32_t wrap_s, uint32_t wrap_t, uint32_t min_filter, uint32_t mag_filter);
+		virtual uint32_t GetWidth() const { return width_; }
+		virtual uint32_t GetHight() const { return height_;}
+		virtual void Bind(uint32_t texture_unit) const = 0;
 	public:
 		uint32_t id_, width_, height_;
 		std::string m_path;
 		eTextureType m_type;
-	private:
+	protected:
 		uint32_t nr_channels_;
 	};
 }
