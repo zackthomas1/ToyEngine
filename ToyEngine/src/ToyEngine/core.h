@@ -27,7 +27,7 @@
 #define TY_BINDFN(fn) [this](Event &e) { return fn(e); }
 //#define TY_BINDFN(fn) std::bind(&fn, this, std::placeholders::_1)
 
-#define TY_EPSILON 0.001
+constexpr float TY_EPSILON = 0.001;
 
 namespace ToyEngine {
 	template <typename T>

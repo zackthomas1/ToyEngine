@@ -23,10 +23,7 @@ public:
 		TY_INFO("Scene loading complete");
 	}
 
-	virtual void OnDetach()
-	{
-
-	}
+	virtual void OnDetach() {}
 
 	virtual void Update(float delta_time)
 	{
@@ -47,7 +44,7 @@ public:
 
 		// Draw Scene
 		ToyEngine::Renderer::BeginScene(m_camera);
-		for(auto model: m_models)
+		for(ToyEngine::Ref<ToyEngine::Model> model: m_models)
 			ToyEngine::Renderer::Submit(m_shader_lib->Get("flat_texture"), model);
 		ToyEngine::Renderer::EndScene();
 	}

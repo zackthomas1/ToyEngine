@@ -38,7 +38,7 @@ namespace ToyEngine
 	void Locator::DeleteTimeStepProvider()
 	{
 		// Deallocates memory for time step provider
-		TY_CORE_TRACE("Deleted TimeStep Provider");
+		TY_CORE_INFO("Deleted TimeStep Provider");
 		if (time_step_ != nullptr) 
 		{
 			delete time_step_;
@@ -62,7 +62,7 @@ namespace ToyEngine
 
 	void Locator::DeleteInputPollProvider()
 	{
-		TY_CORE_TRACE("Deleted InputPoll Provider");
+		TY_CORE_INFO("Deleted InputPoll Provider");
 		if (input_poll_ != nullptr)
 		{
 			delete input_poll_;

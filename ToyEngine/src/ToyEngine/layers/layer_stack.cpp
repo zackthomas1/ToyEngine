@@ -1,16 +1,12 @@
 #include "pch.h"
 #include "layer_stack.h"
 
-#define SPDLOG_ACTIVE_LEVEL SPDLOG_LEVEL_TRACE // Must: define SPDLOG_ACTIVE_LEVEL before `#include "spdlog/spdlog.h"
-
-#include "spdlog/spdlog.h"
-
 namespace ToyEngine
 {
 	LayerStack::LayerStack() {}
 	LayerStack::~LayerStack()
 	{
-		TY_CORE_TRACE("Destroy LayerStack");
+		TY_CORE_INFO("Destroy LayerStack");
 		for (Layer *layer : layers_)
 		{
 			layer->OnDetatch();

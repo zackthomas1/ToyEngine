@@ -64,10 +64,15 @@ namespace ToyEngine
 	void WindowsWindow::SetCallbackFns()
 	{
 		glfwSetFramebufferSizeCallback(window_, [](GLFWwindow* window, int width, int height) {
+			WindowData& data = *(WindowData*)glfwGetWindowUserPointer(window);
 			// make sure the viewport matches the new window dimensions; note that width and 
 			// height will be significantly larger than specified on retina displays.
 			TY_CORE_TRACE("Update Framebuffer size: width - {} height - {}", width, height);
 			glViewport(0, 0, width, height);
+			
+			EventWindowResize window_resize(width, height);
+			data.event_callback(window_resize);
+		
 		});
 
 
@@ -125,7 +130,7 @@ namespace ToyEngine
 
 	void WindowsWindow::Shutdown()
 	{
-		TY_CORE_TRACE("Window shutdown");
+		TY_CORE_INFO("Window shutdown");
 		glfwTerminate();
 	}
 }
