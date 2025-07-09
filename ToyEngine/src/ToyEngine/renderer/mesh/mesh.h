@@ -18,14 +18,14 @@ namespace ToyEngine
 	class Mesh
 	{
 	public:
-		Mesh(Vector<Vertex>& vertices, Vector<unsigned int>& indices, Ref<Material> material);
+		Mesh(Vector<Vertex>& vertices, Vector<uint32_t>& indices, Ref<Material> material);
 		virtual ~Mesh();
 
 	public:
 		// mesh data 
-		unsigned int m_vao, m_vbo, m_ebo;
+        uint32_t m_vao, m_vbo, m_ebo;
 		Vector<Vertex>         m_vertices;
-		Vector<unsigned int>   m_indices;
+        Vector<uint32_t>   m_indices;
 		Ref<Material> m_material;
 	private:
 		void setupMesh();

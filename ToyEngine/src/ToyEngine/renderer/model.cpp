@@ -74,12 +74,12 @@ namespace ToyEngine{
 		}
 
 		//process indices 
-		Vector<unsigned int> indices;
+		Vector<uint32_t> indices;
 		indices.reserve(mesh->mNumFaces * 3);
 		for (unsigned int i = 0; i < mesh->mNumFaces; i++) {
 			aiFace face = mesh->mFaces[i];
 			for (unsigned int j = 0; j < face.mNumIndices; j++) {
-				indices.push_back(face.mIndices[j]);
+				indices.push_back(static_cast<uint32_t>(face.mIndices[j]));
 			}
 		}
 

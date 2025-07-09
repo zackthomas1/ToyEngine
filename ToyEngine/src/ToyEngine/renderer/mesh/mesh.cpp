@@ -6,7 +6,7 @@
 
 namespace ToyEngine
 {
-    Mesh::Mesh(Vector<Vertex>& vertices, Vector<unsigned int>& indices, Ref<Material> material) :
+    Mesh::Mesh(Vector<Vertex>& vertices, Vector<uint32_t>& indices, Ref<Material> material) :
 		m_vertices(vertices), m_indices(indices), m_material(material)
 	{
 		setupMesh();
@@ -35,7 +35,7 @@ namespace ToyEngine
 
         // Set element array buffer 
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_ebo);
-        glBufferData(GL_ELEMENT_ARRAY_BUFFER, m_indices.size() * sizeof(unsigned int), &m_indices[0], GL_STATIC_DRAW);
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER, m_indices.size() * sizeof(uint32_t), &m_indices[0], GL_STATIC_DRAW);
 
         // Set vertex attribute pointers
         // --------------
