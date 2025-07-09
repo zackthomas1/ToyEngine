@@ -57,10 +57,6 @@ namespace ToyEngine
 
 	}
 
-	/// <summary>
-	/// Set the glfw call back functions for this window.
-	/// Sets FramebufferSizeCallback KeyCallback, ScrollCallback, and CursorPosCallback. 
-	/// </summary>
 	void WindowsWindow::SetCallbackFns()
 	{
 		glfwSetFramebufferSizeCallback(window_, [](GLFWwindow* window, int width, int height) {

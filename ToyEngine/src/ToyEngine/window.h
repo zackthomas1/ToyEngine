@@ -34,6 +34,15 @@ namespace ToyEngine {
 		static Scope<Window> Create(const WindowProps& props = WindowProps());
 
 		virtual void OnUpdate() = 0;
+		
+	
+		/// <summary>
+		/// Sets the callback function that will be invoked when an event occurs in the window.
+		/// The callback receives a reference to an Event object, allowing custom event handling logic.
+		/// This method must be implemented by derived classes to connect the window's event system
+		/// with the application's event processing code.
+		/// </summary>
+		/// <param name="callback"></param>
 		virtual void SetCommandCallbackFn(const EventCallbackFn& callback) = 0;
 		float GetAspectRatio() const { return static_cast<float>(data_.width) / static_cast<float>(data_.height); }
 		void SetWindowSize(unsigned int width, unsigned int height) { data_.width = width; data_.height = height; }
