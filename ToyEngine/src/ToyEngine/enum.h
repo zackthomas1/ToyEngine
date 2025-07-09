@@ -33,11 +33,13 @@ namespace ToyEngine
 		kNone,
 	};
 
-	enum class eCameraType
-    {
-        kFlyCamera			= 1,
-        kOrthographicCamera = 2,
-    };
+	// define enum as bit flags (powers of two),
+	// Use bitwise operations to check validity.
+	enum class eCameraType : uint32_t {
+		kFlyCamera = 1 << 0,			// 1
+		kOrthographicCamera = 1 << 1,	// 2
+		// Add more flags as needed, each one should be a power of two
+	};
 
 	//
 	enum class eTextureType

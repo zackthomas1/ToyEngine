@@ -51,13 +51,14 @@ namespace ToyEngine
 
 	class Camera
 	{
-	public: 
+	public:
+		Camera(eCameraType type, const CameraProps& props = CameraProps());
 		Camera(const CameraProps& props = CameraProps());
 		virtual ~Camera() {}
 
 		// getter/setters
 		virtual glm::mat4 GetViewMatrix() const;
-		virtual glm::mat4 GetProjectionMatrix() const = 0;
+		virtual glm::mat4 GetProjectionMatrix() const;
 
 		void SetMovementSpeed(float speed); 
 		void SetMouseSensitivity(float sensitivity); 
@@ -67,12 +68,13 @@ namespace ToyEngine
 		// update methods
 		//virtual void Update();
 		virtual void UpdatePosition(eCameraMovement direction, float time_step);
-		virtual void UpdateLookDirection(float x_offset, float y_offset, GLboolean constrainPitch = TRUE) {}
-		virtual void UpdateFOV(float y_offset) {}
-	protected:
+		virtual void UpdateLookDirection(float x_offset, float y_offset);
+		virtual void UpdateFOV(float y_offset);
+	private:
 		virtual void UpdateCameraVectors();
-	protected: 
+	private: 
 		CameraProps m_data;
 		eCameraMovement movement_update;
 	};
+
 }

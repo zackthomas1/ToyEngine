@@ -4,7 +4,7 @@
 #include "ToyEngine/application.h"
 #include "ToyEngine/layers/layer.h"
 #include "ToyEngine/services/locator.h"
-#include "ToyEngine/renderer/camera/fly_camera.h"
+#include "ToyEngine/renderer/camera/camera.h"
 #include "ToyEngine/renderer/model.h"
 #include "ToyEngine/platform/opengl/shader_s.h"
 #include "ToyEngine/renderer/renderer.h"
