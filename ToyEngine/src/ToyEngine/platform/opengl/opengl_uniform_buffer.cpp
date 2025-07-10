@@ -18,10 +18,13 @@ namespace ToyEngine
         
         // Unbind the buffer
         glBindBuffer(GL_UNIFORM_BUFFER, 0);
+        
+        TY_CORE_INFO("Created OpenGL Uniform Buffer with ID: {}, Size: {}, Binding: {}", m_buffer_id, size, binding);
     }
 
     OpenGLUniformBuffer::~OpenGLUniformBuffer()
     {
+        TY_CORE_INFO("Destroying OpenGL Uniform Buffer with ID: {}", m_buffer_id);
         glDeleteBuffers(1, &m_buffer_id);
     }
 

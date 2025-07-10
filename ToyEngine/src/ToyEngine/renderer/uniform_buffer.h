@@ -48,11 +48,15 @@ namespace ToyEngine
         void SetProjectionMatrix(const glm::mat4& projection);
         void SetModelMatrix(const glm::mat4& model);
         void UpdateBuffer();
+        void UpdateViewProjection(); // Only update view and projection matrices
+        void UpdateModel(); // Only update model matrix
 
         static const uint32_t BINDING_POINT = 0;
 
     private:
         MatricesUniformBuffer m_data;
         Ref<UniformBuffer> m_uniform_buffer;
+        bool m_view_projection_dirty = true;
+        bool m_model_dirty = true;
     };
 }

@@ -19,6 +19,9 @@ namespace ToyEngine
 		uint32_t matrices_block_index = glGetUniformBlockIndex(id_, "Matrices");
 		if (matrices_block_index != GL_INVALID_INDEX) {
 			glUniformBlockBinding(id_, matrices_block_index, 0); // Bind to binding point 0
+			TY_CORE_INFO("Bound uniform buffer block 'Matrices' to binding point 0 for shader '{}'", name);
+		} else {
+			TY_CORE_WARN("Uniform buffer block 'Matrices' not found in shader '{}'", name);
 		}
 	}
 

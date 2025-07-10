@@ -34,7 +34,7 @@ namespace ToyEngine
 		// Update uniform buffer with camera matrices
 		s_instance->m_matrices_buffer->SetViewMatrix(s_instance->m_data.view);
 		s_instance->m_matrices_buffer->SetProjectionMatrix(s_instance->m_data.projection);
-		s_instance->m_matrices_buffer->UpdateBuffer();
+		s_instance->m_matrices_buffer->UpdateViewProjection();
 		s_instance->m_matrices_buffer->Bind();
 	}
 
@@ -43,7 +43,7 @@ namespace ToyEngine
 		shader->Use();
 		// Set model matrix in uniform buffer
 		s_instance->m_matrices_buffer->SetModelMatrix(model->m_model_mat);
-		s_instance->m_matrices_buffer->UpdateBuffer();
+		s_instance->m_matrices_buffer->UpdateModel();
 		
 		for (Ref<Mesh> mesh : model->m_meshes) {
 			mesh->m_material->BindTextures(shader);
