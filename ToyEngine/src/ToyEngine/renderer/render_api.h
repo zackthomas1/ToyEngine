@@ -1,7 +1,5 @@
 #pragma once
 #include "ToyEngine/enum.h"
-#include <glm/glm.hpp>
-#include <glm/vec4.hpp>
 
 namespace ToyEngine
 {
