@@ -21,6 +21,7 @@ namespace ToyEngine
 #endif TY_PLATFORM_OPENGL
 		TY_CORE_ASSERT(!s_instance, "Renderer already exist!"); 
 		s_instance = new Renderer(api);
+		s_instance->m_matrices_buffer = MakeRef<MatricesBuffer>();
 		RenderAPI::Init(api);
 	}
 
@@ -29,15 +30,22 @@ namespace ToyEngine
 		RenderCommand::ClearSetBackground();
 		s_instance->m_data.view = camera->GetViewMatrix();
 		s_instance->m_data.projection = camera->GetProjectionMatrix();
+		
+		// Update uniform buffer with camera matrices
+		s_instance->m_matrices_buffer->SetViewMatrix(s_instance->m_data.view);
+		s_instance->m_matrices_buffer->SetProjectionMatrix(s_instance->m_data.projection);
+		s_instance->m_matrices_buffer->UpdateBuffer();
+		s_instance->m_matrices_buffer->Bind();
 	}
 
 	void Renderer::Submit(Ref<Shader> shader, Ref<Model> model)
 	{
 		shader->Use();
-		shader->SetMat4("uView", s_instance->m_data.view);
-		shader->SetMat4("uProjection", s_instance->m_data.projection);
+		// Set model matrix in uniform buffer
+		s_instance->m_matrices_buffer->SetModelMatrix(model->m_model_mat);
+		s_instance->m_matrices_buffer->UpdateBuffer();
+		
 		for (Ref<Mesh> mesh : model->m_meshes) {
-			shader->SetMat4("uModel", model->m_model_mat);
 			mesh->m_material->BindTextures(shader);
 
 			// draw mesh

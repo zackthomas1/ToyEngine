@@ -14,6 +14,12 @@ namespace ToyEngine
 
 		// compile the shaders
 		CompileShaderProgram(vertex_shader_code.c_str(), fragment_shader_code.c_str(), id_);
+		
+		// Bind uniform buffer block to binding point
+		uint32_t matrices_block_index = glGetUniformBlockIndex(id_, "Matrices");
+		if (matrices_block_index != GL_INVALID_INDEX) {
+			glUniformBlockBinding(id_, matrices_block_index, 0); // Bind to binding point 0
+		}
 	}
 
 	void OpenGLShader::Use()
