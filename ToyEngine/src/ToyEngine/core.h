@@ -1,4 +1,6 @@
 #pragma once
+#include <utility>
+#include <memory>
 
 #ifdef TY_PLATFORM_WINDOWS
 	#ifdef TY_DYNAMIC_LINK
@@ -25,4 +27,28 @@
 #define TY_BINDFN(fn) [this](Event &e) { return fn(e); }
 //#define TY_BINDFN(fn) std::bind(&fn, this, std::placeholders::_1)
 
-#define TY_EPSILON 0.001
+constexpr float TY_EPSILON = 0.001;
+
+namespace ToyEngine {
+	template <typename T>
+	using Ref = std::shared_ptr<T>;
+
+	template<typename T, typename... Args>
+	std::shared_ptr<T> MakeRef(Args&&... args) {
+		return std::make_shared<T>(std::forward<Args>(args)...);
+	}
+
+	template <typename T>
+	using Scope = std::unique_ptr<T>;
+
+	template<typename T, typename... Args>
+	std::unique_ptr<T> MakeScope(Args&&... args) {
+		return std::make_unique<T>(std::forward<Args>(args)...);
+	}
+
+	template <typename T>
+	using Vector = std::vector<T>;
+
+	template <typename T, int n>
+	using Array = std::array<T, n>;
+}

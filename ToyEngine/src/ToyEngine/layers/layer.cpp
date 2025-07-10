@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "layer.h"
 #include "ToyEngine/application.h"
-
+#include "ToyEngine/platform/windows/windows_window.h"
 // imgui
 #include "backends/imgui_impl_glfw.h"
 #include "backends/imgui_impl_opengl3.h"
@@ -15,11 +15,9 @@ namespace ToyEngine
 
 	void ImGuiLayer::OnAttach()
 	{
-		TY_CORE_TRACE("ImGuiLayer attach");
 		TY_CORE_ASSERT(ImGui::GetCurrentContext() == nullptr, "ImGui - Already been initialized context.");
 		
-		Application &app = Application::Get();
-		GLFWwindow* window = app.GetWindow().GetGLFWWindow();
+		GLFWwindow* window = dynamic_cast<WindowsWindow*>(&Application::AccessWindow())->GetGLFWWindow();
 
 		// Setup Dear ImGui context
 		// -------------------------
@@ -50,7 +48,6 @@ namespace ToyEngine
 
 	void ImGuiLayer::OnDetatch()
 	{
-		TY_CORE_TRACE("ImGuiLayer detach");
 		// Cleanup imgui
 		ImGui_ImplOpenGL3_Shutdown();
 		ImGui_ImplGlfw_Shutdown();

@@ -1,6 +1,5 @@
 #pragma once
 #include "ToyEngine/services/time_step.h"
-#include "ToyEngine/services/time_step_glfw.h"
 #include "ToyEngine/services/input_poll.h"
 
 namespace ToyEngine
@@ -20,16 +19,18 @@ namespace ToyEngine
 		Locator& operator=(const Locator&) = delete;
 		Locator& operator=(Locator&&) = delete;
 
-		// time step service
-		static TimeStep* TimeStepService();
-		static void SetTimeStepProvider(TimeStep* time_step);
-		static void DeleteTimeStepProvider();
+		static void DestoryServiceProviders();
 
-		// Input polling service
-		static InputPoll* InputPollService();
+		// time step service
+		static TimeStep& TimeStepService() { TY_CORE_ASSERT(time_step_, "TimeStep provider not set"); return *time_step_; };
+		static void SetTimeStepProvider(TimeStep* time_step);
+
+		// input polling service
+		static InputPoll& InputPollService() { TY_CORE_ASSERT(input_poll_, "InputPoll provider not set"); return *input_poll_; }
 		static void SetInputPollProvider(InputPoll* input_poll); 
+	private:
+		static void DeleteTimeStepProvider();
 		static void DeleteInputPollProvider();
-		
 	private:
 		static TimeStep* time_step_;
 		static InputPoll* input_poll_;

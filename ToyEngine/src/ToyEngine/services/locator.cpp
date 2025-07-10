@@ -4,15 +4,22 @@
 namespace ToyEngine
 {
 	// Service provider pointers
-	TimeStep* Locator::time_step_	= nullptr;
-	InputPoll* Locator::input_poll_	= nullptr;
+#ifdef TY_PLATFORM_WINDOWS
+	TimeStep* Locator::time_step_	= new TimeStepGLFW;
+	InputPoll* Locator::input_poll_ = new InputPollGLFW;
+#else
+	TimeStep* Locator::time_step_	= new NullTimeStep;
+	InputPoll* Locator::input_poll_	= new NullInputPoll;
+#endif TY_PLATFORM_WINDOWS
 
-	// Time Step service methods
-	TimeStep* Locator::TimeStepService()
+	void Locator::DestoryServiceProviders()
 	{
-		return time_step_;
+		DeleteTimeStepProvider();
+		DeleteInputPollProvider();
 	}
 
+	// Time Step service methods
+	// --------------------------
 	void Locator::SetTimeStepProvider(TimeStep* time_step)
 	{
 		// If there is currently an active time step provider deallocate 
@@ -20,12 +27,13 @@ namespace ToyEngine
 		// This ensures that a memory leak does not occur. 
 		if (time_step_ != nullptr) { DeleteTimeStepProvider(); }
 		time_step_ = time_step;
+		time_step_->Init();
 	}
 
 	void Locator::DeleteTimeStepProvider()
 	{
 		// Deallocates memory for time step provider
-		TY_CORE_TRACE("Deleted TimeStep Provider");
+		TY_CORE_INFO("Deleted TimeStep Provider");
 		if (time_step_ != nullptr) 
 		{
 			delete time_step_;
@@ -33,21 +41,18 @@ namespace ToyEngine
 		}
 	}
 
-	// Input Poll service methods
-	InputPoll* Locator::InputPollService()
-	{
-		return input_poll_;
-	}
-
+	// Input Poll 
+	// --------------------------
 	void Locator::SetInputPollProvider(InputPoll* input_poll)
 	{
 		if (input_poll_ != nullptr) { DeleteInputPollProvider(); }
 		input_poll_ = input_poll;
+		input_poll_->Init();
 	}
 
 	void Locator::DeleteInputPollProvider()
 	{
-		TY_CORE_TRACE("Deleted InputPoll Provider");
+		TY_CORE_INFO("Deleted InputPoll Provider");
 		if (input_poll_ != nullptr)
 		{
 			delete input_poll_;

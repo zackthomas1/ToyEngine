@@ -23,6 +23,8 @@ project "Editor"
         "%{IncludeDir.spdlog}",
         "%{IncludeDir.dearimgui}",
         "%{IncludeDir.dearimgui}/backends",
+        "%{IncludeDir.assimp}",
+        "%{IncludeDir.assimp_build}",
     }
 
     links 

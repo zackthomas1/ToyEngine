@@ -8,6 +8,7 @@
 #include <algorithm>
 #include <functional>
 
+#include <cstdint>
 #include <utility>
 #include <string>
 #include <vector>

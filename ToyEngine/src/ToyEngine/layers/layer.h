@@ -2,6 +2,7 @@
 #include "ToyEngine/events/event.h"
 #include "ToyEngine/services/time_step.h"
 // imgui
+#include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include "imgui.h"
 
@@ -19,7 +20,7 @@ namespace ToyEngine
 		/// Each frame, the engine updates every layer in m_layerStack
 		/// </summary>
 		/// <param name="time_delta"></param>
-		virtual void Update(TimeStep *time_step) {};
+		virtual void Update(const TimeStep& time_step) {};
 		/// <summary>
 		/// Called in Application::Run after scene draw call.
 		/// GUI defined in client application project. 
@@ -40,6 +41,7 @@ namespace ToyEngine
 	public:
 		ImGuiLayer();
 		~ImGuiLayer() {}
+
 		virtual void OnAttach() override;
 		virtual void OnDetatch() override;
 		void BeginDraw();

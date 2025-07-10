@@ -1,31 +1,16 @@
 #pragma once
+#include "ToyEngine/enum.h"
+
 namespace ToyEngine
 {
-	enum KeyCode
-	{
-		kKeyEscape	= 256,
-		kKeyW		= 87,
-		kKeyS		= 83,
-		kKeyA		= 65,
-		kKeyD		= 68,
-		kKeyE		= 69,
-		kKeyQ		= 81,
-	};
-
-	enum KeyState
-	{
-		kRelease	= 0,
-		kPress		= 1,
-		kHold		= 2,
-	};
-
 	class Event
 	{
 	public:
-		Event() : isHandled_(false) {}
 		virtual ~Event() {}
-		bool GetEventHandled() { return isHandled_; }
+		bool GetEventHandled() const { return isHandled_; }
 		void SetEventHandled(bool isHandled) { isHandled_ = isHandled; }
+	protected:
+		Event() : isHandled_(false) {}
 	private: 
 		bool isHandled_;
 	};
@@ -33,14 +18,14 @@ namespace ToyEngine
 	class EventKeyInput : public Event
 	{
 	public: 
-		EventKeyInput(KeyCode key, KeyState state) : key_(key), state_(state) {}
+		EventKeyInput(eKeyCode key, eKeyState state) : key_(key), state_(state) {}
 		
-		KeyCode GetKeyCode() const { return key_; }
-		KeyState GetKeyState() const { return state_; }
+		eKeyCode GetKeyCode() const { return key_; }
+		eKeyState GetKeyState() const { return state_; }
 
 	private: 
-		KeyCode key_; 
-		KeyState state_;
+		eKeyCode key_; 
+		eKeyState state_;
 	};
 
 	class EventVerticalScroll : public Event
@@ -56,8 +41,8 @@ namespace ToyEngine
 	{
 	public:
 		EventCursorPos(double xpos, double ypos) : x_offset_(xpos), y_offset_(ypos) {}
-		double GetXOffset() { return x_offset_; }
-		double GetYOffset() { return y_offset_; }
+		double GetXOffset() const { return x_offset_; }
+		double GetYOffset() const { return y_offset_; }
 	private:
 		double x_offset_, y_offset_;
 	};
@@ -66,5 +51,15 @@ namespace ToyEngine
 	{
 	public:
 		EventApplicationClose() {}
+	};
+
+	class EventWindowResize : public Event
+	{
+	public:
+		EventWindowResize(unsigned int width, unsigned int height) : width_(width), height_(height) {}
+		unsigned int GetWidth() const { return width_; }
+		unsigned int GetHeight() const { return height_; }
+	private: 
+		unsigned int width_, height_;
 	};
 }
