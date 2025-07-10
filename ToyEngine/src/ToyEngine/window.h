@@ -13,7 +13,7 @@ namespace ToyEngine {
 		bool is_mouse_active;
 		float x_mouse_pos, y_mouse_pos;
 
-		WindowProps(const std::string& title = "Learn OpenGL",
+		WindowProps(const std::string& title = "Editor",
 			unsigned int width = TY_DEFAULT_WINDOW_WIDTH,
 			unsigned int height = TY_DEFAULT_WINDOW_HEIGHT,
 			bool is_mouse_active = false,

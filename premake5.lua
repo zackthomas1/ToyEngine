@@ -85,6 +85,7 @@ project "ToyEngine"
         defines
         {
             "TY_PLATFORM_WINDOWS",
+            "TY_PLATFORM_OPENGL",
             "TY_BUILD_DLL",
             "GLFW_INCLUDE_NONE",
         }

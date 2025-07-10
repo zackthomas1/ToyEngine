@@ -50,6 +50,7 @@ namespace ToyEngine
 
 	enum class eRenderAPI
 	{
+		kNone	= 0,
 		kOpenGL = 1,
 	};
 }

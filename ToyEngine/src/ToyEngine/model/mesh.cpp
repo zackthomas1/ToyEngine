@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "mesh.h"
 
-#include "ToyEngine/platform/opengl/render_api.h"
+#include "ToyEngine/renderer/render_api.h"
 #include <glad/glad.h>
 
 namespace ToyEngine
@@ -14,9 +14,9 @@ namespace ToyEngine
 
 	Mesh::~Mesh()
 	{
-        RenderAPI::DeleteVertexArray(m_vao);
-        RenderAPI::DeleteBuffer(m_vbo);
-        RenderAPI::DeleteBuffer(m_ebo);
+        RenderCommand::DeleteVertexArray(m_vao);
+        RenderCommand::DeleteBuffer(m_vbo);
+        RenderCommand::DeleteBuffer(m_ebo);
 	}
 
 	void Mesh::setupMesh()

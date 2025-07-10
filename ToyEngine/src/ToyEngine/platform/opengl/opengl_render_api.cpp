@@ -1,54 +1,58 @@
 #include "pch.h"
-#include "render_api.h"
+#include "opengl_render_api.h"
 
 #include <glad/glad.h>
 
 namespace ToyEngine
 {
-	void RenderAPI::ClearSetBackground()
-	{
+    void OpenGLRenderAPI::ClearSetBackground(const glm::vec4& clear_color) const
+    {
 		glEnable(GL_DEPTH_TEST);
-		glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
+		glClearColor(clear_color.r, clear_color.g, clear_color.b, clear_color.a);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    }
+
+	void OpenGLRenderAPI::CreateVertexArray(uint32_t& vao) const
+	{
+		glGenVertexArrays(1, &vao);
 	}
 
-	// Textures
-
-	// Mesh 
-	void RenderAPI::BindVertexArray(uint32_t vao)
+	void OpenGLRenderAPI::BindVertexArray(const uint32_t& vao) const
 	{
 		glBindVertexArray(static_cast<GLuint>(vao));
 	}
-	void RenderAPI::DeleteVertexArray(uint32_t id)
+	
+	void OpenGLRenderAPI::DeleteVertexArray(uint32_t& id) const
 	{
+
 		glDeleteVertexArrays(1, &static_cast<GLuint>(id));
 	}
 
-	void RenderAPI::CreateVertexBuffer(uint32_t* vbo, float* vertex_array, const int size)
+	void OpenGLRenderAPI::CreateVertexBuffer(uint32_t& vbo, float* vertex_array, const int size) const
 	{
 		// create Vertex Buffer Object (VBO)
-		glGenBuffers(1, vbo);
+		glGenBuffers(1, &vbo);
 
-		glBindBuffer(GL_ARRAY_BUFFER, *vbo);
+		glBindBuffer(GL_ARRAY_BUFFER, vbo);
 		glBufferData(GL_ARRAY_BUFFER, size, vertex_array, GL_STATIC_DRAW);
 	}
 
-	void RenderAPI::DeleteBuffer(uint32_t id)
+	void OpenGLRenderAPI::DeleteBuffer(uint32_t& id) const
 	{
-		glDeleteBuffers(1, &static_cast<GLuint>(id));
+		glDeleteBuffers(1, &id);
 	}
 
-	void RenderAPI::DrawArrays(uint32_t vertices)
+	void OpenGLRenderAPI::DrawArrays(uint32_t vertices) const
 	{
 		glDrawArrays(GL_TRIANGLES, 0, vertices); 
 	}
 
-	void RenderAPI::DrawIndexed(uint32_t indices)
+	void OpenGLRenderAPI::DrawIndexed(uint32_t indices) const
 	{
-		glDrawElements(GL_TRIANGLES, (indices), GL_UNSIGNED_INT, 0);
+		glDrawElements(GL_TRIANGLES, indices, GL_UNSIGNED_INT, 0);
 	}
 
-	void RenderAPI::PolygonMode(uint32_t face, uint32_t mode)
+	void OpenGLRenderAPI::PolygonMode(uint32_t face, uint32_t mode) const
 	{
 		//face options:
 		// GL_FRONT_AND_BACK

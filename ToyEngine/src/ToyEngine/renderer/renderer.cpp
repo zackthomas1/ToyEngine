@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "renderer.h"
 
-#include "ToyEngine/platform/opengl/render_api.h"
+#include "ToyEngine/renderer/render_api.h"
 #include "ToyEngine/services/locator.h"
 
 namespace ToyEngine
@@ -12,11 +12,21 @@ namespace ToyEngine
 	{
 	}
 
-	Renderer::~Renderer() {}
+	void Renderer::Init()
+	{
+#ifdef  TY_PLATFORM_OPENGL
+		eRenderAPI api = eRenderAPI::kOpenGL;
+#else
+		eRenderAPI api = eRenderAPI::kNone;
+#endif TY_PLATFORM_OPENGL
+		TY_CORE_ASSERT(!s_instance, "Renderer already exist!"); 
+		s_instance = new Renderer(api);
+		RenderAPI::Init(api);
+	}
 
 	void Renderer::BeginScene(Ref<Camera> camera)
 	{
-		RenderAPI::ClearSetBackground();
+		RenderCommand::ClearSetBackground();
 		s_instance->m_data.view = camera->GetViewMatrix();
 		s_instance->m_data.projection = camera->GetProjectionMatrix();
 	}
@@ -31,17 +41,11 @@ namespace ToyEngine
 			mesh->m_material->BindTextures(shader);
 
 			// draw mesh
-			RenderAPI::BindVertexArray(mesh->m_vao);
-			RenderAPI::DrawIndexed(mesh->m_indices.size());
-			RenderAPI::BindVertexArray(0);
+			RenderCommand::BindVertexArray(mesh->m_vao);
+			RenderCommand::DrawIndexed(mesh->m_indices.size());
+			RenderCommand::BindVertexArray(0);
 		}
 	}
 
 	void Renderer::EndScene() {}
-
-	void Renderer::Init(eRenderAPI api)
-	{
-		TY_CORE_ASSERT(!s_instance, "Renderer already exist!")
-		s_instance = new Renderer(api);
-	}
 }
