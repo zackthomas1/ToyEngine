@@ -19,7 +19,7 @@ namespace ToyEngine
 		Locator& operator=(const Locator&) = delete;
 		Locator& operator=(Locator&&) = delete;
 
-		static void DestoryServiceProviders();
+		static void DestroyServiceProviders();
 
 		// time step service
 		static TimeStep& TimeStepService() { TY_CORE_ASSERT(time_step_, "TimeStep provider not set"); return *time_step_; };

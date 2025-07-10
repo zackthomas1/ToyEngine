@@ -33,7 +33,7 @@ namespace ToyEngine
 
 	Application::~Application()
 	{
-		Locator::DestoryServiceProviders();
+		Locator::DestroyServiceProviders();
 	}
 
 	void Application::Run()
