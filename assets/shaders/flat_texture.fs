@@ -4,11 +4,8 @@ in vec2 texCoords;
 
 struct Material{
 
-    // Note: sampler2D is a so called opaque type which means 
-    // it be can't instantiated, but only defined as uniforms. 
-    // If the struct would be instantiated other than as a uniform 
-    // (like a function parameter) GLSL could throw strange errors; 
-    // the same thus applies to any struct holding such opaque types.
+    // Note: sampler2D is an opaque type and can only be used as a uniform.
+    // Instantiating this struct outside of a uniform may cause GLSL errors.
     sampler2D texture_diffuse1;
     sampler2D texture_diffuse2;
     sampler2D texture_specular1;

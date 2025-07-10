@@ -1,4 +1,5 @@
 #include <toy_engine.h>
+#include <glad/glad.h>
 
 class Scene : public ToyEngine::Layer
 {
@@ -12,7 +13,31 @@ public:
 		TY_INFO("Compiling shaders...");
 		m_shader_lib->Load(ToyEngine::Shader::Create("flat_color", "../assets/shaders/flat_color.vs", "../assets/shaders/flat_color.fs"));
 		m_shader_lib->Load(ToyEngine::Shader::Create("flat_texture", "../assets/shaders/flat_texture.vs", "../assets/shaders/flat_texture.fs"));
+		m_shader_lib->Load(ToyEngine::Shader::Create("phong", "../assets/shaders/phong.vs", "../assets/shaders/phong.fs"));
 		TY_INFO("Shader compilation complete");
+		
+        // Get the index of the "Matrices" uniform block in each shader program.
+        // This index is used to refer to the block within the shader.
+        uint32_t flat_color_block_index = glGetUniformBlockIndex(m_shader_lib->Get("flat_color")->id(), "Matrices");
+        uint32_t flat_texture_block_index = glGetUniformBlockIndex(m_shader_lib->Get("flat_texture")->id(), "Matrices");
+        uint32_t phong_block_index = glGetUniformBlockIndex(m_shader_lib->Get("phong")->id(), "Matrices");
+
+        // Bind each uniform block index to a binding point (here, binding point 0).
+        // This tells OpenGL that the "Matrices" block in each shader will use binding point 0.
+        glUniformBlockBinding(m_shader_lib->Get("flat_color")->id(), flat_color_block_index, 0);
+        glUniformBlockBinding(m_shader_lib->Get("flat_texture")->id(), flat_texture_block_index, 0);
+        glUniformBlockBinding(m_shader_lib->Get("phong")->id(), phong_block_index, 0);
+
+        // Create a uniform buffer object (UBO) to store the data for the uniform block.
+        glGenBuffers(1, &ubo);
+        glBindBuffer(GL_UNIFORM_BUFFER, ubo); 
+        // Allocate space for two 4x4 matrices (view and projection) in the buffer.
+        glBufferData(GL_UNIFORM_BUFFER, 2 * sizeof(glm::mat4), NULL, GL_STATIC_DRAW); 
+        glBindBuffer(GL_UNIFORM_BUFFER, 0); 
+        // Bind the buffer to the same binding point (0) used above.
+        // This links the buffer's data to the "Matrices" block in all shaders using binding point 0.
+        glBindBufferRange(GL_UNIFORM_BUFFER, 0, ubo, 0, 2 * sizeof(glm::mat4));
+
 	}
 
 	virtual void OnAttach() 
@@ -46,10 +71,20 @@ public:
 
 		// Draw Scene
 		ToyEngine::Renderer::BeginScene(m_camera);
-		for(ToyEngine::Ref<ToyEngine::Model> model: m_models){
-			model->m_model_mat = glm::rotate(glm::mat4(1.0f), glm::radians(m_rotation_degree), glm::vec3(0.0f, 1.0f, 0.0f));
-			ToyEngine::Renderer::Submit(m_shader_lib->Get("flat_texture"), model);
-		}
+        // Bind the uniform buffer object (UBO) to update its data.
+        // The first glBufferSubData call uploads the camera's view matrix to the first half of the buffer.
+        // The second glBufferSubData call uploads the camera's projection matrix to the second half of the buffer.
+        // This ensures both matrices are available to all shaders using the "Matrices" uniform block.
+        glBindBuffer(GL_UNIFORM_BUFFER, ubo); 
+        glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(glm::mat4), glm::value_ptr(m_camera->GetViewMatrix()));
+        glBufferSubData(GL_UNIFORM_BUFFER, sizeof(glm::mat4), sizeof(glm::mat4), glm::value_ptr(m_camera->GetProjectionMatrix()));
+        glBindBuffer(GL_UNIFORM_BUFFER, 0);
+		// set model matrix and submit to render for drawing
+		m_models[0]->m_model_mat = glm::rotate(glm::mat4(1.0f), glm::radians(m_rotation_degree), glm::vec3(0.0f, 1.0f, 0.0f));
+		ToyEngine::Renderer::Submit(m_shader_lib->Get("flat_texture"), m_models[0]);
+		m_models[1]->m_model_mat = glm::translate(glm::mat4(1.0f), m_translate);
+		ToyEngine::Renderer::Submit(m_shader_lib->Get("flat_color"), m_models[1]);
+
 		ToyEngine::Renderer::EndScene();
 	}
 
@@ -66,7 +101,8 @@ public:
 		// Show simple window
 		ImGui::Begin("Hello, World");
 		ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / io_.Framerate, io_.Framerate);
-		ImGui::DragFloat("Drag to rotate", &m_rotation_degree, 0.1f, 0.0f, 360.0f, "%0.1f", ImGuiSliderFlags_WrapAround);
+		ImGui::DragFloat("Rotate", &m_rotation_degree, 0.1f, 0.0f, 360.0f, "%0.1f", ImGuiSliderFlags_WrapAround);
+		ImGui::InputFloat3("Translate", glm::value_ptr(m_translate), "%0.1f");
 		ImGui::End();
 	}
 
@@ -86,10 +122,15 @@ public:
 	}
 public: 
 	ToyEngine::Ref<ToyEngine::Camera> m_camera;
-	ToyEngine::Vector<ToyEngine::Ref<ToyEngine::Model>> m_models;
 	ToyEngine::Ref<ToyEngine::ShaderLibrary> m_shader_lib;
+
+	//Models and model control variables
+	ToyEngine::Vector<ToyEngine::Ref<ToyEngine::Model>> m_models;
 	float m_rotation_degree = 0;
+	glm::vec3 m_translate = glm::vec3(0.0f);
 	//std::vector<Light> lights_;
+	uint32_t ubo;
+
 
 };
 

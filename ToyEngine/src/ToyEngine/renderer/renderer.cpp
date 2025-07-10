@@ -27,8 +27,8 @@ namespace ToyEngine
 	void Renderer::BeginScene(Ref<Camera> camera)
 	{
 		RenderCommand::ClearSetBackground();
-		s_instance->m_data.view = camera->GetViewMatrix();
-		s_instance->m_data.projection = camera->GetProjectionMatrix();
+		//s_instance->m_data.view = camera->GetViewMatrix();
+		//s_instance->m_data.projection = camera->GetProjectionMatrix();
 	}
 
 	void Renderer::Submit(Ref<Shader> shader, Ref<Model> model)
