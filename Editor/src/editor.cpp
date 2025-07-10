@@ -47,7 +47,7 @@ public:
 		// Draw Scene
 		ToyEngine::Renderer::BeginScene(m_camera);
 		for(ToyEngine::Ref<ToyEngine::Model> model: m_models){
-			model->m_model_mat = glm::rotate(model->m_model_mat, glm::radians(glm::sin(time_step.GetTimeCurrent())), glm::vec3(0.0f,1.0f,0.0f));
+			model->m_model_mat = glm::rotate(glm::mat4(1.0f), glm::radians(m_rotation_degree), glm::vec3(0.0f, 1.0f, 0.0f));
 			ToyEngine::Renderer::Submit(m_shader_lib->Get("flat_texture"), model);
 		}
 		ToyEngine::Renderer::EndScene();
@@ -65,8 +65,8 @@ public:
 
 		// Show simple window
 		ImGui::Begin("Hello, World");
-		ImGui::Text("This is some useful text");
 		ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / io_.Framerate, io_.Framerate);
+		ImGui::DragFloat("Drag to rotate", &m_rotation_degree, 0.1f, 0.0f, 360.0f, "%0.1f", ImGuiSliderFlags_WrapAround);
 		ImGui::End();
 	}
 
@@ -88,6 +88,7 @@ public:
 	ToyEngine::Ref<ToyEngine::Camera> m_camera;
 	ToyEngine::Vector<ToyEngine::Ref<ToyEngine::Model>> m_models;
 	ToyEngine::Ref<ToyEngine::ShaderLibrary> m_shader_lib;
+	float m_rotation_degree = 0;
 	//std::vector<Light> lights_;
 
 };

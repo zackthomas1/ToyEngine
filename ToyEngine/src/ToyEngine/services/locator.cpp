@@ -12,7 +12,7 @@ namespace ToyEngine
 	InputPoll* Locator::input_poll_	= new NullInputPoll;
 #endif TY_PLATFORM_WINDOWS
 
-	void Locator::DestoryServiceProviders()
+	void Locator::DestroyServiceProviders()
 	{
 		DeleteTimeStepProvider();
 		DeleteInputPollProvider();
