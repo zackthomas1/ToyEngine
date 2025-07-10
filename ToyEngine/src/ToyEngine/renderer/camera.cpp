@@ -4,40 +4,40 @@
 
 namespace ToyEngine
 {
-	Camera::Camera(eCameraType type, const CameraProps& props) : m_data(props)
+	Camera::Camera(eCameraType type, const CameraProps& props) : data_(props)
 	{
-		m_data.type = type;
-		TY_CORE_INFO("Create {}", CameraTypeToString(m_data.type));
+		data_.type = type;
+		TY_CORE_INFO("Create {}", CameraTypeToString(data_.type));
 		UpdateCameraVectors();
 	}
 
-	Camera::Camera(const CameraProps& props) : m_data(props)
+	Camera::Camera(const CameraProps& props) : data_(props)
 	{
-		TY_CORE_INFO("Create {}", CameraTypeToString(m_data.type));
+		TY_CORE_INFO("Create {}", CameraTypeToString(data_.type));
 		UpdateCameraVectors();
 	}
 
 	glm::mat4 Camera::GetViewMatrix() const
 	{
-		return glm::lookAt(m_data.position, m_data.position + m_data.front, m_data.up);
+		return glm::lookAt(data_.position, data_.position + data_.front, data_.up);
 	}
 	
     // Returns the projection matrix for the camera based on its type and properties.
     glm::mat4 Camera::GetProjectionMatrix() const
     {
         // Ensure the camera type is valid before proceeding.
-        TY_CORE_ASSERT(IsValidCameraType(m_data.type), "eCameraType enum invalid");
-        switch (m_data.type)
+        TY_CORE_ASSERT(IsValidCameraType(data_.type), "eCameraType enum invalid");
+        switch (data_.type)
         {
         case eCameraType::kFlyCamera: {
             // For perspective (fly) camera, calculate aspect ratio from the window.
             float aspect = Application::AccessWindow().GetAspectRatio();
             // Return a perspective projection matrix using field of view, aspect ratio, near and far planes.
-            return glm::perspective(glm::radians(m_data.fov), aspect, m_data.znear, m_data.zfar);
+            return glm::perspective(glm::radians(data_.fov), aspect, data_.znear, data_.zfar);
         };
         case eCameraType::kOrthographicCamera: {
             // For orthographic camera, use the defined bounds and near/far planes.
-            return glm::ortho(m_data.left_bound, m_data.right_bound, m_data.bottom_bound, m_data.top_bound, m_data.znear, m_data.zfar);
+            return glm::ortho(data_.left_bound, data_.right_bound, data_.bottom_bound, data_.top_bound, data_.znear, data_.zfar);
         }
         default:
             // Log an error if the camera type is unknown.
@@ -50,44 +50,44 @@ namespace ToyEngine
 
 	void Camera::SetMovementSpeed(float speed)
 	{
-		m_data.movementSpeed = speed;
+		data_.movementSpeed = speed;
 	}
 	void Camera::SetMouseSensitivity(float sensitivity)
 	{
-		m_data.mouseSensitivity = sensitivity;
+		data_.mouseSensitivity = sensitivity;
 	}
 	void Camera::SetNear(float znear)
 	{
-		m_data.znear = znear;
+		data_.znear = znear;
 	}
 	void Camera::SetFar(float zfar)
 	{
-		m_data.zfar = zfar;
+		data_.zfar = zfar;
 	}
 
 	// call-back
 	void Camera::UpdatePosition(eCameraMovement direction, float time_step)
 	{
-		float velocity = m_data.movementSpeed * time_step;
+		float velocity = data_.movementSpeed * time_step;
 		switch (direction)
 		{
 		case eCameraMovement::kForward:
-			m_data.position += velocity * m_data.front;
+			data_.position += velocity * data_.front;
 			break;
 		case eCameraMovement::kBackward:
-			m_data.position -= velocity * m_data.front;
+			data_.position -= velocity * data_.front;
 			break;
 		case eCameraMovement::kLeft:
-			m_data.position -= velocity * m_data.right;
+			data_.position -= velocity * data_.right;
 			break;
 		case eCameraMovement::kRight:
-			m_data.position += velocity * m_data.right;
+			data_.position += velocity * data_.right;
 			break;
 		case eCameraMovement::kUp:
-			m_data.position += velocity * m_data.up;
+			data_.position += velocity * data_.up;
 			break;
 		case eCameraMovement::kDown:
-			m_data.position -= velocity * m_data.up;
+			data_.position -= velocity * data_.up;
 			break;
 		}
 		UpdateCameraVectors();
@@ -95,26 +95,26 @@ namespace ToyEngine
 
 	void Camera::UpdateLookDirection(float x_offset, float y_offset)
 	{
-		x_offset *= m_data.mouseSensitivity;
-		y_offset *= m_data.mouseSensitivity;
+		x_offset *= data_.mouseSensitivity;
+		y_offset *= data_.mouseSensitivity;
 
-		m_data.yaw += x_offset;
-		m_data.pitch -= y_offset;
+		data_.yaw += x_offset;
+		data_.pitch -= y_offset;
 
-		if (m_data.pitch > 89.0f)
-			m_data.pitch = 89.0f;
-		else if (m_data.pitch < -89.0f)
-			m_data.pitch = -89.0f;
+		if (data_.pitch > 89.0f)
+			data_.pitch = 89.0f;
+		else if (data_.pitch < -89.0f)
+			data_.pitch = -89.0f;
 		UpdateCameraVectors();
 	}
 
 	void Camera::UpdateFOV(float y_offset)
 	{
-		m_data.fov -= y_offset;
-		if (m_data.fov < 1.0f)
-			m_data.fov = 1.0f;
-		else if (m_data.fov > 90.0f)
-			m_data.fov = 90.0f;
+		data_.fov -= y_offset;
+		if (data_.fov < 1.0f)
+			data_.fov = 1.0f;
+		else if (data_.fov > 90.0f)
+			data_.fov = 90.0f;
 	}
 
     // Updates the camera's direction vectors (front, right, up) based on the current yaw and pitch angles.
@@ -124,18 +124,18 @@ namespace ToyEngine
         // Calculate the new front vector from the camera's Euler angles (yaw and pitch).
         // The front vector points in the direction the camera is facing.
         glm::vec3 camera_direction;
-        camera_direction.x = cos(glm::radians(m_data.yaw)) * cos(glm::radians(m_data.pitch));
-        camera_direction.y = sin(glm::radians(m_data.pitch));
-        camera_direction.z = sin(glm::radians(m_data.yaw)) * cos(glm::radians(m_data.pitch));
-        m_data.front = glm::normalize(camera_direction);
+        camera_direction.x = cos(glm::radians(data_.yaw)) * cos(glm::radians(data_.pitch));
+        camera_direction.y = sin(glm::radians(data_.pitch));
+        camera_direction.z = sin(glm::radians(data_.yaw)) * cos(glm::radians(data_.pitch));
+        data_.front = glm::normalize(camera_direction);
 
         // Recalculate the right vector as the cross product of the front vector and the world's up vector.
         // This ensures the right vector is always perpendicular to the front and up vectors.
-        m_data.right = glm::normalize(glm::cross(m_data.front, TY_DEFAULT_WORLD_UP));
+        data_.right = glm::normalize(glm::cross(data_.front, TY_DEFAULT_WORLD_UP));
 
         // Recalculate the up vector as the cross product of the right and front vectors.
         // This ensures the up vector is always perpendicular to the front and right vectors.
-        m_data.up = glm::normalize(glm::cross(m_data.right, m_data.front));
+        data_.up = glm::normalize(glm::cross(data_.right, data_.front));
     }
 
 	char* Camera::CameraTypeToString(eCameraType type)

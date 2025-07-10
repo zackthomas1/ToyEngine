@@ -55,9 +55,9 @@ namespace ToyEngine
 		virtual ~Camera() {}
 
 		// getter/setters
-		virtual glm::mat4 GetViewMatrix() const;
-		virtual glm::mat4 GetProjectionMatrix() const;
-
+		glm::mat4 GetViewMatrix() const;
+		glm::mat4 GetProjectionMatrix() const;
+		float fov() const { return data_.fov; }
 		void SetMovementSpeed(float speed); 
 		void SetMouseSensitivity(float sensitivity); 
 		void SetNear(float znear);
@@ -72,7 +72,7 @@ namespace ToyEngine
 		static char* CameraTypeToString(eCameraType type);
 		static inline bool IsValidCameraType(eCameraType type);
 	private: 
-		CameraProps m_data;
+		CameraProps data_;
 	};
 
 }
