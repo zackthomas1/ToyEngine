@@ -13,7 +13,7 @@ namespace ToyEngine
 		glBufferData(GL_UNIFORM_BUFFER, size, NULL, GL_STATIC_DRAW);
 		glBindBuffer(GL_UNIFORM_BUFFER, 0);
 		// Bind the buffer to the same binding point (0) used above.
-		// This links the buffer's data to the "Matrices" block in all shaders using binding point 0.
+		// This links the buffer's data to the "ViewProjectMats" block in all shaders using binding point 0.
 		glBindBufferRange(GL_UNIFORM_BUFFER, binding_point_, id_, 0, size_);
 	}
 
@@ -37,7 +37,7 @@ namespace ToyEngine
 		// Bind the uniform buffer object (UBO) to update its data.
 		// The first glBufferSubData call uploads the camera's view matrix to the first half of the buffer.
 		// The second glBufferSubData call uploads the camera's projection matrix to the second half of the buffer.
-		// This ensures both matrices are available to all shaders using the "Matrices" uniform block.
+		// This ensures both matrices are available to all shaders using the "ViewProjectMats" uniform block.
 		glBindBuffer(GL_UNIFORM_BUFFER, id_); 
 		glBufferSubData(GL_UNIFORM_BUFFER, offset, size, data);
 		glBindBuffer(GL_UNIFORM_BUFFER, 0);

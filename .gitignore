@@ -13,3 +13,5 @@ bin-int/
 *.vcxproj
 *.vcxproj.filters
 imgui.ini
+Makefile
+*/Makefile

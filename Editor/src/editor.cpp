@@ -19,10 +19,10 @@ public:
 		m_shader_lib->Add(textureShader);
 		m_shader_lib->Add(phongShader);
 
-		uint32_t matrices_bind_point = ToyEngine::Renderer::GetUniformManager().GetBindPoint("Matrices");
-		flatShader->BindUniformBlock("Matrices", matrices_bind_point);
-		textureShader->BindUniformBlock("Matrices", matrices_bind_point);
-		phongShader->BindUniformBlock("Matrices", matrices_bind_point);
+		uint32_t matrices_bind_point = ToyEngine::Renderer::GetUniformManager().GetBindPoint("ViewProjectMats");
+		flatShader->BindUniformBlock("ViewProjectMats", matrices_bind_point);
+		textureShader->BindUniformBlock("ViewProjectMats", matrices_bind_point);
+		phongShader->BindUniformBlock("ViewProjectMats", matrices_bind_point);
 		TY_INFO("Shader compilation complete");
 	}
 

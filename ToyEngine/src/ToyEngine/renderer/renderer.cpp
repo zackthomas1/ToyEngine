@@ -24,7 +24,7 @@ namespace ToyEngine
 		RenderAPI::Init(api);
 
 		UniformManager& manager = Renderer::GetUniformManager();
-		manager.Add("Matrices", UniformBuffer::Create(2 * sizeof(glm::mat4), manager.GetNextBindingPoint()));
+		manager.Add("ViewProjectMats", UniformBuffer::Create(2 * sizeof(glm::mat4), manager.GetNextBindingPoint()));
 	}
 
 	void Renderer::BeginScene(Ref<Camera> camera)
@@ -33,7 +33,7 @@ namespace ToyEngine
 		RenderCommand::ClearSetBackground();
 
 		// Set the view and projection matrix data in uniform buffer.
-		ToyEngine::Ref<ToyEngine::UniformBuffer> matrix_buffer = ToyEngine::Renderer::GetUniformManager().GetBuffer("Matrices");
+		ToyEngine::Ref<ToyEngine::UniformBuffer> matrix_buffer = ToyEngine::Renderer::GetUniformManager().GetBuffer("ViewProjectMats");
 		matrix_buffer->SetData(0, sizeof(glm::mat4), glm::value_ptr(camera->GetViewMatrix()));
 		matrix_buffer->SetData(sizeof(glm::mat4), sizeof(glm::mat4), glm::value_ptr(camera->GetProjectionMatrix()));
 	}
