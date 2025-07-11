@@ -51,7 +51,8 @@ namespace ToyEngine
 	public:
 		UniformManager() : m_binding_index(0) {}
 		~UniformManager() {}
-
+		
+		
 		/**
 		* @brief Adds a UniformBuffer to the manager with the specified name.
 		* @param name The name to associate with the UniformBuffer.
