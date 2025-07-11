@@ -23,8 +23,7 @@ namespace ToyEngine
 		s_instance = new Renderer(api);
 		RenderAPI::Init(api);
 
-		UniformManager& manager = Renderer::GetUniformManager();
-		manager.Add("ViewProjectMats", UniformBuffer::Create(2 * sizeof(glm::mat4), manager.GetNextBindingPoint()));
+		Renderer::GetUniformManager().CreateBuffer("ViewProjectMats", 2 * sizeof(glm::mat4));
 	}
 
 	void Renderer::BeginScene(Ref<Camera> camera)

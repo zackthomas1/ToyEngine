@@ -61,15 +61,14 @@ public:
 		// set model matrix and submit to render for drawing
 		m_models[0]->m_model_mat = glm::rotate(glm::mat4(1.0f), glm::radians(m_rotation_degree), glm::vec3(0.0f, 1.0f, 0.0f));
 		ToyEngine::Renderer::Submit(m_shader_lib->Get("flat_texture"), m_models[0]);
-		m_models[1]->m_model_mat = glm::translate(glm::mat4(1.0f), m_translate);
 		ToyEngine::Ref<ToyEngine::Shader> phongShader = m_shader_lib->Get("phong");
 		phongShader->Use();
 		phongShader->SetFloat3("light.direction", 1.0f, 0.5f, 0.0f);
 		phongShader->SetFloat3("light.ambient", 0.2f, 0.2f, 0.2f);
 		phongShader->SetFloat3("light.diffuse", 1.0f, 1.0f, 1.0f);
 		phongShader->SetFloat3("light.specular", 0.5f, 0.5f, 0.5f);
+		m_models[1]->m_model_mat = glm::translate(glm::mat4(1.0f), m_translate);
 		ToyEngine::Renderer::Submit(phongShader, m_models[1]);
-
 		ToyEngine::Renderer::EndScene();
 	}
 

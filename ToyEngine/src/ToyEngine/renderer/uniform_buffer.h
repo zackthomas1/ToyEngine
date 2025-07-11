@@ -52,7 +52,13 @@ namespace ToyEngine
 		UniformManager() : m_binding_index(0) {}
 		~UniformManager() {}
 		
-		
+		/**
+		* @brief Creates a new UniformBuffer with the specified name and size, and adds it to the manager.
+		* @param name The name to associate with the new UniformBuffer.
+		* @param size The size in bytes of the UniformBuffer to create.
+		*/
+		void CreateBuffer(std::string name, uint32_t size);
+
 		/**
 		* @brief Adds a UniformBuffer to the manager with the specified name.
 		* @param name The name to associate with the UniformBuffer.
