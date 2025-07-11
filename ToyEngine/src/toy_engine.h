@@ -8,6 +8,7 @@
 #include "ToyEngine/renderer/camera.h"
 #include "ToyEngine/renderer/shader.h"
 #include "ToyEngine/renderer/renderer.h"
+#include "ToyEngine/renderer/uniform_buffer.h"
 
 //----------- entry point -------------
 #include "ToyEngine/entry_point.h"

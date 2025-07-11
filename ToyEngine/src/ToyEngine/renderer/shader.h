@@ -11,6 +11,8 @@ namespace ToyEngine
 		virtual ~Shader() {}
 
 		virtual void Use() = 0;
+		virtual void BindUniformBlock(const char* uniform_block, uint32_t binding_point) const = 0; 
+
 		virtual void SetBool(const std::string& name, bool value) const = 0; 
 		virtual void SetInt(const std::string& name, int value) const = 0;
 		virtual void SetFloat(const std::string& name, float value) const = 0;
@@ -39,7 +41,7 @@ namespace ToyEngine
 		ShaderLibrary() {}
 		~ShaderLibrary() {}
 
-		void Load(Ref<Shader> shader);
+		void Add(Ref<Shader> shader);
 		Ref<Shader> Get(const std::string& name);
     private:
 		std::unordered_map<std::string, Ref<Shader>> library_;

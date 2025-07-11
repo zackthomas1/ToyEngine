@@ -11,6 +11,7 @@ namespace ToyEngine
 
 		// use/activate the shader 
 		virtual void Use() override;
+		virtual void BindUniformBlock(const char* uniform_block, uint32_t binding_point) const override;
 
 		// utility uniform functions
 		virtual void SetBool(const std::string& name, bool value) const override;

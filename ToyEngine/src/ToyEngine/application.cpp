@@ -29,6 +29,7 @@ namespace ToyEngine
 
 		// initialize renderer
 		Renderer::Init();
+
 	}
 
 	Application::~Application()
