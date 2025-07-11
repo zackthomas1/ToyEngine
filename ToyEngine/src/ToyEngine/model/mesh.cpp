@@ -15,27 +15,21 @@ namespace ToyEngine
 	Mesh::~Mesh()
 	{
         RenderCommand::DeleteVertexArray(m_vao);
-        RenderCommand::DeleteBuffer(m_vbo);
-        RenderCommand::DeleteBuffer(m_ebo);
+        // The vertex and index buffers will be automatically cleaned up when the shared_ptr goes out of scope
 	}
 
 	void Mesh::setupMesh()
 	{
-        // Gen buffers
+        // Create vertex and index buffers using the abstraction
+        m_vertex_buffer = VertexBuffer::Create(&m_vertices[0], m_vertices.size() * sizeof(Vertex));
+        m_index_buffer = IndexBuffer::Create(&m_indices[0], m_indices.size());
+
+        // Gen and bind vertex array
         glGenVertexArrays(1, &m_vao);
-        glGenBuffers(1, &m_vbo);
-        glGenBuffers(1, &m_ebo);
-
-        // Bind buffers
         glBindVertexArray(m_vao);
-        glBindBuffer(GL_ARRAY_BUFFER, m_vbo);
 
-        // Set vertice buffer
-        glBufferData(GL_ARRAY_BUFFER, m_vertices.size() * sizeof(Vertex), &m_vertices[0], GL_STATIC_DRAW);
-
-        // Set element array buffer 
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_ebo);
-        glBufferData(GL_ELEMENT_ARRAY_BUFFER, m_indices.size() * sizeof(uint32_t), &m_indices[0], GL_STATIC_DRAW);
+        // Bind vertex buffer
+        m_vertex_buffer->Bind();
 
         // Set vertex attribute pointers
         // --------------
@@ -50,6 +44,9 @@ namespace ToyEngine
         // aTexCoords
         glEnableVertexAttribArray(2);
         glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, TexCoords));
+
+        // Bind index buffer
+        m_index_buffer->Bind();
 
         // Release vertex array object 
         glBindVertexArray(0);

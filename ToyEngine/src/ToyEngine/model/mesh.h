@@ -1,5 +1,6 @@
 #pragma once
 #include "ToyEngine/model/material.h"
+#include "ToyEngine/renderer/vertex_buffer.h"
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
@@ -23,7 +24,9 @@ namespace ToyEngine
 
 	public:
 		// mesh data 
-		uint32_t m_vao, m_vbo, m_ebo;
+		uint32_t m_vao;
+		Ref<VertexBuffer> m_vertex_buffer;
+		Ref<IndexBuffer> m_index_buffer;
 		Vector<Vertex>		m_vertices;
 		Vector<uint32_t>	m_indices;
 		Ref<Material>		m_material;
