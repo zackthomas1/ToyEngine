@@ -84,6 +84,12 @@ namespace ToyEngine
 		uint32_t GetCount() const { return count_; }
 
 		/**
+		* @brief Gets the capacity of the index buffer.
+		* @return The maximum number of indices the buffer can hold.
+		*/
+		uint32_t GetCapacity() const { return capacity_; }
+
+		/**
 		* @brief Creates an index buffer with the specified indices.
 		* @param indices Pointer to the index data to upload.
 		* @param count The number of indices to upload.
@@ -92,10 +98,11 @@ namespace ToyEngine
 		static Ref<IndexBuffer> Create(const uint32_t* indices, uint32_t count);
 
 	protected:
-		IndexBuffer(uint32_t count) : count_(count) {}
+		IndexBuffer(uint32_t count) : count_(count), capacity_(count) {}
 
 	protected:
 		uint32_t id_ = 0;
 		uint32_t count_ = 0;
+		uint32_t capacity_ = 0;
 	};
 }
