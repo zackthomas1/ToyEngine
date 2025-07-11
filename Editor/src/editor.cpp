@@ -86,8 +86,8 @@ public:
 		ImGui::Begin("Hello, World");
 		ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / io_.Framerate, io_.Framerate);
         ImGui::Text("Camera FOV: %d", static_cast<int>(m_camera->fov()));
-		ImGui::DragFloat("Rotate", &m_rotation_degree, 0.1f, 0.0f, 360.0f, "%0.1f", ImGuiSliderFlags_WrapAround);
-		ImGui::InputFloat3("Translate", glm::value_ptr(m_translate), "%0.1f");
+		ImGui::DragFloat("Rotate Backpack", &m_rotation_degree, 0.1f, 0.0f, 360.0f, "%0.1f", ImGuiSliderFlags_WrapAround);
+		ImGui::InputFloat3("Translate Cyborg", glm::value_ptr(m_translate), "%0.1f");
 		ImGui::End();
 	}
 
