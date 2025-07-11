@@ -21,6 +21,18 @@ namespace ToyEngine
 		glUseProgram(id_);
 	}
 
+	void ToyEngine::OpenGLShader::BindUniformBlock(const char* uniform_block, uint32_t binding_point) const
+	{
+		// Get the index of the "Matrices" uniform block in each shader program.
+		// This index is used to refer to the block within the shader.
+		
+		//glGetUniformBlockIndex(id_, uniform_block);
+
+		// Bind each uniform block index to a binding point (here, binding point 0).
+		// This tells OpenGL that the "Matrices" block in each shader will use binding point 0.
+		glUniformBlockBinding(id_, glGetUniformBlockIndex(id_, uniform_block), binding_point);
+	}
+
 	void OpenGLShader::SetBool(const std::string& name, bool value) const
 	{
 		glUniform1i(glGetUniformLocation(id_, name.c_str()), (int)value);

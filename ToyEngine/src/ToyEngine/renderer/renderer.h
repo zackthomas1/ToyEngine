@@ -2,32 +2,40 @@
 #include "ToyEngine/model/model.h"
 #include "ToyEngine/renderer/camera.h"
 #include "ToyEngine/renderer/shader.h"
+#include "ToyEngine/renderer/uniform_buffer.h"
 
 namespace ToyEngine
 {
+	struct SceneData {
+		
+		SceneData() {}
+	};
+
 	class Renderer
 	{
 	public:
-
 		static void Init();
+
+		/// <summary>
+		/// Begins a new rendering scene by setting up camera matrices in the uniform buffer.
+		/// This function prepares the renderer for drawing by clearing the background and updating
+		/// the uniform buffer with the current camera's view and projection matrices.
+		/// </summary>
+		/// <param name="camera"></param>
 		static void BeginScene(Ref<Camera> camera);
 		static void Submit(Ref<Shader> shader, Ref<Model> model);
 		static void EndScene();
 
-		static Renderer* s_instance;
 		static eRenderAPI API() { return Renderer::s_instance->api_; }
+		static UniformManager& GetUniformManager() { return Renderer::s_instance->m_uniform_manager; }
 
-		struct SceneData{
-			glm::mat4 view;
-			glm::mat4 projection;
-			
-			SceneData () : view(glm::mat4(1.0f)), projection(glm::mat4(1.0f)) {}
-		};
-		SceneData m_data;
 	protected:
 		Renderer(eRenderAPI api, SceneData data = SceneData());
 		~Renderer() {}
 	private:
+		static Renderer* s_instance;
 		eRenderAPI api_;
+		UniformManager m_uniform_manager;
+		SceneData m_data;
 	};
 }

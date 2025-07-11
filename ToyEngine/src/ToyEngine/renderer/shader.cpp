@@ -17,7 +17,7 @@ namespace ToyEngine {
 		}
 	}
 
-	void ShaderLibrary::Load(Ref<Shader> shader)
+	void ShaderLibrary::Add(Ref<Shader> shader)
 	{
 		library_.emplace(std::make_pair(std::string(shader->m_name), shader));
 	}
@@ -29,7 +29,7 @@ namespace ToyEngine {
 		if (it != library_.end()) {
 			shader = it->second;
 		}
-		TY_CORE_ASSERT(shader, "Shader library returned NULL. Shader not found.")
-			return shader;
+		TY_CORE_ASSERT(shader, "Shader library returned NULL. Shader not found.");
+		return shader;
 	}
 }

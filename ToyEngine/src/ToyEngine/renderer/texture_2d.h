@@ -10,7 +10,6 @@ namespace ToyEngine
 
 		virtual uint32_t GetWidth() const { return width_; }
 		virtual uint32_t GetHeight() const { return height_;}
-		virtual uint32_t GetHeight() const { return height_;}
 		virtual void Bind(uint32_t texture_unit) const = 0;
 
 		static Ref<Texture2D> Create(const std::string& path, eTextureType type, bool flip_vertically = false);
