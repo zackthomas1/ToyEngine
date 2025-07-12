@@ -24,6 +24,14 @@ namespace ToyEngine
 		RenderAPI::Init(api);
 
 		Renderer::GetUniformManager().CreateBuffer("ViewProjectMats", 2 * sizeof(glm::mat4));
+		
+		// Initialize with a default directional light
+		DirectionalLight defaultLight;
+		defaultLight.direction = glm::vec3(0.5f, -1.0f, 0.3f);
+		defaultLight.ambient = glm::vec3(0.2f, 0.2f, 0.2f);
+		defaultLight.diffuse = glm::vec3(1.0f, 1.0f, 1.0f);
+		defaultLight.specular = glm::vec3(0.5f, 0.5f, 0.5f);
+		Renderer::GetLightManager().AddDirectionalLight(defaultLight);
 	}
 
 	void Renderer::BeginScene(Ref<Camera> camera)

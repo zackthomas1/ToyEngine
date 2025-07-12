@@ -3,6 +3,7 @@
 #include "ToyEngine/renderer/camera.h"
 #include "ToyEngine/renderer/shader.h"
 #include "ToyEngine/renderer/uniform_buffer.h"
+#include "ToyEngine/renderer/light_manager.h"
 
 namespace ToyEngine
 {
@@ -28,6 +29,7 @@ namespace ToyEngine
 
 		static eRenderAPI API() { return Renderer::s_instance->api_; }
 		static UniformManager& GetUniformManager() { return Renderer::s_instance->m_uniform_manager; }
+		static LightManager& GetLightManager() { return Renderer::s_instance->m_lightManager; }
 
 	protected:
 		Renderer(eRenderAPI api, SceneData data = SceneData());
@@ -36,6 +38,7 @@ namespace ToyEngine
 		static Renderer* s_instance;
 		eRenderAPI api_;
 		UniformManager m_uniform_manager;
+		LightManager m_lightManager;
 		SceneData m_data;
 	};
 }
