@@ -12,18 +12,55 @@ struct Material{
     // Instantiating this struct outside of a uniform may cause GLSL errors.
     sampler2D texture_diffuse1;
     sampler2D texture_specular1;
-
     float shininess;
 }; uniform Material material;
 
 struct DirectionalLight{ 
     vec3 direction; // directional vector replaces position vector
-
     vec3 ambient;
     vec3 diffuse;
     vec3 specular;
-}; uniform DirectionalLight light;
+    bool enabled; // flag to enable/disable this light
+}; 
 
+struct PointLight{
+    vec3 position; 
+    vec3 ambient; 
+    vec3 diffuse; 
+    vec3 specular; 
+    float constant; 
+    float linear; 
+    float quadratic;
+    bool enabled; 
+}
+
+struct SpotLight{
+    vec3 position;
+    vec3 ambient;
+    vec3 diffuse;
+    vec3 specular;
+    float constant;
+    float linear;
+    float quadratic;
+    vec3 spotDirection;
+    float innerAngle;
+    float outerAngle;
+    bool enabled;
+}
+#define MAX_DIRECTIONAL_LIGHTS 4
+#define MAX_POINT_LIGHTS 32
+#define MAX_SPOT_Lights 16
+
+uniform DirectionalLight uDirectionalLights[MAX_DIRECTIONAL_LIGHTS];
+uniform PointLight uPointLights[MAX_POINT_LIGHTS]; 
+uniform SpotLight uSpotLights[MAX_SPOT_LIGHTS]
+
+uniform int uNumDirectionalLights;
+uniform int uNumPointLights;
+uniform int uNumberSpotLights;
+
+vec3 CalcDirLight(DirectionalLight light, vec3 normal, vec3 viewDir);
+vec3 CalcSpotLight(SpotLight light, vec3 normal, vec3 viewDir, vec3 fragPos);
 vec3 CalcDirLight(DirectionalLight light, vec3 normal, vec3 viewDir);
 
 uniform vec3 viewPos;
@@ -50,8 +87,30 @@ void main()
     vec3 norm = normalize(fs_in.normal); 
     vec3 viewDir = normalize(fs_in.fragPos - viewPos);
 
-    vec3 outputColor = CalcDirLight(light, norm, viewDir);
-    FragColor = vec4(outputColor, 1.0);
+    vec3 result = vec3(0.0);
+
+    // directional light
+    for (int i = 0; i < uNumDirectionalLights and i < MAX_DIRECTIONAL_LIGHTS; i++){
+        if(uDirectionalLights[i].enabled){
+            result += CalcDirLight(uDirectionalLights[i], norm, viewDir)
+        }
+    }
+    
+    // point light
+    for (int i = 0; i < uNumPointLights and i < MAX_POINT_LIGHTS; i++){
+        if(uPointLights[i].enabled){
+            result += CalcPointLight(uPointLights[i], norm, viewDir, fragPos)
+        }
+    }
+
+    // spot light
+    for (int i = 0; i < uNumberSpotLights and i < MAX_SPOT_Lights; i++){
+        if(uSpotLights[i].enabled){
+            result += CalcSpotLight(uSpotLights[i], norm, viewDir, fragPos)
+        }
+    }
+
+    FragColor = vec4(result, 1.0);
 }
 
 /**
@@ -94,4 +153,84 @@ vec3 CalcDirLight(DirectionalLight light, vec3 normal, vec3 viewDir)
     vec3 specularColor = texture(material.texture_specular1, fs_in.texCoords).rgb * specularIntensity * light.specular;
 
     return (ambientColor + diffuseColor + specularColor);
+}
+
+vec3 CalcPointLight(PointLight light, vec3 normal, vec3 viewDir, vec3 fragPos)
+{
+    // light caster
+    // ------------------
+    vec3 lightDir = normalize(light.position - fragPos);    // positional light caster
+
+    float distance = distance(light.position, fragPos);
+    float attenuation = 1.0 / (light.constant + (light.linear * distance) + (light.quadratic * pow(distance, 2)));
+
+    // ambient color
+    // ------------------
+    vec3 ambientColor = texture(material.diffuse, texCoords).rgb * light.ambient;
+
+    // diffuse color
+    // -----------------
+    // Note: The cosine term is the factor that describes how much light interacts with surface. 
+    // A fragments brightness increases the closer it aligns with the incoming light rays from the source.
+    float cosineTerm = max(dot(normal, lightDir), 0.0);
+    vec3 diffuseColor = texture(material.diffuse, texCoords).rgb * cosineTerm * light.diffuse;
+
+    // specular color
+    // -------------------
+
+    // Note: The lightDir vector is negated. The reflect function expects the first vector 
+    // to point from the light source towards the fragment's position. The lightDir vector 
+    // currently points the other way around. To make sure we get the correct reflect vector
+    // we reverse the lightDir vector. 
+    vec3 reflectDir = reflect(-lightDir, normal); 
+
+    // Note: Calculate the angular distance between this reflection vector and the view direction.
+    // The closer the angle between them, the greater the impact of the specular light.
+    float specularIntensity = pow(max(dot(reflectDir, viewDir), 0.0),material.shininess);
+    vec3 specularColor = (texture(material.specular, texCoords).rgb * specularIntensity) * light.specular;
+
+    ambientColor    *= attenuation;
+    diffuseColor    *= attenuation;
+    specularColor   *= attenuation;
+
+    return ambientColor + diffuseColor + specularColor;
+}
+
+vec3 CalcSpotLight(SpotLight light, vec3 normal, vec3 viewDir, vec3 fragPos){
+    // light caster
+    // ------------------
+    float distance = distance(light.position, fragPos);
+    float attenuation = 1.0 / (light.constant + (light.linear * distance) + (light.quadratic * pow(distance, 2)));
+    
+    vec3 lightDir = normalize(light.position - fragPos);    // positional light caster
+
+    // calculate spot light terms
+    float theta = dot(lightDir, normalize(-light.spotDir)); // the angle between the light direction and spot direction in radians
+    float epsilon = light.innerAngle - light.outerAngle;
+    float intensity = clamp((theta - light.outerAngle) / epsilon, 0.0, 1.0);
+
+    // ambient color
+    // ------------------
+    vec3 ambientColor = texture(material.diffuse, texCoords).rgb * light.ambient;
+
+    // diffuse color
+    // -----------------   
+    float cosineTerm = max(dot(normal, lightDir), 0.0);
+    vec3 diffuseColor = texture(material.diffuse, texCoords).rgb * cosineTerm * light.diffuse;
+
+    // specular color
+    // -------------------
+    vec3 reflectDir = reflect(-lightDir, normal); 
+
+    float specularIntensity = pow(max(dot(reflectDir, viewDir), 0.0),material.shininess);
+    vec3 specularColor = (texture(material.specular, texCoords).rgb * specularIntensity) * light.specular;
+
+    diffuseColor    *= intensity;
+    specularColor   *= intensity;
+
+    ambientColor    *= attenuation;
+    diffuseColor    *= attenuation;
+    specularColor   *= attenuation;
+
+    return ambientColor + diffuseColor + specularColor;
 }
