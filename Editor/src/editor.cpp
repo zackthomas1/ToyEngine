@@ -59,14 +59,15 @@ public:
 		ToyEngine::Renderer::BeginScene(m_camera);
 		
 		// set model matrix and submit to render for drawing
-		m_models[0]->m_model_mat = glm::rotate(glm::mat4(1.0f), glm::radians(m_rotation_degree), glm::vec3(0.0f, 1.0f, 0.0f));
-		ToyEngine::Renderer::Submit(m_shader_lib->Get("flat_texture"), m_models[0]);
 		ToyEngine::Ref<ToyEngine::Shader> phongShader = m_shader_lib->Get("phong");
 		phongShader->Use();
-		phongShader->SetFloat3("light.direction", 1.0f, 0.5f, 0.0f);
+		phongShader->SetFloat3("light.direction", m_light_direction.x, m_light_direction.y, m_light_direction.z);
 		phongShader->SetFloat3("light.ambient", 0.2f, 0.2f, 0.2f);
 		phongShader->SetFloat3("light.diffuse", 1.0f, 1.0f, 1.0f);
 		phongShader->SetFloat3("light.specular", 0.5f, 0.5f, 0.5f);
+		phongShader->SetFloat("material.shininess", m_shininess);
+		m_models[0]->m_model_mat = glm::rotate(glm::mat4(1.0f), glm::radians(m_rotation_degree), glm::vec3(0.0f, 1.0f, 0.0f));
+		ToyEngine::Renderer::Submit(phongShader, m_models[0]);
 		m_models[1]->m_model_mat = glm::translate(glm::mat4(1.0f), m_translate);
 		ToyEngine::Renderer::Submit(phongShader, m_models[1]);
 		ToyEngine::Renderer::EndScene();
@@ -86,8 +87,10 @@ public:
 		ImGui::Begin("Hello, World");
 		ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / io_.Framerate, io_.Framerate);
         ImGui::Text("Camera FOV: %d", static_cast<int>(m_camera->fov()));
-		ImGui::DragFloat("Rotate Backpack", &m_rotation_degree, 0.1f, 0.0f, 360.0f, "%0.1f", ImGuiSliderFlags_WrapAround);
-		ImGui::InputFloat3("Translate Cyborg", glm::value_ptr(m_translate), "%0.1f");
+		ImGui::DragFloat("Rotate Backpack", &m_rotation_degree, 0.1f, 0.0f, 360.0f, "%.1f", ImGuiSliderFlags_WrapAround);
+		ImGui::DragFloat3("Translate Cyborg", glm::value_ptr(m_translate), 0.1f, -10.0f, 10.0f, "%.1f");
+		ImGui::DragFloat("Material Shininess", &m_shininess, 0.1f, 0.1f, 256.0f, "%.1f");
+		ImGui::DragFloat3("Directional Light", glm::value_ptr(m_light_direction), 0.01f, -1.0f, 1.0f, "%.2f");
 		ImGui::End();
 	}
 
@@ -114,6 +117,8 @@ public:
 	ToyEngine::Vector<ToyEngine::Ref<ToyEngine::Model>> m_models;
 	float m_rotation_degree = 0;
 	glm::vec3 m_translate = glm::vec3(0.0f);
+	float m_shininess = 32.0f;
+	glm::vec3 m_light_direction = glm::vec3(1.0, 0.0, 0.0);
 
 	//std::vector<Light> lights_;
 
