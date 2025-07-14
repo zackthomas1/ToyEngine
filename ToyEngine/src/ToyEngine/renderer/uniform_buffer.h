@@ -51,13 +51,14 @@ namespace ToyEngine
 	public:
 		UniformManager() : m_binding_index(0) {}
 		~UniformManager() {}
-
+		
 		/**
-		* @brief Adds a UniformBuffer to the manager with the specified name.
-		* @param name The name to associate with the UniformBuffer.
-		* @param uniform_buffer The UniformBuffer to add.
+		* @brief Creates a new UniformBuffer with the specified name and size, and adds it to the manager.
+		* Binds to the next available binding point index and increments the internal counter 
+		* @param name The name to associate with the new UniformBuffer.
+		* @param size The size in bytes of the UniformBuffer to create.
 		*/
-		void Add(std::string name, Ref<UniformBuffer> uniform_buffer);
+		void CreateBuffer(std::string name, uint32_t size);
 
 		/**
 		* @brief Retrieves the UniformBuffer associated with the given name.
@@ -79,12 +80,6 @@ namespace ToyEngine
 		* @return True if the buffer exists, false otherwise.
 		*/
 		bool HasBuffer(const std::string& name) const;
-
-		/**
-		* @brief Returns the next available binding point index and increments the internal counter.
-		* @return The next binding point index.
-		*/
-		uint32_t GetNextBindingPoint() { return m_binding_index++; }
 	private:
 		uint32_t m_binding_index;
 		std::unordered_map<std::string, Ref<UniformBuffer>> buffer_lib_;

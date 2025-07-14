@@ -16,9 +16,9 @@ namespace ToyEngine {
 			return nullptr;
 		}
 	}
-	void UniformManager::Add(std::string name, Ref<UniformBuffer> uniform_buffer)
+	void UniformManager::CreateBuffer(std::string name, uint32_t size)
 	{
-		buffer_lib_.emplace(std::make_pair(name, uniform_buffer));
+		buffer_lib_.emplace(std::make_pair(name, UniformBuffer::Create(size, m_binding_index++)));
 	}
 
 	Ref<UniformBuffer> ToyEngine::UniformManager::GetBuffer(const std::string& name) const

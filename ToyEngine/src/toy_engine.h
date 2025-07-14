@@ -5,6 +5,7 @@
 #include "ToyEngine/layers/layer.h"
 #include "ToyEngine/model/model.h"
 #include "ToyEngine/services/locator.h"
+#include "ToyEngine/renderer/light.h"
 #include "ToyEngine/renderer/camera.h"
 #include "ToyEngine/renderer/shader.h"
 #include "ToyEngine/renderer/renderer.h"

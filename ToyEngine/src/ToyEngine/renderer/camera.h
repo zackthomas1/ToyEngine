@@ -58,6 +58,8 @@ namespace ToyEngine
 		glm::mat4 GetViewMatrix() const;
 		glm::mat4 GetProjectionMatrix() const;
 		float fov() const { return data_.fov; }
+		const glm::vec3& position() const { return data_.position; }
+		const glm::vec3& front() const { return data_.front; }
 		void SetMovementSpeed(float speed); 
 		void SetMouseSensitivity(float sensitivity); 
 		void SetNear(float znear);
@@ -74,5 +76,4 @@ namespace ToyEngine
 	private: 
 		CameraProps data_;
 	};
-
 }
