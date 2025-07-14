@@ -23,7 +23,7 @@ namespace ToyEngine
 		s_instance = new Renderer(api);
 		RenderAPI::Init(api);
 
-		Renderer::GetUniformManager().CreateBuffer("ViewProjectMats", 2 * sizeof(glm::mat4));
+		Renderer::GetUniformManager().CreateBuffer("ViewProjectMats", 2 * sizeof(glm::mat4) + sizeof(glm::vec3) + sizeof(float));
 	}
 
 	void Renderer::BeginScene(Ref<Camera> camera)
@@ -35,6 +35,7 @@ namespace ToyEngine
 		ToyEngine::Ref<ToyEngine::UniformBuffer> matrix_buffer = ToyEngine::Renderer::GetUniformManager().GetBuffer("ViewProjectMats");
 		matrix_buffer->SetData(0, sizeof(glm::mat4), glm::value_ptr(camera->GetViewMatrix()));
 		matrix_buffer->SetData(sizeof(glm::mat4), sizeof(glm::mat4), glm::value_ptr(camera->GetProjectionMatrix()));
+		matrix_buffer->SetData(2 * sizeof(glm::mat4), sizeof(glm::vec3), glm::value_ptr(camera->position()));
 	}
 
 	void Renderer::Submit(Ref<Shader> shader, Ref<Model> model)

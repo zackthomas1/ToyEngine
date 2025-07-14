@@ -1,4 +1,6 @@
 #pragma once
+#include <cstdint>
+
 namespace ToyEngine
 {
 	// Defines key codes
@@ -52,5 +54,11 @@ namespace ToyEngine
 	{
 		kNone	= 0,
 		kOpenGL = 1,
+	};
+
+	enum class eLightType {
+		kDirectional = 1,
+		kPoint		= 2,
+		kSpot		= 3,
 	};
 }

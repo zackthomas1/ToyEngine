@@ -4,16 +4,17 @@ layout (location = 1) in vec3 aNormal;
 layout (location = 2) in vec2 aTexCoords;
 
 layout (std140) uniform ViewProjectMats{
-    mat4 uView;       // Base alignment: 64 bytes, Aligned offset: 0
-    mat4 uProjection; // Base alignment: 64 bytes, Aligned offset: 64
+    mat4 uView;        // Base alignment: 64 bytes, Aligned offset: 0
+    mat4 uProjection;  // Base alignment: 64 bytes, Aligned offset: 64
+    vec3 uViewPos;     // Base alignment: 16 bytes, Aligned offset: 128
 };
 uniform mat4 uModel;
 
-out VS_OUT
-{
-    vec3 fragPos; 
-    vec3 normal; 
-    vec2 texCoords; 
+out VS_OUT {
+    vec3 fragPos;
+    vec3 normal;
+    vec2 texCoords;
+    vec3 viewPos;
 } vs_out;
 
 void main()
@@ -29,8 +30,9 @@ void main()
     // Transform the input normal vector to world space
     vs_out.normal = normalMat * aNormal;
 
-    // Pass through the texture coordinates to the fragment shader
     vs_out.texCoords = aTexCoords;
+
+    vs_out.viewPos = uViewPos;
 
     // Compute the final vertex position in clip space for rasterization
     gl_Position = uProjection * uView * uModel * vec4(aPos, 1.0);
