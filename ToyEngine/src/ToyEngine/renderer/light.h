@@ -6,7 +6,7 @@
 
 #define TY_MAX_DIRECTIONAL_LIGHTS 4
 #define TY_MAX_POINT_LIGHTS 32
-#define TY_MAX_SPOT_Lights 16
+#define TY_MAX_SPOT_LIGHTS 16
 
 namespace ToyEngine
 {
