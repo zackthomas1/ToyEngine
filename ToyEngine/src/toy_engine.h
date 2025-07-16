@@ -2,6 +2,7 @@
 
 #include "ToyEngine/log.h"
 #include "ToyEngine/application.h"
+#include "ToyEngine/scene_node.h"
 #include "ToyEngine/layers/layer.h"
 #include "ToyEngine/model/model.h"
 #include "ToyEngine/services/locator.h"

@@ -1,4 +1,5 @@
 #pragma once
+#include "ToyEngine/scene_node.h"
 #include "ToyEngine/model/model.h"
 #include "ToyEngine/renderer/camera.h"
 #include "ToyEngine/renderer/shader.h"
@@ -23,7 +24,8 @@ namespace ToyEngine
 		/// </summary>
 		/// <param name="camera"></param>
 		static void BeginScene(Ref<Camera> camera);
-		static void Submit(Ref<Shader> shader, Ref<Model> model);
+		static void Submit(Ref<Model> model, const glm::mat4& world_transform);
+		static void Submit(Ref<SceneNode> scene);
 		static void EndScene();
 
 		static eRenderAPI API() { return Renderer::s_instance->api_; }

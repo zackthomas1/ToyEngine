@@ -32,23 +32,35 @@ namespace ToyEngine
 		RenderCommand::ClearSetBackground();
 
 		// Set the view and projection matrix data in uniform buffer.
-		ToyEngine::Ref<ToyEngine::UniformBuffer> matrix_buffer = ToyEngine::Renderer::GetUniformManager().GetBuffer("ViewProjectMats");
-		matrix_buffer->SetData(0, sizeof(glm::mat4), glm::value_ptr(camera->GetViewMatrix()));
-		matrix_buffer->SetData(sizeof(glm::mat4), sizeof(glm::mat4), glm::value_ptr(camera->GetProjectionMatrix()));
-		matrix_buffer->SetData(2 * sizeof(glm::mat4), sizeof(glm::vec3), glm::value_ptr(camera->position()));
+		ToyEngine::Ref<ToyEngine::UniformBuffer> camera_uniforms = ToyEngine::Renderer::GetUniformManager().GetBuffer("ViewProjectMats");
+		camera_uniforms->SetData(0, sizeof(glm::mat4), glm::value_ptr(camera->GetViewMatrix()));
+		camera_uniforms->SetData(sizeof(glm::mat4), sizeof(glm::mat4), glm::value_ptr(camera->GetProjectionMatrix()));
+		camera_uniforms->SetData(2 * sizeof(glm::mat4), sizeof(glm::vec3), glm::value_ptr(camera->position()));
 	}
 
-	void Renderer::Submit(Ref<Shader> shader, Ref<Model> model)
+	void Renderer::Submit(Ref<Model> model, const glm::mat4& world_transform)
 	{
+		Ref<Shader> shader = model->m_shader;
 		shader->Use();
 		for (Ref<Mesh> mesh : model->m_meshes) {
-			shader->SetMat4("uModel", model->m_model_mat);
+			shader->SetMat4("uModel", world_transform);
 			mesh->m_material->BindTextures(shader);
 
 			// draw mesh
 			RenderCommand::BindVertexArray(mesh->m_vao);
 			RenderCommand::DrawIndexed(mesh->m_indices.size());
 			RenderCommand::BindVertexArray(0);
+		}
+	}
+
+	void Renderer::Submit(Ref<SceneNode> scene)
+	{
+		scene->UpdateWorldTransform();
+		if(scene->GetEntity())
+			Renderer::Submit(scene->GetEntity(), scene->GetWorldTransform());
+
+		for (auto child : scene->GetChildren()) {
+			Renderer::Submit(child);
 		}
 	}
 

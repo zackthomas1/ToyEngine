@@ -20,6 +20,8 @@ public:
 		flatShader->BindUniformBlock("ViewProjectMats", matrices_bind_point);
 		textureShader->BindUniformBlock("ViewProjectMats", matrices_bind_point);
 		phongShader->BindUniformBlock("ViewProjectMats", matrices_bind_point);
+	
+		m_scene_graph = ToyEngine::MakeRef<ToyEngine::SceneNode>();
 	}
 
 	virtual void OnAttach()
@@ -36,8 +38,15 @@ public:
 
 		// Create scene geometry
 		TY_INFO("Loading scene geometry...");
-		m_models.push_back(ToyEngine::Model::Create("../assets/models/backpack/backpack.obj", true));
-		m_models.push_back(ToyEngine::Model::Create("../assets/models/cyborg/cyborg.obj", false));
+		ToyEngine::Ref<ToyEngine::Model> backpack	= (ToyEngine::Model::Create("../assets/models/backpack/backpack.obj", true));
+		ToyEngine::Ref<ToyEngine::Model> cyborg		= (ToyEngine::Model::Create("../assets/models/cyborg/cyborg.obj", false));
+		ToyEngine::Ref<ToyEngine::Shader> phongShader = m_shader_lib->Get("phong");
+		backpack->m_shader = phongShader;
+		cyborg->m_shader = phongShader;
+		ToyEngine::Ref<ToyEngine::SceneNode> backpack_node	= ToyEngine::MakeRef<ToyEngine::SceneNode>(backpack);
+		ToyEngine::Ref<ToyEngine::SceneNode> cyborg_node	= ToyEngine::MakeRef<ToyEngine::SceneNode>(cyborg);
+		m_scene_graph->AddChild(backpack_node);
+		m_scene_graph->AddChild(cyborg_node);
 		TY_INFO("Scene loaded!");
 	}
 
@@ -78,7 +87,6 @@ public:
 
 		// Draw Scene
 		ToyEngine::Renderer::BeginScene(m_camera);
-		// set model matrix and submit to render for drawing
 		ToyEngine::Ref<ToyEngine::Shader> phongShader = m_shader_lib->Get("phong");
 		phongShader->Use();
 		// Lights
@@ -118,11 +126,13 @@ public:
 				break;
 			}
 		}
+		// models
 		phongShader->SetFloat("material.shininess", m_shininess);
-		m_models[0]->m_model_mat = glm::rotate(glm::mat4(1.0f), glm::radians(m_rotation_degree), glm::vec3(0.0f, 1.0f, 0.0f));
-		ToyEngine::Renderer::Submit(phongShader, m_models[0]);
-		m_models[1]->m_model_mat = glm::translate(glm::mat4(1.0f), m_translate);
-		ToyEngine::Renderer::Submit(phongShader, m_models[1]);
+		m_scene_graph->SetLocalTransform(glm::translate(glm::mat4(1.0f), m_translate));
+		m_scene_graph->GetChildren()[1]->SetLocalTransform(
+			glm::rotate(glm::translate(glm::mat4(1.0f), m_translate_cyborg),
+				glm::radians(m_rotation_degree), glm::vec3(0.0f, 1.0f, 0.0f)));
+		ToyEngine::Renderer::Submit(m_scene_graph);
 		ToyEngine::Renderer::EndScene();
 	}
 
@@ -139,12 +149,14 @@ public:
 		// Show simple window
 		ImGui::Begin("Hello, World");
 		ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / io_.Framerate, io_.Framerate);
-		ImGui::Text("Scene Controls");
-		ImGui::Text("Camera FOV: %d", static_cast<int>(m_camera->fov()));
-		ImGui::DragFloat("Rotate Backpack##RotateBackpack", &m_rotation_degree, 0.1f, 0.0f, 360.0f, "%.1f", ImGuiSliderFlags_WrapAround);
-		ImGui::DragFloat3("Translate Cyborg##TranslateCyborg", glm::value_ptr(m_translate), 0.1f, -10.0f, 10.0f, "%.1f");
-		ImGui::DragFloat("Material Shininess##MaterialShininess", &m_shininess, 0.1f, 0.1f, 256.0f, "%.1f");
-
+		if (ImGui::CollapsingHeader("Scene Controls", ImGuiTreeNodeFlags_DefaultOpen))
+		{
+			ImGui::Text("Camera FOV: %d", static_cast<int>(m_camera->fov()));
+			ImGui::DragFloat3("Translate Root##TranslateRoot", glm::value_ptr(m_translate), 0.1f, -10.0f, 10.0f, "%.1f");
+			ImGui::DragFloat3("Translate Cyborg##TranslateCyborg", glm::value_ptr(m_translate_cyborg), 0.1f, -10.0f, 10.0f, "%.1f");
+			ImGui::DragFloat("Rotate Cyborg##RotateCyborg", &m_rotation_degree, 0.1f, 0.0f, 360.0f, "%.1f", ImGuiSliderFlags_WrapAround);
+			ImGui::DragFloat("Material Shininess##MaterialShininess", &m_shininess, 0.1f, 0.1f, 256.0f, "%.1f");
+		}
 		if (ImGui::CollapsingHeader("Light Controls", ImGuiTreeNodeFlags_DefaultOpen))
 		{
 			ImGui::Text("Directional Light");
@@ -185,13 +197,12 @@ public:
 	}
 public: 
 	ToyEngine::Ref<ToyEngine::ShaderLibrary> m_shader_lib;
-
 	ToyEngine::Ref<ToyEngine::Camera> m_camera;
 
 	// Model control parameters
-	ToyEngine::Vector<ToyEngine::Ref<ToyEngine::Model>> m_models;
+	ToyEngine::Ref<ToyEngine::SceneNode> m_scene_graph;
 	float m_rotation_degree = 0;
-	glm::vec3 m_translate = glm::vec3(0.0f);
+	glm::vec3 m_translate = glm::vec3(0.0f), m_translate_cyborg = glm::vec3(0.0f);
 	float m_shininess = 32.0f;
 
 	// Light control parameters

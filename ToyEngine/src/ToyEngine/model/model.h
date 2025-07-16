@@ -14,8 +14,7 @@ namespace ToyEngine
 
 		static Ref<Model> Create(const char* path, bool flip_vertically = false, bool gamma = false);
 	public:
-		// Model data
-		glm::mat4 m_model_mat;
+		Ref<Shader> m_shader;
 		Vector<Ref<Mesh>> m_meshes;
 		Vector<Ref<Texture2D>> m_textures;
 	private:

@@ -1,5 +1,5 @@
 #pragma once
-#include "ToyEngine/events/event.h"
+#include "ToyEngine/event.h"
 
 namespace ToyEngine {
 	constexpr int TY_DEFAULT_WINDOW_WIDTH = 800;
