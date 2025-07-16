@@ -1,6 +1,6 @@
 #pragma once
 #include "core.h"
-#include "ToyEngine/events/event.h"
+#include "ToyEngine/event.h"
 #include "ToyEngine/window.h"
 #include "ToyEngine/layers/layer_stack.h"
 

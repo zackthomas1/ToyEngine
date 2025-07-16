@@ -1,5 +1,5 @@
 #pragma once
-#include "ToyEngine/events/event.h"
+#include "ToyEngine/event.h"
 #include "ToyEngine/services/time_step.h"
 // imgui
 #include <glad/glad.h>
