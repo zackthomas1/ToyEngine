@@ -29,6 +29,11 @@ namespace ToyEngine {
 			void MarkDirty() { is_dirty = true; }
 			void UpdateWorldTransform();
 
+			Vector<Scope<SceneNode>>::iterator ChildrenBegin() { return children_.begin(); }
+			Vector<Scope<SceneNode>>::iterator ChildrenEnd() { return children_.end(); }
+			Vector<Scope<SceneNode>>::const_iterator ChildrenBegin() const { return children_.begin(); }
+			Vector<Scope<SceneNode>>::const_iterator ChildrenEnd() const { return children_.end(); }
+
 	private:
 			std::string name_;
 			bool is_dirty;
