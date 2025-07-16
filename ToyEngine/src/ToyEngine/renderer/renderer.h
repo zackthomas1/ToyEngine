@@ -25,7 +25,7 @@ namespace ToyEngine
 		/// <param name="camera"></param>
 		static void BeginScene(Ref<Camera> camera);
 		static void Submit(Ref<Model> model, const glm::mat4& world_transform);
-		static void Submit(Ref<SceneNode> scene);
+		static void Submit(SceneNode* scene);
 		static void EndScene();
 
 		static eRenderAPI API() { return Renderer::s_instance->api_; }

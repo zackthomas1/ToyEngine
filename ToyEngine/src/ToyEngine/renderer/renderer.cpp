@@ -53,14 +53,15 @@ namespace ToyEngine
 		}
 	}
 
-	void Renderer::Submit(Ref<SceneNode> scene)
+	void Renderer::Submit(SceneNode* scene)
 	{
+		if(!scene) return;
 		scene->UpdateWorldTransform();
 		if(scene->GetEntity())
 			Renderer::Submit(scene->GetEntity(), scene->GetWorldTransform());
 
-		for (auto child : scene->GetChildren()) {
-			Renderer::Submit(child);
+		for (const Scope<SceneNode>& child : scene->GetChildren()) {
+			Renderer::Submit(child.get());
 		}
 	}
 

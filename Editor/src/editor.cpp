@@ -1,6 +1,16 @@
 #include <toy_engine.h>
 #include <glad/glad.h>
 
+void DrawSceneNodeTree(ToyEngine::SceneNode* node) {
+	if(!node) return; 
+	if (ImGui::TreeNode(node->GetName().c_str())) {
+		for (const auto& child : node->GetChildren()) {
+			DrawSceneNodeTree(child.get());
+		}
+		ImGui::TreePop();
+	}
+}
+
 class Scene : public ToyEngine::Layer
 {
 public:
@@ -21,7 +31,7 @@ public:
 		textureShader->BindUniformBlock("ViewProjectMats", matrices_bind_point);
 		phongShader->BindUniformBlock("ViewProjectMats", matrices_bind_point);
 	
-		m_scene_graph = ToyEngine::MakeRef<ToyEngine::SceneNode>();
+		m_scene_graph = ToyEngine::MakeScope<ToyEngine::SceneNode>("root");
 	}
 
 	virtual void OnAttach()
@@ -43,10 +53,8 @@ public:
 		ToyEngine::Ref<ToyEngine::Shader> phongShader = m_shader_lib->Get("phong");
 		backpack->m_shader = phongShader;
 		cyborg->m_shader = phongShader;
-		ToyEngine::Ref<ToyEngine::SceneNode> backpack_node	= ToyEngine::MakeRef<ToyEngine::SceneNode>(backpack);
-		ToyEngine::Ref<ToyEngine::SceneNode> cyborg_node	= ToyEngine::MakeRef<ToyEngine::SceneNode>(cyborg);
-		m_scene_graph->AddChild(backpack_node);
-		m_scene_graph->AddChild(cyborg_node);
+		m_scene_graph->AddChild(ToyEngine::MakeScope<ToyEngine::SceneNode>("backepack_model", backpack));
+		m_scene_graph->AddChild(ToyEngine::MakeScope<ToyEngine::SceneNode>("cyborg_model", cyborg));
 		TY_INFO("Scene loaded!");
 	}
 
@@ -132,7 +140,7 @@ public:
 		m_scene_graph->GetChildren()[1]->SetLocalTransform(
 			glm::rotate(glm::translate(glm::mat4(1.0f), m_translate_cyborg),
 				glm::radians(m_rotation_degree), glm::vec3(0.0f, 1.0f, 0.0f)));
-		ToyEngine::Renderer::Submit(m_scene_graph);
+		ToyEngine::Renderer::Submit(m_scene_graph.get());
 		ToyEngine::Renderer::EndScene();
 	}
 
@@ -147,7 +155,7 @@ public:
 		ImGui::ShowDemoWindow();
 
 		// Show simple window
-		ImGui::Begin("Hello, World");
+		ImGui::Begin("Controls");
 		ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / io_.Framerate, io_.Framerate);
 		if (ImGui::CollapsingHeader("Scene Controls", ImGuiTreeNodeFlags_DefaultOpen))
 		{
@@ -179,6 +187,10 @@ public:
 			ImGui::ColorEdit3("Color##SpotLightColor", glm::value_ptr(m_spot_light_color), ImGuiColorEditFlags_Float);
 		}
 		ImGui::End();
+
+		ImGui::Begin("Scene Graph");
+		DrawSceneNodeTree(m_scene_graph.get());
+		ImGui::End();
 	}
 
 	virtual void OnEvent(ToyEngine::Event& e)
@@ -200,7 +212,7 @@ public:
 	ToyEngine::Ref<ToyEngine::Camera> m_camera;
 
 	// Model control parameters
-	ToyEngine::Ref<ToyEngine::SceneNode> m_scene_graph;
+	ToyEngine::Scope<ToyEngine::SceneNode> m_scene_graph;
 	float m_rotation_degree = 0;
 	glm::vec3 m_translate = glm::vec3(0.0f), m_translate_cyborg = glm::vec3(0.0f);
 	float m_shininess = 32.0f;
@@ -209,7 +221,7 @@ public:
 	ToyEngine::Vector<ToyEngine::Ref<ToyEngine::Light>> m_lights;
 	glm::vec3 m_directional_light_color = glm::vec3(0.2), m_directional_light_dir = glm::vec3(0.0, 0.0, -1.0);
 	glm::vec3 m_point_light_color_1 = glm::vec3(1.0, 0.0, 0.0), m_point_light_color_2 = glm::vec3(0.0, 1.0, 0.0), m_point_light_color_3 = glm::vec3(0.0, 0.0, 1.0);
-	glm::vec3 m_point_light_position_1 = glm::vec3(1.0, 0.0, 0.0), m_point_light_position_2 = glm::vec3(0.0, 1.0, 0.0), m_point_light_position_3 = glm::vec3(0.0, 0.0, 1.0);
+	glm::vec3 m_point_light_position_1 = glm::vec3(1.0, 0.0, 1.0), m_point_light_position_2 = glm::vec3(0.0, 1.0, 1.0), m_point_light_position_3 = glm::vec3(-1.0, 0.0, 1.0);
 	glm::vec3 m_spot_light_color = glm::vec3(1.0, 1.0, 0.0);
 };
 
