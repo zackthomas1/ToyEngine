@@ -5,15 +5,6 @@
 
 namespace ToyEngine
 {
-	Material::Material()
-	{
-	}
-
-	Material::Material(const Vector<Ref<Texture2D>> &textues) :
-		textures_(textues)
-	{
-	}
-
 	void Material::BindTextures(Ref<Shader> shader)
 	{
 		// bind texture on corresponding texture units
