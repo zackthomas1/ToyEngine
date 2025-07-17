@@ -17,6 +17,6 @@
 [submodule "ToyEngine/vendor/assimp"]
 	path = ToyEngine/vendor/assimp
 	url = https://github.com/assimp/assimp.git
-[submodule "wiki"]
-	path = wiki
+[submodule "docs/wiki"]
+	path = docs/wiki
 	url = https://github.com/zackthomas1/ToyEngine.wiki.git
