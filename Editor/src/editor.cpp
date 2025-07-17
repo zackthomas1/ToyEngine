@@ -26,18 +26,14 @@ public:
 		m_shader_lib->Add(textureShader);
 		m_shader_lib->Add(phongShader);
 
-		uint32_t view_proj_bind_point = ToyEngine::Renderer::GetUniformManager().GetBindPoint("ViewProjectMats");
-		flatShader->BindUniformBlock("ViewProjectMats", view_proj_bind_point);
-		textureShader->BindUniformBlock("ViewProjectMats", view_proj_bind_point);
-		phongShader->BindUniformBlock("ViewProjectMats", view_proj_bind_point);
-		
-		uint32_t light_block_bind_point = ToyEngine::Renderer::GetUniformManager().GetBindPoint("LightBlock");
-		flatShader->BindUniformBlock("LightBlock", light_block_bind_point);
-		textureShader->BindUniformBlock("LightBlock", light_block_bind_point);
-		phongShader->BindUniformBlock("LightBlock", light_block_bind_point);
+		ToyEngine::Renderer::GetUniformManager().BindUniformBlockToShader(flatShader, "ViewProjectMats");
+		ToyEngine::Renderer::GetUniformManager().BindUniformBlockToShader(textureShader, "ViewProjectMats");
+		ToyEngine::Renderer::GetUniformManager().BindUniformBlockToShader(phongShader, "ViewProjectMats");
 
-		m_scene_graph = ToyEngine::MakeScope<ToyEngine::SceneNode>("root");
-		m_light_block = ToyEngine::MakeScope<ToyEngine::LightBlock>();
+		ToyEngine::Renderer::GetUniformManager().BindUniformBlockToShader(flatShader, "LightBlock");
+		ToyEngine::Renderer::GetUniformManager().BindUniformBlockToShader(textureShader, "LightBlock");
+		ToyEngine::Renderer::GetUniformManager().BindUniformBlockToShader(phongShader, "LightBlock");
+
 	}
 
 	virtual void OnAttach()
@@ -46,6 +42,7 @@ public:
 		m_camera = ToyEngine::MakeRef<ToyEngine::Camera>(ToyEngine::eCameraType::kFlyCamera);
 
 		TY_INFO("Creating lights...");
+		m_light_block = ToyEngine::MakeScope<ToyEngine::LightBlock>();
 		m_light_block->m_num_lights = 5;
 		m_light_block->m_lights[0].m_type = int(ToyEngine::eLightType::kDirectional);
 		m_light_block->m_lights[1].m_type = int(ToyEngine::eLightType::kPoint);
@@ -60,6 +57,7 @@ public:
 
 		// Create scene geometry
 		TY_INFO("Create scene...");
+		m_scene_graph = ToyEngine::MakeScope<ToyEngine::SceneNode>("root");
 		ToyEngine::Ref<ToyEngine::Model> backpack	= (ToyEngine::Model::Create("../assets/models/backpack/backpack.obj", true));
 		ToyEngine::Ref<ToyEngine::Model> cyborg		= (ToyEngine::Model::Create("../assets/models/cyborg/cyborg.obj", false));
 		ToyEngine::Ref<ToyEngine::Shader> phongShader = m_shader_lib->Get("phong");
@@ -67,7 +65,6 @@ public:
 		cyborg->m_shader = phongShader;
 		m_scene_graph->AddChild(ToyEngine::MakeScope<ToyEngine::SceneNode>("backepack_model", backpack));
 		m_scene_graph->AddChild(ToyEngine::MakeScope<ToyEngine::SceneNode>("cyborg_model", cyborg));
-		TY_INFO("Scene loaded!");
 	}
 
 	virtual void OnDetach() {}

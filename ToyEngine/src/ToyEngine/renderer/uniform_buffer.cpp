@@ -4,6 +4,8 @@
 #include "ToyEngine/platform/opengl/opengl_uniform_buffer.h"
 
 namespace ToyEngine {
+	uint32_t UniformManager::s_next_binding_point = 0;
+
 	Ref<UniformBuffer> UniformBuffer::Create(uint32_t size, uint32_t binding_point)
 	{
 		switch (Renderer::API())
@@ -18,7 +20,7 @@ namespace ToyEngine {
 	}
 	void UniformManager::CreateBuffer(std::string name, uint32_t size)
 	{
-		buffer_lib_.emplace(std::make_pair(name, UniformBuffer::Create(size, m_binding_index++)));
+		buffer_lib_.emplace(std::make_pair(name, UniformBuffer::Create(size, s_next_binding_point++)));
 	}
 
 	Ref<UniformBuffer> ToyEngine::UniformManager::GetBuffer(const std::string& name) const
@@ -32,7 +34,7 @@ namespace ToyEngine {
 		return uniform_buffer;
 	}
 
-	uint32_t ToyEngine::UniformManager::GetBindPoint(const std::string& name) const
+	uint32_t UniformManager::GetBindPoint(const std::string& name) const
 	{
 		auto it = buffer_lib_.find(name);
 		Ref<UniformBuffer> uniform_buffer;
@@ -42,8 +44,19 @@ namespace ToyEngine {
 		TY_CORE_ASSERT(uniform_buffer, "UniformBuffer '{}' not found in UniformManager", name);
 		return uniform_buffer->GetBindPoint();
 	}
-    bool UniformManager::HasBuffer(const std::string& name) const
-    {
-        return buffer_lib_.find(name) != buffer_lib_.end();
-    }
+
+	void UniformManager::BindUniformBlockToShader(Ref<Shader> shader, const char* ubo_name)
+	{
+		if(!HasBuffer(ubo_name)){
+			TY_CORE_ERROR("Unable to find specified Uniform Block Object (ubo) - {}", ubo_name);
+			return;
+		}
+		uint32_t bind_point = GetBindPoint(ubo_name);
+		shader->BindUniformBlock(ubo_name, bind_point);
+	}
+
+	bool UniformManager::HasBuffer(const std::string& name) const
+	{
+		return buffer_lib_.find(name) != buffer_lib_.end();
+	}
 }
