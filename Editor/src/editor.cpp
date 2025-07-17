@@ -126,9 +126,29 @@ public:
 		// Show simple window
 		ImGui::Begin("Controls");
 		ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / io_.Framerate, io_.Framerate);
-		if (ImGui::CollapsingHeader("Scene Controls", ImGuiTreeNodeFlags_DefaultOpen))
+		if (ImGui::CollapsingHeader("Camera Controls", ImGuiTreeNodeFlags_DefaultOpen))
 		{
 			ImGui::Text("Camera FOV: %d", static_cast<int>(m_camera->fov()));
+
+			// Camera type selection widget
+			static int camera_type = static_cast<int>(m_camera->GetCameraType());
+			const char* camera_types[] = { "Perspective (Fly Camera)", "Orthographic" };
+			if (ImGui::Combo("Camera Type", &camera_type, camera_types, IM_ARRAYSIZE(camera_types)))
+			{
+				// 0: Perspective (Fly Camera), 1: Orthographic
+				if (camera_type == 0 && m_camera->GetCameraType() != ToyEngine::eCameraType::kFlyCamera)
+				{
+					m_camera->SetCameraType(ToyEngine::eCameraType::kFlyCamera);
+				}
+				else if (camera_type == 1 && m_camera->GetCameraType() != ToyEngine::eCameraType::kOrthographicCamera)
+				{
+					m_camera->SetCameraType(ToyEngine::eCameraType::kOrthographicCamera);
+				}
+			}
+
+		}
+		if (ImGui::CollapsingHeader("Scene Controls", ImGuiTreeNodeFlags_DefaultOpen))
+		{
 			ImGui::DragFloat3("Translate Root##TranslateRoot", glm::value_ptr(m_translate), 0.1f, -10.0f, 10.0f, "%.1f");
 			ImGui::DragFloat3("Translate Cyborg##TranslateCyborg", glm::value_ptr(m_translate_cyborg), 0.1f, -10.0f, 10.0f, "%.1f");
 			ImGui::DragFloat("Rotate Cyborg##RotateCyborg", &m_rotation_degree, 0.1f, 0.0f, 360.0f, "%.1f", ImGuiSliderFlags_WrapAround);

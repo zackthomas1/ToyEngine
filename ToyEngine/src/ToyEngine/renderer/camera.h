@@ -57,6 +57,7 @@ namespace ToyEngine
 		// getter/setters
 		glm::mat4 GetViewMatrix() const;
 		glm::mat4 GetProjectionMatrix() const;
+		eCameraType GetCameraType() const { return data_.type; }
 		float fov() const { return data_.fov; }
 		const glm::vec3& position() const { return data_.position; }
 		const glm::vec3& front() const { return data_.front; }
@@ -64,6 +65,7 @@ namespace ToyEngine
 		void SetMouseSensitivity(float sensitivity); 
 		void SetNear(float znear);
 		void SetFar(float zfar);
+		void SetCameraType(eCameraType type) { data_.type = type; }
 
 		// update methods
 		virtual void UpdatePosition(eCameraMovement direction, float time_step);
