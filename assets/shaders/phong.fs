@@ -26,26 +26,26 @@ struct Material{
     float shininess;
 }; uniform Material material;
 
-// Each Light struct is padded to a multiple of 16 bytes (likely 96 bytes)
+// Each Light struct is padded to a multiple of 16 bytes (total 80 bytes)
 struct Light{
-    //General light parameters
-    int type;           // - int m_type: 4 bytes (offset 0)
-    int enabled;        // - int m_enabled: 4 bytes 
-    float innerAngle;   // - float m_innerAngle: 4 bytes (offset 76)
-    float outerAngle;   // - float m_outerAngle: 4 bytes (offset 80)
+                        // base alignment   // aligned offset
+    int type;           // 4 bytes          0 bytes
+    int enabled;        // 4 bytes          4 bytes 
+    float innerAngle;   // 4 bytes          8 bytes
+    float outerAngle;   // 4 bytes          12 bytes
 
-    vec4 value;         // - vec3 m_value: 12 bytes (offset 16, must be aligned to 16)
-    vec4 direction;     // - vec3 m_direction: 12 bytes (offset 32, aligned to 16)
-    vec4 position;      // - vec3 m_position: 12 bytes (offset 48, aligned to 16)
-    vec4 spotDirection; // - vec3 m_spotDirection: 12 bytes (offset 64, aligned to 16)
+    vec4 value;         // 16 bytes         16 bytes
+    vec4 direction;     // 16 bytes         32 bytes
+    vec4 position;      // 16 bytes         48 bytes
+    vec4 spotDirection; // 16 bytes         64 bytes
 
     // NOTE: The inner and outer angles are measured in terms of their cosine value.
 };
 
 // - The block itself is aligned to 16 bytes
 layout (std140) uniform LightBlock{
-    Light uLights[MAX_LIGHTS];  // offset 16, each element aligned to 16 bytes
-    int uNumLight;              // offset 0, base alignment 4, but next member must start at 16 (vec4 boundary)
+    Light uLights[MAX_LIGHTS];  // offset 0, each element aligned to 16 bytes
+    int uNumLight;              // offset , base alignment 4, but next member must start at 16 (vec4 boundary)
 };
 
 vec3 CalcDirLight(Light light, vec3 normal, vec3 viewDir);
