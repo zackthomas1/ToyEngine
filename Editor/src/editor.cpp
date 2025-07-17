@@ -145,7 +145,6 @@ public:
 					m_camera->SetCameraType(ToyEngine::eCameraType::kOrthographicCamera);
 				}
 			}
-
 		}
 		if (ImGui::CollapsingHeader("Scene Controls", ImGuiTreeNodeFlags_DefaultOpen))
 		{
