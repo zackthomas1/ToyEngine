@@ -34,23 +34,18 @@ struct Light{
     float innerAngle;   // - float m_innerAngle: 4 bytes (offset 76)
     float outerAngle;   // - float m_outerAngle: 4 bytes (offset 80)
 
-    vec3 value;         // - vec3 m_value: 12 bytes (offset 16, must be aligned to 16)
-    int pad1;
-    vec3 direction;     // - vec3 m_direction: 12 bytes (offset 32, aligned to 16)
-    int pad2;
-    vec3 position;      // - vec3 m_position: 12 bytes (offset 48, aligned to 16)
-    int pad3;
-    vec3 spotDirection; // - vec3 m_spotDirection: 12 bytes (offset 64, aligned to 16)
-    int pad4;
+    vec4 value;         // - vec3 m_value: 12 bytes (offset 16, must be aligned to 16)
+    vec4 direction;     // - vec3 m_direction: 12 bytes (offset 32, aligned to 16)
+    vec4 position;      // - vec3 m_position: 12 bytes (offset 48, aligned to 16)
+    vec4 spotDirection; // - vec3 m_spotDirection: 12 bytes (offset 64, aligned to 16)
 
     // NOTE: The inner and outer angles are measured in terms of their cosine value.
 };
 
 // - The block itself is aligned to 16 bytes
 layout (std140) uniform LightBlock{
-    int uNumLight;              // offset 0, base alignment 4, but next member must start at 16 (vec4 boundary)
-    int pad[3];                 // pad to vec4 boundary required by std140
     Light uLights[MAX_LIGHTS];  // offset 16, each element aligned to 16 bytes
+    int uNumLight;              // offset 0, base alignment 4, but next member must start at 16 (vec4 boundary)
 };
 
 vec3 CalcDirLight(Light light, vec3 normal, vec3 viewDir);
@@ -123,24 +118,24 @@ void main()
 vec3 CalcDirLight(Light light, vec3 normal, vec3 viewDir)
 {
     // Light direction (from fragment to light)
-    vec3 lightDir = normalize(-light.direction);
+    vec3 lightDir = normalize(-light.direction.xyz);
 
     // Ambient: texture modulated by ambient light
-    vec3 ambientColor = texture(material.texture_diffuse1, fs_in.texCoords).rgb * (light.value * AMBIENT_INFLUENCE);
+    vec3 ambientColor = texture(material.texture_diffuse1, fs_in.texCoords).rgb * (light.value.xyz * AMBIENT_INFLUENCE);
 
     // Diffuse texture color
     vec3 diffuseTexColor = texture(material.texture_diffuse1, fs_in.texCoords).rgb;
 
     // Diffuse: Lambertian reflectance
     float cosineTerm = max(dot(normal, lightDir), 0.0);
-    vec3 diffuseColor = diffuseTexColor * cosineTerm * (light.value * DIFFUSE_INFLUENCE);
+    vec3 diffuseColor = diffuseTexColor * cosineTerm * (light.value.xyz * DIFFUSE_INFLUENCE);
     
     // Specular: Phong reflection with texture
     // Calculates angular distance between reflection direction and view direction.
     // Smaller angular distance result in greater specular light contribute.
     vec3 reflectDir = reflect(-lightDir, normal);
     float specularIntensity = pow(max(dot(reflectDir, viewDir), 0.0), material.shininess);
-    vec3 specularColor = texture(material.texture_specular1, fs_in.texCoords).rgb * specularIntensity * (light.value * SPECULAR_INFLUENCE);
+    vec3 specularColor = texture(material.texture_specular1, fs_in.texCoords).rgb * specularIntensity * (light.value.xyz * SPECULAR_INFLUENCE);
 
     return ( ambientColor + diffuseColor + specularColor);
 }
@@ -149,21 +144,21 @@ vec3 CalcPointLight(Light light, vec3 normal, vec3 viewDir, vec3 fragPos)
 {
     // light caster
     // ------------------
-    vec3 lightDir = normalize(light.position - fragPos);
+    vec3 lightDir = normalize(light.position.xyz - fragPos);
 
-    float distance = distance(light.position, fragPos);
+    float distance = distance(light.position.xyz, fragPos);
     float attenuation = 1.0 / (CONSTANT_ATTEN + (LINEAR_ATTEN * distance) + (QUADRATIC_ATTEN * pow(distance, 2)));
 
     // ambient color
     // ------------------
-    vec3 ambientColor = texture(material.texture_diffuse1, fs_in.texCoords).rgb * (light.value * AMBIENT_INFLUENCE);
+    vec3 ambientColor = texture(material.texture_diffuse1, fs_in.texCoords).rgb * (light.value.xyz * AMBIENT_INFLUENCE);
 
     // diffuse color
     // -----------------
     // Note: The cosine term is the factor that describes how much light interacts with surface. 
     // A fragments brightness increases the closer it aligns with the incoming light rays from the source.
     float cosineTerm = max(dot(normal, lightDir), 0.0);
-    vec3 diffuseColor = texture(material.texture_diffuse1, fs_in.texCoords).rgb * cosineTerm * (light.value * DIFFUSE_INFLUENCE);
+    vec3 diffuseColor = texture(material.texture_diffuse1, fs_in.texCoords).rgb * cosineTerm * (light.value.xyz * DIFFUSE_INFLUENCE);
 
     // specular color
     // -------------------
@@ -177,7 +172,7 @@ vec3 CalcPointLight(Light light, vec3 normal, vec3 viewDir, vec3 fragPos)
     // Note: Calculate the angular distance between this reflection vector and the view direction.
     // The closer the angle between them, the greater the impact of the specular light.
     float specularIntensity = pow(max(dot(reflectDir, viewDir), 0.0),material.shininess);
-    vec3 specularColor = (texture(material.texture_specular1, fs_in.texCoords).rgb * specularIntensity) * (light.value * SPECULAR_INFLUENCE);
+    vec3 specularColor = (texture(material.texture_specular1, fs_in.texCoords).rgb * specularIntensity) * (light.value.xyz * SPECULAR_INFLUENCE);
 
     ambientColor    *= attenuation;
     diffuseColor    *= attenuation;
@@ -190,13 +185,13 @@ vec3 CalcSpotLight(Light light, vec3 normal, vec3 viewDir, vec3 fragPos)
 {
     // light caster
     // ------------------
-    float distance = distance(light.position, fragPos);
+    float distance = distance(light.position.xyz, fragPos);
     float attenuation = 1.0 / (CONSTANT_ATTEN + (LINEAR_ATTEN * distance) + (QUADRATIC_ATTEN * pow(distance, 2)));
 
-    vec3 lightDir = normalize(light.position - fragPos);    // positional light caster
+    vec3 lightDir = normalize(light.position.xyz - fragPos);    // positional light caster
 
     // calculate spot light terms
-    float theta = dot(lightDir, normalize(-light.spotDirection)); // cosine of the angle between the light direction and spot direction
+    float theta = dot(lightDir, normalize(-light.spotDirection.xyz)); // cosine of the angle between the light direction and spot direction
     float epsilon = light.innerAngle - light.outerAngle;
     // Ensure epsilon is positive to avoid inverted ramp or division by zero
     if (epsilon <= 0.0) {
@@ -206,19 +201,19 @@ vec3 CalcSpotLight(Light light, vec3 normal, vec3 viewDir, vec3 fragPos)
 
     // ambient color
     // ------------------
-    vec3 ambientColor = texture(material.texture_diffuse1, fs_in.texCoords).rgb * (light.value * AMBIENT_INFLUENCE);
+    vec3 ambientColor = texture(material.texture_diffuse1, fs_in.texCoords).rgb * (light.value.xyz * AMBIENT_INFLUENCE);
 
     // diffuse color
     // -----------------   
     float cosineTerm = max(dot(normal, lightDir), 0.0);
-    vec3 diffuseColor = texture(material.texture_diffuse1, fs_in.texCoords).rgb * cosineTerm * (light.value * DIFFUSE_INFLUENCE);
+    vec3 diffuseColor = texture(material.texture_diffuse1, fs_in.texCoords).rgb * cosineTerm * (light.value.xyz * DIFFUSE_INFLUENCE);
 
     // specular color
     // -------------------
     vec3 reflectDir = reflect(-lightDir, normal); 
 
     float specularIntensity = pow(max(dot(reflectDir, viewDir), 0.0),material.shininess);
-    vec3 specularColor = (texture(material.texture_specular1, fs_in.texCoords).rgb * specularIntensity) * (light.value * SPECULAR_INFLUENCE);
+    vec3 specularColor = (texture(material.texture_specular1, fs_in.texCoords).rgb * specularIntensity) * (light.value.xyz * SPECULAR_INFLUENCE);
 
     diffuseColor    *= intensity;
     specularColor   *= intensity;

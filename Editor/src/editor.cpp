@@ -91,17 +91,17 @@ public:
 			m_camera->UpdatePosition(ToyEngine::eCameraMovement::kDown, delta_time);
 
 		// Update lights
-		m_light_block->m_lights[0].m_direction		= m_directional_light_dir;
-		m_light_block->m_lights[0].m_value			= m_directional_light_color;
-		m_light_block->m_lights[1].m_position		= m_point_light_position_1;
-		m_light_block->m_lights[1].m_value			= m_point_light_color_1;
-		m_light_block->m_lights[2].m_position		= m_point_light_position_2;
-		m_light_block->m_lights[2].m_value			= m_point_light_color_2;
-		m_light_block->m_lights[3].m_position		= m_point_light_position_3;
-		m_light_block->m_lights[3].m_value			= m_point_light_color_3;
-		m_light_block->m_lights[4].m_position		= m_camera->position();
-		m_light_block->m_lights[4].m_spotDirection	= m_camera->front();
-		m_light_block->m_lights[4].m_value			= m_spot_light_color;
+		m_light_block->m_lights[0].m_direction		= glm::vec4(m_directional_light_dir,0.0f);
+		m_light_block->m_lights[0].m_value			= glm::vec4(m_directional_light_color, 0.0f);
+		m_light_block->m_lights[1].m_position		= glm::vec4(m_point_light_position_1, 0.0f);
+		m_light_block->m_lights[1].m_value			= glm::vec4(m_point_light_color_1, 0.0f);
+		m_light_block->m_lights[2].m_position		= glm::vec4(m_point_light_position_2, 0.0f);
+		m_light_block->m_lights[2].m_value			= glm::vec4(m_point_light_color_2, 0.0f);
+		m_light_block->m_lights[3].m_position		= glm::vec4(m_point_light_position_3, 0.0f);
+		m_light_block->m_lights[3].m_value			= glm::vec4(m_point_light_color_3, 0.0f);
+		m_light_block->m_lights[4].m_position		= glm::vec4(m_camera->position(), 0.0f);
+		m_light_block->m_lights[4].m_spotDirection	= glm::vec4(m_camera->front(), 0.0f);
+		m_light_block->m_lights[4].m_value			= glm::vec4(m_spot_light_color, 0.0f);
 
 		// Draw Scene
 		ToyEngine::Renderer::BeginScene(m_camera, m_light_block.get());

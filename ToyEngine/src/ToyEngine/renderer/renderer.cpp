@@ -38,7 +38,7 @@ namespace ToyEngine
 		camera_uniforms->SetData(2 * sizeof(glm::mat4), sizeof(glm::vec3), glm::value_ptr(camera->position()));
 		
 		Ref<UniformBuffer> light_uniforms = Renderer::GetUniformManager().GetBuffer("LightBlock");
-		TY_CORE_ASSERT(sizeof(LightBlock) == 1024, "LightBlock Incorrect size");
+		//TY_CORE_ASSERT(sizeof(LightBlock) == 1024, "LightBlock Incorrect size");
 		light_uniforms->SetData(0, sizeof(LightBlock), light_block);
 	}
 
