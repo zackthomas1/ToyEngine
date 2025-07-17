@@ -7,12 +7,12 @@ This document outlines the planned development phases for ToyEngine, including m
 ToyEngine follows an iterative development approach with clearly defined phases. Each phase builds upon the previous one, ensuring a solid foundation while continuously adding new capabilities.
 
 ### Phase Structure
-- **Duration**: 3-6 months per phase
-- **Deliverables**: Working features with documentation and tests
-- **Review Process**: Code review, testing, and community feedback
-- **Iteration**: Continuous improvement based on feedback
+- **Duration**: The majority of initial development work is planned for summer break from June to August. Afterwards I will continue with development in my free time between classes and work. Toy Engine is primarily a hobby/educational project that will be worked on in my free time. 
+- **Deliverables**: Working editor prototype with documentation and youtube dev vlogs
+- **Review Process**: Code review, copilot reviews, and community feedback
+- **Iteration**: Continuous improvement based additional learning and feedback
 
-## Phase 1: Foundation (Months 1-3)
+## Phase 1: Foundation
 
 ### Objective
 Establish the core architecture and fundamental systems needed for a functioning game engine.
@@ -20,46 +20,45 @@ Establish the core architecture and fundamental systems needed for a functioning
 ### Key Deliverables
 
 #### 1.1 Core Architecture
-- **Application Framework**: Main application loop and lifecycle management
-- **Window System**: Cross-platform window creation and management (GLFW)
-- **Event System**: Event dispatching and handling framework
-- **Layer System**: Hierarchical layer management for different systems
-- **Memory Management**: Smart pointer integration and RAII patterns
+- [x] **Application Framework**: premake build system, entry point, main application loop
+- [x] **Window System**: Cross-platform window creation and management. Starting with GLFW for windows
+- [x] **Event System**: Event dispatching and handling framework
+- [x] **Layer System**: Hierarchical layer management for different systems
+- [ ] **Memory Management**: Smart pointer integration and RAII patterns
 
 #### 1.2 Basic Rendering
-- **OpenGL Context**: OpenGL context creation and management
-- **Shader System**: Shader compilation, linking, and uniform management
-- **Basic Primitives**: Triangle and quad rendering
-- **Vertex Management**: Vertex buffer and array objects
-- **Basic Camera**: Simple camera implementation with view/projection matrices
+- [x] **OpenGL Context**: OpenGL context creation and management
+- [x] **Shader System**: Shader compilation, linking, and uniform management
+- [x] **Basic Primitives**: Triangle and quad rendering
+- [ ] **Vertex Management**: Vertex buffer and array objects
+- [x] **Basic Camera**: Simple camera implementation with view/projection matrices
 
 #### 1.3 Input System
-- **Keyboard Input**: Key event handling and polling
-- **Mouse Input**: Mouse button and movement event handling
-- **Input Polling**: Real-time input state querying
-- **Event Integration**: Input events integrated with event system
+- [x] **Keyboard Input**: Key event handling and polling
+- [x] **Mouse Input**: Mouse button and movement event handling
+- [x] **Input Polling**: Real-time input state querying
+- [x] **Event Integration**: Input events integrated with event system
 
 #### 1.4 Development Tools
-- **Logging System**: Comprehensive logging with spdlog integration
-- **Debug Utilities**: Basic debugging tools and assertions
-- **Build System**: Premake5 configuration and project generation
-- **Version Control**: Git workflow and contribution guidelines
+- [x] **Logging System**: Comprehensive logging with spdlog integration
+- [ ] **Debug Utilities**: Basic debugging tools and assertions
+- [x] **Build System**: Premake5 configuration and project generation
 
 ### Success Criteria
-- [ ] Application runs with a window and basic OpenGL context
-- [ ] Simple colored triangle renders correctly
-- [ ] Keyboard and mouse input events are handled
-- [ ] Logging system provides detailed debug information
-- [ ] Build system generates correct project files
+- [x] Application runs with a window and basic OpenGL context
+- [x] Simple colored triangle renders correctly
+- [x] Keyboard and mouse input events are handled
+- [x] Logging system provides detailed debug information
+- [x] Build system generates correct project files
 
 ### Testing Requirements
-- Unit tests for core classes and utilities
-- Integration tests for window and input systems
-- Performance benchmarks for basic rendering
+- [ ] Unit tests for core classes and utilities
+- [ ] Integration tests for window and input systems
+- [ ] Performance benchmarks for basic rendering
 
 ---
 
-## Phase 2: Rendering Pipeline (Months 4-6)
+## Phase 2: Rendering Pipeline
 
 ### Objective
 Implement a complete 3D rendering pipeline with support for meshes, textures, and basic lighting.
@@ -67,46 +66,46 @@ Implement a complete 3D rendering pipeline with support for meshes, textures, an
 ### Key Deliverables
 
 #### 2.1 3D Rendering
-- **3D Mathematics**: GLM integration for vectors, matrices, and transformations
-- **Camera System**: Perspective and orthographic cameras with smooth movement
-- **Mesh Rendering**: Vertex buffer objects for complex geometry
-- **Model Loading**: Basic OBJ model loading with Assimp
-- **Texture System**: Texture loading, binding, and management
+- [x] **3D Mathematics**: GLM integration for vectors, matrices, and transformations
+- [x] **Camera System**: Perspective and orthographic cameras with smooth movement
+- [x] **Mesh Rendering**: Vertex buffer objects for complex geometry
+- [x] **Model Loading**: Basic OBJ model loading with Assimp
+- [x] **Texture System**: Texture loading, binding, and management
 
 #### 2.2 Lighting System
-- **Basic Lighting**: Phong lighting model implementation
-- **Light Types**: Directional, point, and spot lights
-- **Material System**: Diffuse, specular, and normal mapping
-- **Shader Library**: Organized shader management and compilation
+- [x] **Basic Lighting**: Phong lighting model implementation
+- [x] **Light Types**: Directional, point, and spot lights
+- [x] **Material System**: Diffuse, specular, and normal mapping
+- [x] **Shader Library**: Organized shader management and compilation
 
 #### 2.3 Scene Management
-- **Scene Graph**: Hierarchical scene organization
-- **Transform System**: Position, rotation, and scale management
-- **Basic Culling**: View frustum culling for performance
-- **Render Queue**: Organized rendering order and state management
+- [x] **Scene Graph**: Hierarchical scene organization
+- [x] **Transform System**: Position, rotation, and scale management
+- [ ] **Basic Culling**: View frustum culling for performance
+- [ ] **Render Queue**: Organized rendering order and state management
 
 #### 2.4 Asset Pipeline
-- **Resource Manager**: Centralized asset loading and caching
-- **File System**: Platform-independent file operations
-- **Asset Formats**: Support for common 3D formats (OBJ, FBX)
-- **Texture Formats**: Support for common image formats (PNG, JPEG, TGA)
+- [ ] **Resource Manager**: Centralized asset loading and caching
+- [ ] **File System**: Platform-independent file operations
+- [x] **Asset Formats**: Support for common 3D formats (OBJ, FBX)
+- [x] **Texture Formats**: Support for common image formats (PNG, JPEG, TGA)
 
 ### Success Criteria
-- [ ] 3D models load and render correctly with textures
-- [ ] Multiple light sources illuminate scenes properly
-- [ ] Camera movement is smooth and responsive
-- [ ] Basic scene management works with multiple objects
+- [x] 3D models load and render correctly with textures
+- [x] Multiple light sources illuminate scenes properly
+- [x] Camera movement is smooth and responsive
+- [x] Basic scene management works with multiple objects (scene graph)
 - [ ] Asset loading is efficient and cached
 
 ### Testing Requirements
-- Rendering correctness tests with reference images
-- Performance tests for complex scenes
-- Memory usage tests for asset loading
-- Cross-platform compatibility tests
+- [ ] Rendering correctness tests with reference images
+- [ ] Performance tests for complex scenes
+- [ ] Memory usage tests for asset loading
+- [ ] Cross-platform compatibility tests
 
 ---
 
-## Phase 3: Advanced Features (Months 7-9)
+## Phase 3: Advanced Features
 
 ### Objective
 Add advanced rendering features and improve engine capabilities for more complex applications.
@@ -114,29 +113,44 @@ Add advanced rendering features and improve engine capabilities for more complex
 ### Key Deliverables
 
 #### 3.1 Advanced Rendering
-- **Physically Based Rendering (PBR)**: Modern material and lighting system
-- **Shadow Mapping**: Dynamic shadow rendering for light sources
-- **Post-Processing**: Bloom, tone mapping, and other effects
-- **Deferred Rendering**: Efficient multi-light rendering
-- **Instanced Rendering**: Efficient rendering of multiple objects
+- [ ] **Physically Based Rendering (PBR)**: Modern material and lighting system
+- [ ] **Shadow Mapping**: Dynamic shadow rendering for light sources
+- [ ] **Post-Processing**: Bloom, tone mapping, and other effects
+- [ ] **Deferred Rendering**: Efficient multi-light rendering
+- [ ] **Instanced Rendering**: Efficient rendering of multiple objects
+- [ ] **Blending**: Support for transparent and additive blending modes
 
-#### 3.2 Animation System
-- **Skeletal Animation**: Bone-based character animation
-- **Animation Blending**: Smooth transitions between animations
-- **Animation Controllers**: State-based animation management
-- **Keyframe Animation**: Property-based animation system
+#### 3.2 Particle System
+- [ ] **Particle System Core**: Engine for spawning, updating, and rendering particles
+- [ ] **Emitter Types**: Support for point, box, and mesh emitters
+- [ ] **Particle Behaviors**: Lifetime, velocity, acceleration, color, size, and rotation over time
+- [ ] **GPU Acceleration**: Optional compute or instanced rendering for high particle counts
+- [ ] **Editor Integration**: Visual tools for creating and previewing particle effects
+- [ ] **Serialization**: Save/load particle system configurations
 
-#### 3.3 Performance Optimization
-- **Batch Rendering**: Grouped draw calls for similar objects
-- **Level of Detail (LOD)**: Distance-based detail reduction
-- **Occlusion Culling**: Performance optimization for hidden objects
-- **GPU Profiling**: Performance monitoring and optimization tools
+#### 3.3 Entity-Component-System (ECS)
+- [ ] **ECS Architecture**: Modern entity management system
+- [ ] **Component System**: Flexible component-based design
+- [ ] **System Management**: Efficient system processing and scheduling
+- [ ] **Serialization**: Save/load support for ECS data
 
-#### 3.4 Editor Integration
-- **Scene Editor**: Visual scene editing tools
-- **Asset Browser**: File browser and asset management
-- **Property Inspector**: Object property editing
-- **Viewport Controls**: Camera and object manipulation
+#### 3.4 Animation System
+- [ ] **Skeletal Animation**: Bone-based character animation
+- [ ] **Animation Blending**: Smooth transitions between animations
+- [ ] **Animation Controllers**: State-based animation management
+- [ ] **Keyframe Animation**: Property-based animation system
+
+#### 3.5 Editor Integration
+- [ ] **Scene Editor**: Visual scene editing tools
+- [ ] **Asset Browser**: File browser and asset management
+- [ ] **Property Inspector**: Object property editing
+- [ ] **Viewport Controls**: Camera and object manipulation
+
+#### 3.6 Performance Optimization
+- [ ] **Batch Rendering**: Grouped draw calls for similar objects
+- [ ] **Level of Detail (LOD)**: Distance-based detail reduction
+- [ ] **Occlusion Culling**: Performance optimization for hidden objects
+- [ ] **GPU Profiling**: Performance monitoring and optimization tools
 
 ### Success Criteria
 - [ ] PBR materials render with realistic appearance
@@ -161,28 +175,35 @@ Implement production-ready features and tools for real-world game development.
 ### Key Deliverables
 
 #### 4.1 Audio System
-- **Audio Engine**: 3D spatial audio with OpenAL
-- **Sound Management**: Loading, playing, and managing audio assets
-- **Music System**: Background music and dynamic audio
-- **Audio Effects**: Reverb, echo, and other audio processing
+- [ ] **Audio Engine**: 3D spatial audio with OpenAL
+- [ ] **Sound Management**: Loading, playing, and managing audio assets
+- [ ] **Music System**: Background music and dynamic audio
+- [ ] **Audio Effects**: Reverb, echo, and other audio processing
 
 #### 4.2 Physics Integration
-- **Physics Engine**: Integration with Bullet Physics or similar
-- **Collision Detection**: Accurate collision detection and response
-- **Rigid Body Dynamics**: Realistic physics simulation
-- **Trigger Systems**: Event-based collision handling
+- [ ] **Physics Engine**: Integration with Bullet Physics or similar
+- [ ] **Collision Detection**: Accurate collision detection and response
+- [ ] **Rigid Body Dynamics**: Realistic physics simulation
+- [ ] **Trigger Systems**: Event-based collision handling
+- [ ] **Physics Materials**: Support for friction, restitution, and other material properties
+- [ ] **Physics Constraints**: Joints, hinges, springs, and other constraints
+- [ ] **Kinematic Bodies**: Support for non-simulated, script-controlled objects
+- [ ] **Character Controller**: Basic physics-driven character movement
+- [ ] **Scene Integration**: Physics objects integrated with scene graph and ECS
+- [ ] **Editor Integration**: Visual tools for configuring and debugging physics objects
+- [ ] **Serialization**: Save/load physics state and configuration
 
 #### 4.3 Scripting Support
-- **Script Engine**: Lua or C# scripting integration
-- **Entity Scripting**: Component-based scripting system
-- **Hot Reloading**: Runtime script modification and testing
-- **Debugging Tools**: Script debugging and profiling
+- [ ] **Script Engine**: Lua or C# scripting integration
+- [ ] **Entity Scripting**: Component-based scripting system
+- [ ] **Hot Reloading**: Runtime script modification and testing
+- [ ] **Debugging Tools**: Script debugging and profiling
 
 #### 4.4 Advanced Tools
-- **Profiler**: Real-time performance profiling and analysis
-- **Memory Debugger**: Memory usage tracking and leak detection
-- **Asset Pipeline**: Automated asset processing and optimization
-- **Build System**: Automated building and packaging
+- [ ] **Profiler**: Real-time performance profiling and analysis
+- [ ] **Memory Debugger**: Memory usage tracking and leak detection
+- [ ] **Asset Pipeline**: Automated asset processing and optimization
+- [ ] **Build System**: Automated building and packaging
 
 ### Success Criteria
 - [ ] Audio system provides immersive 3D sound
@@ -199,43 +220,42 @@ Implement production-ready features and tools for real-world game development.
 
 ---
 
-## Phase 5: Platform Expansion (Months 13-15)
+## Phase 5: Platform Expansion
 
 ### Objective
 Expand platform support and optimize for different hardware configurations.
+Prioritize support for Linux and DirectX. 
 
 ### Key Deliverables
 
 #### 5.1 Cross-Platform Support
-- **Linux Support**: Native Linux builds and testing
-- **macOS Support**: Metal rendering backend for macOS
-- **Mobile Platforms**: iOS and Android compatibility
-- **Platform Abstraction**: Unified API across all platforms
+- [ ] **Linux Support**: Native Linux builds and testing
+- [ ] **macOS Support**: Metal rendering backend for macOS
+- [ ] **Mobile Platforms**: iOS and Android compatibility
+- [ ] **Platform Abstraction**: Unified API across all platforms
 
 #### 5.2 Graphics API Support
-- **Vulkan Backend**: Modern graphics API for better performance
-- **DirectX 12 Support**: Windows-specific graphics optimization
-- **Metal Support**: macOS and iOS graphics integration
-- **OpenGL ES**: Mobile graphics API support
+- [ ] **Vulkan Backend**: Modern graphics API for better performance
+- [ ] **DirectX 12 Support**: Windows-specific graphics optimization
+- [ ] **Metal Support**: macOS and iOS graphics integration
+- [ ] **OpenGL ES**: Mobile graphics API support
 
 #### 5.3 Optimization
-- **Multi-threading**: Parallel processing for better performance
-- **GPU Compute**: GPU-accelerated calculations and effects
-- **Memory Optimization**: Platform-specific memory management
-- **Power Efficiency**: Battery-conscious rendering for mobile
+- [ ] **Multi-threading**: Parallel processing for better performance
+- [ ] **GPU Compute**: GPU-accelerated calculations and effects
+- [ ] **Memory Optimization**: Platform-specific memory management
+- [ ] **Power Efficiency**: Battery-conscious rendering for mobile
 
 #### 5.4 Distribution
-- **Package Management**: Easy installation and updates
-- **Documentation**: Comprehensive user and developer guides
-- **Sample Projects**: Example games and applications
-- **Community Tools**: Forums, wiki, and support resources
+- [ ] **Package Management**: Easy installation and updates
+- [ ] **Documentation**: Comprehensive user and developer guides
+- [ ] **Sample Projects**: Example games and applications
 
 ### Success Criteria
 - [ ] Engine runs on all major desktop platforms
 - [ ] Mobile platforms support basic functionality
 - [ ] Performance is optimized for each platform
 - [ ] Distribution and installation are streamlined
-- [ ] Community has resources for support and learning
 
 ### Testing Requirements
 - Cross-platform compatibility tests
@@ -245,36 +265,30 @@ Expand platform support and optimize for different hardware configurations.
 
 ---
 
-## Phase 6: Advanced Systems (Months 16-18)
+## Phase 6: Advanced Systems
 
 ### Objective
 Implement advanced engine systems for sophisticated game development.
 
 ### Key Deliverables
 
-#### 6.1 Entity-Component-System (ECS)
-- **ECS Architecture**: Modern entity management system
-- **Component System**: Flexible component-based design
-- **System Management**: Efficient system processing and scheduling
-- **Serialization**: Save/load support for ECS data
-
 #### 6.2 Networking
-- **Network Foundation**: Basic networking infrastructure
-- **Client-Server**: Multiplayer game support
-- **Synchronization**: State synchronization and prediction
-- **Network Debugging**: Tools for network performance analysis
+- [ ] **Network Foundation**: Basic networking infrastructure
+- [ ] **Client-Server**: Multiplayer game support
+- [ ] **Synchronization**: State synchronization and prediction
+- [ ] **Network Debugging**: Tools for network performance analysis
 
 #### 6.3 Advanced Graphics
-- **Ray Tracing**: Hardware-accelerated ray tracing
-- **Global Illumination**: Realistic lighting simulation
-- **Temporal Effects**: Motion blur and temporal anti-aliasing
-- **Advanced Materials**: Subsurface scattering and complex shaders
+- [ ] **Ray Tracing**: Hardware-accelerated ray tracing
+- [ ] **Global Illumination**: Realistic lighting simulation
+- [ ] **Temporal Effects**: Motion blur and temporal anti-aliasing
+- [ ] **Advanced Materials**: Subsurface scattering and complex shaders
 
 #### 6.4 AI Systems
-- **Pathfinding**: A* and navigation mesh systems
-- **Behavior Trees**: AI decision-making framework
-- **State Machines**: Character AI state management
-- **Crowd Simulation**: Large-scale AI character management
+- [ ] **Pathfinding**: A* and navigation mesh systems
+- [ ] **Behavior Trees**: AI decision-making framework
+- [ ] **State Machines**: Character AI state management
+- [ ] **Crowd Simulation**: Large-scale AI character management
 
 ### Success Criteria
 - [ ] ECS provides flexible and performant entity management
@@ -308,16 +322,12 @@ Implement advanced engine systems for sophisticated game development.
 - **Regression Tests**: Automated testing for stability
 
 #### Community
-- **Code Reviews**: Peer review of all contributions
+- **Code Reviews**: Peer review of all contributions including copilot. 
 - **Issue Tracking**: Bug reports and feature requests
-- **Community Feedback**: Regular surveys and feedback collection
-- **Open Source Maintenance**: License compliance and contribution guidelines
 
 #### Quality Assurance
 - **Code Standards**: Consistent coding style and conventions
 - **Performance Monitoring**: Regular performance analysis
-- **Security Reviews**: Security best practices and vulnerability assessment
-- **Accessibility**: Ensuring engine accessibility for all developers
 
 ---
 
@@ -332,14 +342,13 @@ Phase 1 (Foundation) → Phase 2 (Rendering) → Phase 3 (Advanced) → Phase 4 
 
 ### Parallel Development
 - Documentation and testing run parallel to all phases
-- Community building and feedback collection are ongoing
 - Performance optimization continues throughout development
 
 ### Risk Management
-- **Technical Risks**: Prototype complex features early
+- **Technical Risks**: Prototype complex features early. I am learning all the required techinques as I build the systems. 
 - **Schedule Risks**: Flexible phase boundaries and scope adjustment
-- **Resource Risks**: Community contribution and volunteer management
-- **Quality Risks**: Continuous integration and automated testing
+- **Resource Risks**: Currently, there is a solo developer with limited graphics programming experience
+- **Quality Risks**: Continuous integration and automated testing. The main purpose of this project is educational. It will not have the quality and performance of a professional engine
 
 ---
 
@@ -348,21 +357,16 @@ Phase 1 (Foundation) → Phase 2 (Rendering) → Phase 3 (Advanced) → Phase 4 
 ### Phase Completion Criteria
 - All deliverables implemented and tested
 - Documentation complete and reviewed
-- Community feedback incorporated
 - Performance benchmarks met
 - Code quality standards maintained
 
 ### Overall Project Success
-- **Technical**: Engine supports production-quality games
+- **Technical**: Engine supports simple games with 3D graphics
 - **Educational**: Serves as valuable learning resource
-- **Community**: Active contributor and user base
-- **Performance**: Meets or exceeds performance targets
-- **Quality**: High code quality and maintainability
+- **Performance**: Able to support simple 3D scenes and games at 60 fps
+- **Quality**: Code is maintainable and well commented 
 
 ### Continuous Improvement
 - Regular retrospectives after each phase
-- Feedback integration and process improvement
+- Feedback integration and process for continual improvement as understanding and knowledge grows
 - Performance optimization and technical debt management
-- Community growth and engagement strategies
-
-This development roadmap provides a structured approach to building ToyEngine while maintaining flexibility for adaptation based on community needs and emerging technologies.

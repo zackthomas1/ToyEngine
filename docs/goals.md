@@ -66,8 +66,7 @@ This document outlines the vision, objectives, and long-term goals for the ToyEn
 ### Educational Metrics
 - **Documentation Coverage**: Complete API documentation and tutorials
 - **Code Examples**: Comprehensive example projects and use cases
-- **Community Engagement**: Active community contributions and feedback
-- **Learning Resources**: Tutorial videos, blog posts, and educational content
+- **Learning Resources**: dev vlogs videos, blog posts, and content documenting development journey
 
 ### Feature Metrics
 - **Rendering Features**: Support for modern rendering techniques
@@ -79,7 +78,6 @@ This document outlines the vision, objectives, and long-term goals for the ToyEn
 
 ### Primary Audience
 - **Students and Educators**: Learning game engine development and graphics programming
-- **Indie Developers**: Creating small to medium-scale 3D games and applications
 - **Engine Developers**: Studying engine architecture and implementation patterns
 - **Graphics Programmers**: Implementing and testing rendering techniques
 
@@ -99,22 +97,20 @@ This document outlines the vision, objectives, and long-term goals for the ToyEn
 
 ### Year 2 Goals
 - Advanced rendering features (PBR, shadows, post-processing)
+- Entity-Component-System (ECS) architecture
 - Multi-threading support
 - Audio system integration
 - Mobile platform support
 - Performance optimization
 
 ### Year 3 Goals
-- Entity-Component-System (ECS) architecture
 - Scripting language integration
 - Advanced editor features
 - Plugin system
 - Production-ready toolchain
 
 ### Long-term Aspirations
-- **Industry Recognition**: Become a reference implementation for educational game engines
 - **Community Growth**: Build an active community of contributors and users
-- **Commercial Viability**: Support indie developers in creating commercial games
 - **Innovation Platform**: Serve as a testbed for new graphics techniques and engine features
 
 ## Non-Goals
@@ -155,9 +151,6 @@ This document outlines the vision, objectives, and long-term goals for the ToyEn
 - **Annual Planning**: Long-term vision alignment and goal adjustment
 
 ### Community Feedback
-- **User Surveys**: Regular feedback from users and contributors
-- **Issue Tracking**: Monitor bug reports and feature requests
-- **Educational Impact**: Gather feedback from students and educators
 
 ### Technical Metrics
 - **Performance Benchmarks**: Regular performance testing and optimization
@@ -166,6 +159,6 @@ This document outlines the vision, objectives, and long-term goals for the ToyEn
 
 ## Conclusion
 
-ToyEngine represents an ambitious but achievable vision for a modern, educational game engine. By focusing on clean architecture, modern C++ practices, and comprehensive documentation, we aim to create a valuable resource for the game development community while building a capable engine for real-world applications.
+ToyEngine represents vision for a modern, educational game engine. While Toy Engine is starting as solo project I hope that one day a community grows around it. Where people interested in learning graphics and game engine programming can all learn and create together. 
 
-The success of ToyEngine will be measured not just in technical capabilities, but in its ability to educate, inspire, and empower developers to create amazing 3D experiences.
+The success of ToyEngine will be measured not just in technical capabilities, but in its ability to educate, build community, and empower developers to create amazing 3D experiences.

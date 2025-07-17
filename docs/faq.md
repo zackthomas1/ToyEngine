@@ -3,17 +3,14 @@
 ## General Questions
 
 ### What is ToyEngine?
-ToyEngine is an open-source, educational 3D game engine written in C++ with OpenGL rendering. It's designed to demonstrate modern game engine architecture and graphics programming techniques while being usable for real projects.
+ToyEngine is an open-source, educational 3D game engine written in C++ with OpenGL rendering. It's designed to demonstrate modern game engine architecture and graphics programming techniques while being usable for simple projects.
 
 ### Who is ToyEngine for?
-- **Students** learning game engine development
-- **Educators** teaching graphics programming
-- **Indie developers** creating 3D games
-- **Engine developers** studying architecture patterns
+- **CS Students** interested learning game engine development and studying architecture patterns.
 - **Anyone** interested in graphics programming
 
 ### Is ToyEngine ready for production use?
-ToyEngine is currently in active development. While it demonstrates core engine concepts and can run basic 3D applications, it's not yet feature-complete for commercial game development. See our [Development Phases](phases.md) for the roadmap.
+ToyEngine is currently in active development. While it demonstrates core engine concepts and can run basic 3D applications, it's not feature-complete for commercial game development. See our [Development Phases](phases.md) for the roadmap.
 
 ### What makes ToyEngine different from other engines?
 - **Educational focus**: Comprehensive documentation and clear code structure
@@ -65,21 +62,9 @@ Yes! ToyEngine is licensed under the MIT license, which allows commercial use. H
 1. Follow the [Quick Start Guide](quick-start.md)
 2. Read the [Architecture Documentation](architecture.md)
 3. Try the sample projects and tutorials
-4. Join the community and ask questions
 
 ### How can I contribute to ToyEngine?
-See our [Contributing Guide](contributing.md) for detailed information on:
-- Code contributions
-- Bug reports
-- Documentation improvements
-- Feature requests
-
-### What should I work on as a first contribution?
-Look for GitHub issues labeled:
-- `good first issue`
-- `help wanted`
-- `documentation`
-- `beginner friendly`
+There is not a plan for community contribution. Toy Engine is intead as a solo educational project. However, if you are interested in reaching out to learn more about the project feel free to reach out through email. You can find my email address on my GitHub profile. 
 
 ### How do I build ToyEngine from source?
 ```bash
@@ -104,13 +89,6 @@ scripts/Win-GenProjects.bat
 - Visual Studio 2022
 - Git
 - Premake5 (included)
-
-### How do I add a new feature to ToyEngine?
-1. **Plan**: Discuss the feature in GitHub issues
-2. **Design**: Create a design document if needed
-3. **Implement**: Follow coding standards and write tests
-4. **Document**: Update documentation and examples
-5. **Submit**: Create a pull request with your changes
 
 ## Usage Questions
 
@@ -230,65 +208,19 @@ See the [Troubleshooting Guide](troubleshooting.md) for more solutions.
 
 ### Where can I get help?
 - **GitHub Issues**: Bug reports and feature requests
-- **GitHub Discussions**: Questions and general discussion
 - **Documentation**: Comprehensive guides and API reference
-- **Community Forums**: Connect with other users
+- **Email**: I will respond to email request, but please be specific with your inquiry.  
 
-### How do I report a bug?
-1. Search existing issues to avoid duplicates
-2. Create a new issue with:
-   - Clear description of the problem
-   - Steps to reproduce
-   - Expected vs actual behavior
-   - System information
-   - Screenshots or logs if applicable
-
-### How do I request a feature?
-1. Check existing feature requests
-2. Create a new issue with:
-   - Clear description of the feature
-   - Use case and rationale
-   - Potential implementation ideas
-   - Alternatives considered
+### Can I use or modify Toy Engine for my own purposes?
+Yes, 
 
 ### How do I stay updated with development?
 - **Watch the GitHub repository** for notifications
-- **Follow release notes** for new features
-- **Join community discussions** for latest news
+- **Follow Youtube vlog series** for weekly/bi-weekly development updates 
 - **Check the roadmap** for planned features
 
-## Educational Questions
-
 ### Is ToyEngine good for learning game engine development?
-Yes! ToyEngine is specifically designed for educational purposes with:
-- Clear, well-documented code
-- Comprehensive architecture documentation
-- Step-by-step tutorials
-- Examples and sample projects
-
-### What can I learn from ToyEngine?
-- Modern C++ practices and design patterns
-- OpenGL graphics programming
-- Game engine architecture
-- Real-time rendering techniques
-- Asset pipeline development
-- Performance optimization
-
-### Are there tutorials available?
-Yes, we provide:
-- Getting started guides
-- Architecture explanations
-- API documentation with examples
-- Sample projects
-- Video tutorials (planned)
-
-### Can I use ToyEngine for academic projects?
-Absolutely! ToyEngine is perfect for:
-- Computer graphics courses
-- Game development classes
-- Software engineering projects
-- Research in real-time rendering
-- Master's/PhD thesis work
+ToyEngine is primarily intended as a personal learning project and experimental platform for graphics programming techniques. As new concepts are explored, they are implemented in ToyEngine to gain hands-on experience. While the engine is educational and open source, some implementations may be basic or use straightforward solutions, rather than production-level approaches.
 
 ## Future Development Questions
 
@@ -304,19 +236,6 @@ See our [Development Phases](phases.md) for the complete roadmap, including:
 ### When will feature X be available?
 Check the [Development Phases](phases.md) for estimated timelines. Note that development is community-driven and timelines may change based on contributor availability.
 
-### How can I influence the development roadmap?
-- **Participate in discussions** about features
-- **Submit feature requests** with detailed use cases
-- **Contribute code** for features you need
-- **Provide feedback** on existing features
-
-### Will ToyEngine support [specific feature]?
-Check the roadmap first. If it's not listed:
-1. Create a feature request issue
-2. Discuss the feature with the community
-3. Consider contributing the feature yourself
-4. Wait for community/maintainer feedback
-
 ## Legal and Licensing Questions
 
 ### What license is ToyEngine released under?
@@ -330,10 +249,7 @@ ToyEngine is released under the MIT License, which allows:
 Yes, the MIT license allows commercial use without royalties or licensing fees.
 
 ### Do I need to credit ToyEngine in my projects?
-While not required by the license, we appreciate attribution to ToyEngine and its contributors.
-
-### Can I contribute to ToyEngine if I work for a company?
-Yes, but check your employment contract for any restrictions on contributing to open source projects.
+While not required by the license, the attribution to ToyEngine is appreciated.
 
 ---
 
@@ -345,5 +261,3 @@ If you can't find the answer to your question here:
 2. **Check GitHub Issues** - someone might have asked before
 3. **Ask on GitHub Discussions** - the community can help
 4. **Create a new issue** - if it's a bug or feature request
-
-We're here to help and always happy to answer questions!
