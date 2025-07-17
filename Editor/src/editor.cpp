@@ -26,12 +26,14 @@ public:
 		m_shader_lib->Add(textureShader);
 		m_shader_lib->Add(phongShader);
 
-		uint32_t matrices_bind_point = ToyEngine::Renderer::GetUniformManager().GetBindPoint("ViewProjectMats");
-		flatShader->BindUniformBlock("ViewProjectMats", matrices_bind_point);
-		textureShader->BindUniformBlock("ViewProjectMats", matrices_bind_point);
-		phongShader->BindUniformBlock("ViewProjectMats", matrices_bind_point);
-	
-		m_scene_graph = ToyEngine::MakeScope<ToyEngine::SceneNode>("root");
+		ToyEngine::Renderer::GetUniformManager().BindUniformBlockToShader(flatShader, "ViewProjectMats");
+		ToyEngine::Renderer::GetUniformManager().BindUniformBlockToShader(textureShader, "ViewProjectMats");
+		ToyEngine::Renderer::GetUniformManager().BindUniformBlockToShader(phongShader, "ViewProjectMats");
+
+		ToyEngine::Renderer::GetUniformManager().BindUniformBlockToShader(flatShader, "LightBlock");
+		ToyEngine::Renderer::GetUniformManager().BindUniformBlockToShader(textureShader, "LightBlock");
+		ToyEngine::Renderer::GetUniformManager().BindUniformBlockToShader(phongShader, "LightBlock");
+
 	}
 
 	virtual void OnAttach()
@@ -40,14 +42,22 @@ public:
 		m_camera = ToyEngine::MakeRef<ToyEngine::Camera>(ToyEngine::eCameraType::kFlyCamera);
 
 		TY_INFO("Creating lights...");
-		m_lights.push_back(ToyEngine::MakeRef<ToyEngine::Light>(ToyEngine::eLightType::kDirectional));
-		m_lights.push_back(ToyEngine::MakeRef<ToyEngine::Light>(ToyEngine::eLightType::kPoint));
-		m_lights.push_back(ToyEngine::MakeRef<ToyEngine::Light>(ToyEngine::eLightType::kPoint));
-		m_lights.push_back(ToyEngine::MakeRef<ToyEngine::Light>(ToyEngine::eLightType::kPoint));
-		m_lights.push_back(ToyEngine::MakeRef<ToyEngine::Light>(ToyEngine::eLightType::kSpot));
+		m_light_block = ToyEngine::MakeScope<ToyEngine::LightBlock>();
+		m_light_block->m_num_lights = 5;
+		m_light_block->m_lights[0].m_type = int(ToyEngine::eLightType::kDirectional);
+		m_light_block->m_lights[1].m_type = int(ToyEngine::eLightType::kPoint);
+		m_light_block->m_lights[2].m_type = int(ToyEngine::eLightType::kPoint);
+		m_light_block->m_lights[3].m_type = int(ToyEngine::eLightType::kPoint);
+		m_light_block->m_lights[4].m_type = int(ToyEngine::eLightType::kSpot);
+		m_light_block->m_lights[0].m_enabled = true;
+		m_light_block->m_lights[1].m_enabled = true;
+		m_light_block->m_lights[2].m_enabled = true;
+		m_light_block->m_lights[3].m_enabled = true;
+		m_light_block->m_lights[4].m_enabled = true;
 
 		// Create scene geometry
-		TY_INFO("Loading scene geometry...");
+		TY_INFO("Create scene...");
+		m_scene_graph = ToyEngine::MakeScope<ToyEngine::SceneNode>("root");
 		ToyEngine::Ref<ToyEngine::Model> backpack	= (ToyEngine::Model::Create("../assets/models/backpack/backpack.obj", true));
 		ToyEngine::Ref<ToyEngine::Model> cyborg		= (ToyEngine::Model::Create("../assets/models/cyborg/cyborg.obj", false));
 		ToyEngine::Ref<ToyEngine::Shader> phongShader = m_shader_lib->Get("phong");
@@ -55,7 +65,6 @@ public:
 		cyborg->m_shader = phongShader;
 		m_scene_graph->AddChild(ToyEngine::MakeScope<ToyEngine::SceneNode>("backepack_model", backpack));
 		m_scene_graph->AddChild(ToyEngine::MakeScope<ToyEngine::SceneNode>("cyborg_model", cyborg));
-		TY_INFO("Scene loaded!");
 	}
 
 	virtual void OnDetach() {}
@@ -79,61 +88,21 @@ public:
 			m_camera->UpdatePosition(ToyEngine::eCameraMovement::kDown, delta_time);
 
 		// Update lights
-		m_lights[0]->m_direction = m_directional_light_dir;
-		m_lights[0]->m_value = m_directional_light_color;
-		m_lights[1]->m_position = m_point_light_position_1;
-		m_lights[1]->m_value = m_point_light_color_1;
-		m_lights[2]->m_position = m_point_light_position_2;
-		m_lights[2]->m_value = m_point_light_color_2;
-		m_lights[3]->m_position = m_point_light_position_3;
-		m_lights[3]->m_value = m_point_light_color_3;
-		m_lights[4]->m_position = m_camera->position();
-		m_lights[4]->m_spotDirection = m_camera->front();
-		m_lights[4]->m_value = m_spot_light_color;
-
-		//TY_CORE_TRACE("({},{},{})", m_camera->front().x, m_camera->front().y, m_camera->front().z);
+		m_light_block->m_lights[0].m_direction		= glm::vec4(m_directional_light_dir,0.0f);
+		m_light_block->m_lights[0].m_value			= glm::vec4(m_directional_light_color, 0.0f);
+		m_light_block->m_lights[1].m_position		= glm::vec4(m_point_light_position_1, 0.0f);
+		m_light_block->m_lights[1].m_value			= glm::vec4(m_point_light_color_1, 0.0f);
+		m_light_block->m_lights[2].m_position		= glm::vec4(m_point_light_position_2, 0.0f);
+		m_light_block->m_lights[2].m_value			= glm::vec4(m_point_light_color_2, 0.0f);
+		m_light_block->m_lights[3].m_position		= glm::vec4(m_point_light_position_3, 0.0f);
+		m_light_block->m_lights[3].m_value			= glm::vec4(m_point_light_color_3, 0.0f);
+		m_light_block->m_lights[4].m_position		= glm::vec4(m_camera->position(), 0.0f);
+		m_light_block->m_lights[4].m_spotDirection	= glm::vec4(m_camera->front(), 0.0f);
+		m_light_block->m_lights[4].m_value			= glm::vec4(m_spot_light_color, 0.0f);
 
 		// Draw Scene
-		ToyEngine::Renderer::BeginScene(m_camera);
+		ToyEngine::Renderer::BeginScene(m_camera, m_light_block.get());
 		ToyEngine::Ref<ToyEngine::Shader> phongShader = m_shader_lib->Get("phong");
-		phongShader->Use();
-		// Lights
-		int numDirection = 0, numPoint = 0, numSpot = 0;
-		for (int i = 0; i < m_lights.size(); i++) {
-			ToyEngine::Ref<ToyEngine::Light> light = m_lights[i];
-			switch (light->m_type)
-			{
-			case(ToyEngine::eLightType::kDirectional): {
-				std::string base = "uDirectionalLights[" + std::to_string(numDirection++) + "]";
-				phongShader->SetFloat3(base + ".direction", light->m_direction.x, light->m_direction.y, light->m_direction.z);
-				phongShader->SetFloat3(base + ".value", light->m_value.r, light->m_value.g, light->m_value.b);
-				phongShader->SetBool(base + ".enabled", light->m_enabled);
-				phongShader->SetInt("uNumDirectionalLights", (numDirection));
-				break;
-			}
-			case(ToyEngine::eLightType::kPoint):{
-				std::string base = "uPointLights[" + std::to_string(numPoint++) + "]";
-				phongShader->SetFloat3(base + ".position", light->m_position.x, light->m_position.y, light->m_position.z);
-				phongShader->SetFloat3(base + ".value", light->m_value.r, light->m_value.g, light->m_value.b);
-				phongShader->SetBool(base + ".enabled", light->m_enabled);
-				phongShader->SetInt("uNumPointLights", (numPoint));
-				break; 
-			}
-			case(ToyEngine::eLightType::kSpot):{
-				std::string base = "uSpotLights[" + std::to_string(numSpot++) + "]";
-				phongShader->SetFloat3(base + ".position", light->m_position.x, light->m_position.y, light->m_position.z);
-				phongShader->SetFloat3(base + ".value", light->m_value.r, light->m_value.g, light->m_value.b);
-				phongShader->SetFloat3(base + ".spotDirection", light->m_spotDirection.x, light->m_spotDirection.y, light->m_spotDirection.z);
-				phongShader->SetFloat(base + ".innerAngle", light->m_innerAngle);
-				phongShader->SetFloat(base + ".outerAngle", light->m_outerAngle);
-				phongShader->SetBool(base + ".enabled", light->m_enabled);
-				phongShader->SetInt("uNumSpotLights", (numSpot));
-				break;
-			}
-			default:
-				break;
-			}
-		}
 		// models
 		phongShader->SetFloat("material.shininess", m_shininess);
 		m_scene_graph->SetLocalTransform(glm::translate(glm::mat4(1.0f), m_translate));
@@ -218,7 +187,7 @@ public:
 	float m_shininess = 32.0f;
 
 	// Light control parameters
-	ToyEngine::Vector<ToyEngine::Ref<ToyEngine::Light>> m_lights;
+	ToyEngine::Scope<ToyEngine::LightBlock> m_light_block;
 	glm::vec3 m_directional_light_color = glm::vec3(0.2), m_directional_light_dir = glm::vec3(0.0, 0.0, -1.0);
 	glm::vec3 m_point_light_color_1 = glm::vec3(1.0, 0.0, 0.0), m_point_light_color_2 = glm::vec3(0.0, 1.0, 0.0), m_point_light_color_3 = glm::vec3(0.0, 0.0, 1.0);
 	glm::vec3 m_point_light_position_1 = glm::vec3(1.0, 0.0, 1.0), m_point_light_position_2 = glm::vec3(0.0, 1.0, 1.0), m_point_light_position_3 = glm::vec3(-1.0, 0.0, 1.0);
@@ -233,10 +202,7 @@ public:
 		TY_INFO("Initialize application");
 		PushLayer(new Scene());
 	}
-	~Editor()
-	{
-
-	}
+	~Editor() { }
 };
 
 ToyEngine::Application* ToyEngine::CreateApplication()

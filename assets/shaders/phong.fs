@@ -1,8 +1,6 @@
 #version 330 core
 
-#define MAX_DIRECTIONAL_LIGHTS 4
-#define MAX_POINT_LIGHTS 32
-#define MAX_SPOT_LIGHTS 16
+#define MAX_LIGHTS 12
 
 #define AMBIENT_INFLUENCE 0.2
 #define DIFFUSE_INFLUENCE 1
@@ -28,38 +26,31 @@ struct Material{
     float shininess;
 }; uniform Material material;
 
-struct DirectionalLight{ 
-    vec3 direction; // directional vector replaces position vector
-    vec3 value;
-    bool enabled; // flag to enable/disable this light
-}; 
+// Each Light struct is padded to a multiple of 16 bytes (total 80 bytes)
+struct Light{
+                        // base alignment   // aligned offset
+    int type;           // 4 bytes          0 bytes
+    int enabled;        // 4 bytes          4 bytes 
+    float innerAngle;   // 4 bytes          8 bytes
+    float outerAngle;   // 4 bytes          12 bytes
 
-struct PointLight{
-    vec3 position;
-    vec3 value;
-    bool enabled;
+    vec4 value;         // 16 bytes         16 bytes
+    vec4 direction;     // 16 bytes         32 bytes
+    vec4 position;      // 16 bytes         48 bytes
+    vec4 spotDirection; // 16 bytes         64 bytes
+
+    // NOTE: The inner and outer angles are measured in terms of their cosine value.
 };
 
-struct SpotLight{
-    vec3 position;
-    vec3 value;
-    vec3 spotDirection;
-    float innerAngle;
-    float outerAngle;
-    bool enabled;
+// - The block itself is aligned to 16 bytes
+layout (std140) uniform LightBlock{
+    Light uLights[MAX_LIGHTS];  // offset 0, each element aligned to 16 bytes
+    int uNumLight;              // offset , base alignment 4, but next member must start at 16 (vec4 boundary)
 };
 
-uniform DirectionalLight uDirectionalLights[MAX_DIRECTIONAL_LIGHTS];
-uniform PointLight uPointLights[MAX_POINT_LIGHTS];
-uniform SpotLight uSpotLights[MAX_SPOT_LIGHTS];
-
-uniform int uNumDirectionalLights;
-uniform int uNumPointLights;
-uniform int uNumSpotLights;
-
-vec3 CalcDirLight(DirectionalLight light, vec3 normal, vec3 viewDir);
-vec3 CalcPointLight(PointLight light, vec3 normal, vec3 viewDir, vec3 fragPos);
-vec3 CalcSpotLight(SpotLight light, vec3 normal, vec3 viewDir, vec3 fragPos);
+vec3 CalcDirLight(Light light, vec3 normal, vec3 viewDir);
+vec3 CalcPointLight(Light light, vec3 normal, vec3 viewDir, vec3 fragPos);
+vec3 CalcSpotLight(Light light, vec3 normal, vec3 viewDir, vec3 fragPos);
 
 out vec4 FragColor;
 
@@ -85,24 +76,22 @@ void main()
 
     vec3 result = vec3(0.0);
 
-    // directional light
-    for (int i = 0; i < uNumDirectionalLights && i < MAX_DIRECTIONAL_LIGHTS; i++){
-        if(uDirectionalLights[i].enabled){
-            result += CalcDirLight(uDirectionalLights[i], norm, viewDir);
-        }
-    }
-    
-    // point light
-    for (int i = 0; i < uNumPointLights && i < MAX_POINT_LIGHTS; i++){
-        if(uPointLights[i].enabled){
-            result += CalcPointLight(uPointLights[i], norm, viewDir, fs_in.fragPos);
-        }
-    }
+    for (int i = 0; i < uNumLight && i < MAX_LIGHTS; ++i){
+        Light light = uLights[i]; 
+        if(light.enabled == 0) continue;
 
-    // spot light
-    for (int i = 0; i < uNumSpotLights && i < MAX_SPOT_LIGHTS; i++){
-        if(uSpotLights[i].enabled){
-            result += CalcSpotLight(uSpotLights[i], norm, viewDir, fs_in.fragPos);
+        switch(light.type){
+            case 1:
+                result += CalcDirLight(light, norm, viewDir);
+                break;
+            case 2:
+                result += CalcPointLight(light, norm, viewDir, fs_in.fragPos);
+                break;
+            case 3:
+                result += CalcSpotLight(light, norm, viewDir, fs_in.fragPos);
+                break;
+            default:
+                break;
         }
     }
 
@@ -126,50 +115,50 @@ void main()
  * 5. Calculates the specular component using the Phong reflection model and the specular texture.
  * 6. Returns the sum of ambient, diffuse, and specular components as the final color.
  */
-vec3 CalcDirLight(DirectionalLight light, vec3 normal, vec3 viewDir)
+vec3 CalcDirLight(Light light, vec3 normal, vec3 viewDir)
 {
     // Light direction (from fragment to light)
-    vec3 lightDir = normalize(-light.direction);
+    vec3 lightDir = normalize(-light.direction.xyz);
 
     // Ambient: texture modulated by ambient light
-    vec3 ambientColor = texture(material.texture_diffuse1, fs_in.texCoords).rgb * (light.value * AMBIENT_INFLUENCE);
+    vec3 ambientColor = texture(material.texture_diffuse1, fs_in.texCoords).rgb * (light.value.xyz * AMBIENT_INFLUENCE);
 
     // Diffuse texture color
     vec3 diffuseTexColor = texture(material.texture_diffuse1, fs_in.texCoords).rgb;
 
     // Diffuse: Lambertian reflectance
     float cosineTerm = max(dot(normal, lightDir), 0.0);
-    vec3 diffuseColor = diffuseTexColor * cosineTerm * (light.value * DIFFUSE_INFLUENCE);
+    vec3 diffuseColor = diffuseTexColor * cosineTerm * (light.value.xyz * DIFFUSE_INFLUENCE);
     
     // Specular: Phong reflection with texture
     // Calculates angular distance between reflection direction and view direction.
     // Smaller angular distance result in greater specular light contribute.
     vec3 reflectDir = reflect(-lightDir, normal);
     float specularIntensity = pow(max(dot(reflectDir, viewDir), 0.0), material.shininess);
-    vec3 specularColor = texture(material.texture_specular1, fs_in.texCoords).rgb * specularIntensity * (light.value * SPECULAR_INFLUENCE);
+    vec3 specularColor = texture(material.texture_specular1, fs_in.texCoords).rgb * specularIntensity * (light.value.xyz * SPECULAR_INFLUENCE);
 
     return ( ambientColor + diffuseColor + specularColor);
 }
 
-vec3 CalcPointLight(PointLight light, vec3 normal, vec3 viewDir, vec3 fragPos)
+vec3 CalcPointLight(Light light, vec3 normal, vec3 viewDir, vec3 fragPos)
 {
     // light caster
     // ------------------
-    vec3 lightDir = normalize(light.position - fragPos);
+    vec3 lightDir = normalize(light.position.xyz - fragPos);
 
-    float distance = distance(light.position, fragPos);
+    float distance = distance(light.position.xyz, fragPos);
     float attenuation = 1.0 / (CONSTANT_ATTEN + (LINEAR_ATTEN * distance) + (QUADRATIC_ATTEN * pow(distance, 2)));
 
     // ambient color
     // ------------------
-    vec3 ambientColor = texture(material.texture_diffuse1, fs_in.texCoords).rgb * (light.value * AMBIENT_INFLUENCE);
+    vec3 ambientColor = texture(material.texture_diffuse1, fs_in.texCoords).rgb * (light.value.xyz * AMBIENT_INFLUENCE);
 
     // diffuse color
     // -----------------
     // Note: The cosine term is the factor that describes how much light interacts with surface. 
     // A fragments brightness increases the closer it aligns with the incoming light rays from the source.
     float cosineTerm = max(dot(normal, lightDir), 0.0);
-    vec3 diffuseColor = texture(material.texture_diffuse1, fs_in.texCoords).rgb * cosineTerm * (light.value * DIFFUSE_INFLUENCE);
+    vec3 diffuseColor = texture(material.texture_diffuse1, fs_in.texCoords).rgb * cosineTerm * (light.value.xyz * DIFFUSE_INFLUENCE);
 
     // specular color
     // -------------------
@@ -183,7 +172,7 @@ vec3 CalcPointLight(PointLight light, vec3 normal, vec3 viewDir, vec3 fragPos)
     // Note: Calculate the angular distance between this reflection vector and the view direction.
     // The closer the angle between them, the greater the impact of the specular light.
     float specularIntensity = pow(max(dot(reflectDir, viewDir), 0.0),material.shininess);
-    vec3 specularColor = (texture(material.texture_specular1, fs_in.texCoords).rgb * specularIntensity) * (light.value * SPECULAR_INFLUENCE);
+    vec3 specularColor = (texture(material.texture_specular1, fs_in.texCoords).rgb * specularIntensity) * (light.value.xyz * SPECULAR_INFLUENCE);
 
     ambientColor    *= attenuation;
     diffuseColor    *= attenuation;
@@ -192,17 +181,17 @@ vec3 CalcPointLight(PointLight light, vec3 normal, vec3 viewDir, vec3 fragPos)
     return ambientColor + diffuseColor + specularColor;
 }
 
-vec3 CalcSpotLight(SpotLight light, vec3 normal, vec3 viewDir, vec3 fragPos)
+vec3 CalcSpotLight(Light light, vec3 normal, vec3 viewDir, vec3 fragPos)
 {
     // light caster
     // ------------------
-    float distance = distance(light.position, fragPos);
+    float distance = distance(light.position.xyz, fragPos);
     float attenuation = 1.0 / (CONSTANT_ATTEN + (LINEAR_ATTEN * distance) + (QUADRATIC_ATTEN * pow(distance, 2)));
 
-    vec3 lightDir = normalize(light.position - fragPos);    // positional light caster
+    vec3 lightDir = normalize(light.position.xyz - fragPos);    // positional light caster
 
     // calculate spot light terms
-    float theta = dot(lightDir, normalize(-light.spotDirection)); // cosine of the angle between the light direction and spot direction
+    float theta = dot(lightDir, normalize(-light.spotDirection.xyz)); // cosine of the angle between the light direction and spot direction
     float epsilon = light.innerAngle - light.outerAngle;
     // Ensure epsilon is positive to avoid inverted ramp or division by zero
     if (epsilon <= 0.0) {
@@ -212,19 +201,19 @@ vec3 CalcSpotLight(SpotLight light, vec3 normal, vec3 viewDir, vec3 fragPos)
 
     // ambient color
     // ------------------
-    vec3 ambientColor = texture(material.texture_diffuse1, fs_in.texCoords).rgb * (light.value * AMBIENT_INFLUENCE);
+    vec3 ambientColor = texture(material.texture_diffuse1, fs_in.texCoords).rgb * (light.value.xyz * AMBIENT_INFLUENCE);
 
     // diffuse color
     // -----------------   
     float cosineTerm = max(dot(normal, lightDir), 0.0);
-    vec3 diffuseColor = texture(material.texture_diffuse1, fs_in.texCoords).rgb * cosineTerm * (light.value * DIFFUSE_INFLUENCE);
+    vec3 diffuseColor = texture(material.texture_diffuse1, fs_in.texCoords).rgb * cosineTerm * (light.value.xyz * DIFFUSE_INFLUENCE);
 
     // specular color
     // -------------------
     vec3 reflectDir = reflect(-lightDir, normal); 
 
     float specularIntensity = pow(max(dot(reflectDir, viewDir), 0.0),material.shininess);
-    vec3 specularColor = (texture(material.texture_specular1, fs_in.texCoords).rgb * specularIntensity) * (light.value * SPECULAR_INFLUENCE);
+    vec3 specularColor = (texture(material.texture_specular1, fs_in.texCoords).rgb * specularIntensity) * (light.value.xyz * SPECULAR_INFLUENCE);
 
     diffuseColor    *= intensity;
     specularColor   *= intensity;

@@ -1,6 +1,7 @@
 #pragma once
-#include "ToyEngine/core.h"
 #include <cstdint>
+#include "ToyEngine/core.h"
+#include "ToyEngine/renderer/shader.h"
 
 namespace ToyEngine
 {
@@ -49,7 +50,7 @@ namespace ToyEngine
 	class UniformManager
 	{
 	public:
-		UniformManager() : m_binding_index(0) {}
+		UniformManager() {}
 		~UniformManager() {}
 		
 		/**
@@ -75,13 +76,25 @@ namespace ToyEngine
 		uint32_t GetBindPoint(const std::string& name) const;
 
 		/**
+		* @brief Binds a named uniform block in the given shader to the binding point of the associated UniformBuffer.
+		*
+		* This function looks up the UniformBuffer associated with the given uniform block name,
+		* retrieves its binding point, and binds the uniform block in the specified shader to that binding point.
+		*
+		* @param shader The shader in which to bind the uniform block.
+		* @param ubo_name The name of the uniform block to bind.
+		*/
+		void BindUniformBlockToShader(Ref<Shader> shader, const char* ubo_name);
+
+		/**
 		* @brief Checks if a UniformBuffer with the specified name exists in the manager.
 		* @param name The name to check.
 		* @return True if the buffer exists, false otherwise.
 		*/
 		bool HasBuffer(const std::string& name) const;
 	private:
-		uint32_t m_binding_index;
 		std::unordered_map<std::string, Ref<UniformBuffer>> buffer_lib_;
+		
+        static uint32_t s_next_binding_point;
 	};
 }
