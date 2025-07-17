@@ -4,15 +4,13 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
-#define TY_MAX_DIRECTIONAL_LIGHTS 4
-#define TY_MAX_POINT_LIGHTS 32
-#define TY_MAX_SPOT_LIGHTS 16
+#define MAX_LIGHTS 12
 
 namespace ToyEngine
 {
 	class Light {
 	public:
-		Light(eLightType type = eLightType::kPoint) : m_type(type), m_enabled(true),
+		Light(eLightType type = eLightType::kPoint) : m_type(int(type)), m_enabled(false),
 			m_value(glm::vec3(1.0f)),
 			m_direction(glm::vec3(0.0f, 0.0f, -1.0f)),
 			m_position(glm::vec3(0.0f, 0.0f, -1.0f)),
@@ -21,21 +19,23 @@ namespace ToyEngine
 		{}
 
 		//General light parameters
-		eLightType m_type;
-		bool m_enabled;
-		glm::vec3 m_value;
-
-		// Directional light parameters
-		glm::vec3 m_direction;
-
-		// Point/Spot light parameters
-		glm::vec3 m_position;
-
-		// Spot light parameters
-		glm::vec3 m_spotDirection;
-		// The inner and outer angles are measured in terms of their cosine value.  
-		// Measurements in degrees must first be converted to radians,  
-		// and then the cosine of the angle in radians is used.  
+		int m_type;
+		int m_enabled;
 		float m_innerAngle, m_outerAngle;
+
+		glm::vec3 m_value;			int pad1;
+		glm::vec3 m_direction;		int pad2;
+		glm::vec3 m_position;		int pad3;
+		glm::vec3 m_spotDirection;	int pad4;
+
+		// NOTE: The inner and outer angles are measured in terms of their cosine value.
+	};
+
+	struct LightBlock {
+		uint32_t m_num_lights;
+		int padding1[3];	// to align next vec3 on 16-byte boundary
+		Light m_lights[MAX_LIGHTS];
+		int padding2[12];
+
 	};
 }

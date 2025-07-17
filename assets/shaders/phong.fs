@@ -1,8 +1,6 @@
 #version 330 core
 
-#define MAX_DIRECTIONAL_LIGHTS 4
-#define MAX_POINT_LIGHTS 32
-#define MAX_SPOT_LIGHTS 16
+#define MAX_LIGHTS 12
 
 #define AMBIENT_INFLUENCE 0.2
 #define DIFFUSE_INFLUENCE 1
@@ -28,38 +26,36 @@ struct Material{
     float shininess;
 }; uniform Material material;
 
-struct DirectionalLight{ 
-    vec3 direction; // directional vector replaces position vector
-    vec3 value;
-    bool enabled; // flag to enable/disable this light
-}; 
+// Each Light struct is padded to a multiple of 16 bytes (likely 96 bytes)
+struct Light{
+    //General light parameters
+    int type;           // - int m_type: 4 bytes (offset 0)
+    int enabled;        // - int m_enabled: 4 bytes 
+    float innerAngle;   // - float m_innerAngle: 4 bytes (offset 76)
+    float outerAngle;   // - float m_outerAngle: 4 bytes (offset 80)
 
-struct PointLight{
-    vec3 position;
-    vec3 value;
-    bool enabled;
+    vec3 value;         // - vec3 m_value: 12 bytes (offset 16, must be aligned to 16)
+    int pad1;
+    vec3 direction;     // - vec3 m_direction: 12 bytes (offset 32, aligned to 16)
+    int pad2;
+    vec3 position;      // - vec3 m_position: 12 bytes (offset 48, aligned to 16)
+    int pad3;
+    vec3 spotDirection; // - vec3 m_spotDirection: 12 bytes (offset 64, aligned to 16)
+    int pad4;
+
+    // NOTE: The inner and outer angles are measured in terms of their cosine value.
 };
 
-struct SpotLight{
-    vec3 position;
-    vec3 value;
-    vec3 spotDirection;
-    float innerAngle;
-    float outerAngle;
-    bool enabled;
+// - The block itself is aligned to 16 bytes
+layout (std140) uniform LightBlock{
+    int uNumLight;              // offset 0, base alignment 4, but next member must start at 16 (vec4 boundary)
+    int pad[3];                 // pad to vec4 boundary required by std140
+    Light uLights[MAX_LIGHTS];  // offset 16, each element aligned to 16 bytes
 };
 
-uniform DirectionalLight uDirectionalLights[MAX_DIRECTIONAL_LIGHTS];
-uniform PointLight uPointLights[MAX_POINT_LIGHTS];
-uniform SpotLight uSpotLights[MAX_SPOT_LIGHTS];
-
-uniform int uNumDirectionalLights;
-uniform int uNumPointLights;
-uniform int uNumSpotLights;
-
-vec3 CalcDirLight(DirectionalLight light, vec3 normal, vec3 viewDir);
-vec3 CalcPointLight(PointLight light, vec3 normal, vec3 viewDir, vec3 fragPos);
-vec3 CalcSpotLight(SpotLight light, vec3 normal, vec3 viewDir, vec3 fragPos);
+vec3 CalcDirLight(Light light, vec3 normal, vec3 viewDir);
+vec3 CalcPointLight(Light light, vec3 normal, vec3 viewDir, vec3 fragPos);
+vec3 CalcSpotLight(Light light, vec3 normal, vec3 viewDir, vec3 fragPos);
 
 out vec4 FragColor;
 
@@ -85,24 +81,22 @@ void main()
 
     vec3 result = vec3(0.0);
 
-    // directional light
-    for (int i = 0; i < uNumDirectionalLights && i < MAX_DIRECTIONAL_LIGHTS; i++){
-        if(uDirectionalLights[i].enabled){
-            result += CalcDirLight(uDirectionalLights[i], norm, viewDir);
-        }
-    }
-    
-    // point light
-    for (int i = 0; i < uNumPointLights && i < MAX_POINT_LIGHTS; i++){
-        if(uPointLights[i].enabled){
-            result += CalcPointLight(uPointLights[i], norm, viewDir, fs_in.fragPos);
-        }
-    }
+    for (int i = 0; i < uNumLight && i < MAX_LIGHTS; ++i){
+        Light light = uLights[i]; 
+        if(light.enabled == 0) continue;
 
-    // spot light
-    for (int i = 0; i < uNumSpotLights && i < MAX_SPOT_LIGHTS; i++){
-        if(uSpotLights[i].enabled){
-            result += CalcSpotLight(uSpotLights[i], norm, viewDir, fs_in.fragPos);
+        switch(light.type){
+            case 1:
+                result += CalcDirLight(light, norm, viewDir);
+                break;
+            case 2:
+                result += CalcPointLight(light, norm, viewDir, fs_in.fragPos);
+                break;
+            case 3:
+                result += CalcSpotLight(light, norm, viewDir, fs_in.fragPos);
+                break;
+            default:
+                break;
         }
     }
 
@@ -126,7 +120,7 @@ void main()
  * 5. Calculates the specular component using the Phong reflection model and the specular texture.
  * 6. Returns the sum of ambient, diffuse, and specular components as the final color.
  */
-vec3 CalcDirLight(DirectionalLight light, vec3 normal, vec3 viewDir)
+vec3 CalcDirLight(Light light, vec3 normal, vec3 viewDir)
 {
     // Light direction (from fragment to light)
     vec3 lightDir = normalize(-light.direction);
@@ -151,7 +145,7 @@ vec3 CalcDirLight(DirectionalLight light, vec3 normal, vec3 viewDir)
     return ( ambientColor + diffuseColor + specularColor);
 }
 
-vec3 CalcPointLight(PointLight light, vec3 normal, vec3 viewDir, vec3 fragPos)
+vec3 CalcPointLight(Light light, vec3 normal, vec3 viewDir, vec3 fragPos)
 {
     // light caster
     // ------------------
@@ -192,7 +186,7 @@ vec3 CalcPointLight(PointLight light, vec3 normal, vec3 viewDir, vec3 fragPos)
     return ambientColor + diffuseColor + specularColor;
 }
 
-vec3 CalcSpotLight(SpotLight light, vec3 normal, vec3 viewDir, vec3 fragPos)
+vec3 CalcSpotLight(Light light, vec3 normal, vec3 viewDir, vec3 fragPos)
 {
     // light caster
     // ------------------

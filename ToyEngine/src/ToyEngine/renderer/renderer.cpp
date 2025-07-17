@@ -1,8 +1,7 @@
 #include "pch.h"
 #include "renderer.h"
-
-#include "ToyEngine/renderer/render_api.h"
 #include "ToyEngine/services/locator.h"
+#include "ToyEngine/renderer/render_api.h"
 
 namespace ToyEngine
 {
@@ -24,18 +23,23 @@ namespace ToyEngine
 		RenderAPI::Init(api);
 
 		Renderer::GetUniformManager().CreateBuffer("ViewProjectMats", 2 * sizeof(glm::mat4) + sizeof(glm::vec3) + sizeof(float));
+		Renderer::GetUniformManager().CreateBuffer("LightBlock", sizeof(LightBlock));
 	}
 
-	void Renderer::BeginScene(Ref<Camera> camera)
+	void Renderer::BeginScene(Ref<Camera> camera, const LightBlock* light_block)
 	{
 		// Clear the background to prepare for rendering a new frame.
 		RenderCommand::ClearSetBackground();
 
-		// Set the view and projection matrix data in uniform buffer.
-		ToyEngine::Ref<ToyEngine::UniformBuffer> camera_uniforms = ToyEngine::Renderer::GetUniformManager().GetBuffer("ViewProjectMats");
+		// Update uniform buffer objects
+		Ref<UniformBuffer> camera_uniforms = Renderer::GetUniformManager().GetBuffer("ViewProjectMats");
 		camera_uniforms->SetData(0, sizeof(glm::mat4), glm::value_ptr(camera->GetViewMatrix()));
 		camera_uniforms->SetData(sizeof(glm::mat4), sizeof(glm::mat4), glm::value_ptr(camera->GetProjectionMatrix()));
 		camera_uniforms->SetData(2 * sizeof(glm::mat4), sizeof(glm::vec3), glm::value_ptr(camera->position()));
+		
+		Ref<UniformBuffer> light_uniforms = Renderer::GetUniformManager().GetBuffer("LightBlock");
+		TY_CORE_ASSERT(sizeof(LightBlock) == 1024, "LightBlock Incorrect size");
+		light_uniforms->SetData(0, sizeof(LightBlock), light_block);
 	}
 
 	void Renderer::Submit(Ref<Model> model, const glm::mat4& world_transform)

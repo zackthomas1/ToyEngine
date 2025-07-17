@@ -1,6 +1,7 @@
 #pragma once
 #include "ToyEngine/scene_node.h"
 #include "ToyEngine/model/model.h"
+#include "ToyEngine/renderer/light.h"
 #include "ToyEngine/renderer/camera.h"
 #include "ToyEngine/renderer/shader.h"
 #include "ToyEngine/renderer/uniform_buffer.h"
@@ -8,7 +9,6 @@
 namespace ToyEngine
 {
 	struct SceneData {
-		
 		SceneData() {}
 	};
 
@@ -23,7 +23,7 @@ namespace ToyEngine
 		/// the uniform buffer with the current camera's view and projection matrices.
 		/// </summary>
 		/// <param name="camera"></param>
-		static void BeginScene(Ref<Camera> camera);
+		static void BeginScene(Ref<Camera> camera, const LightBlock* light_block);
 		static void Submit(Ref<Model> model, const glm::mat4& world_transform);
 		static void Submit(SceneNode* scene);
 		static void EndScene();
