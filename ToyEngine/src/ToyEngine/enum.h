@@ -48,6 +48,7 @@ namespace ToyEngine
 	{
 		kDiffuse = 1,
 		kSpecular = 2,
+		kEnvironment = 3,  // For cube maps/skyboxes
 	};
 
 	enum class eRenderAPI
