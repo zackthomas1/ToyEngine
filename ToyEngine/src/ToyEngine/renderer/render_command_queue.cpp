@@ -1,6 +1,9 @@
 #include "pch.h"
 #include "render_command_queue.h"
 #include "ToyEngine/renderer/render_api.h"
+#include "ToyEngine/model/model.h"
+#include "ToyEngine/model/mesh.h"
+#include "ToyEngine/renderer/shader.h"
 
 namespace ToyEngine
 {
@@ -37,6 +40,17 @@ namespace ToyEngine
 	void ClearBackgroundCommand::Execute()
 	{
 		RenderCommand::ClearSetBackground(m_clear_color);
+	}
+
+	// SetPolygonModeCommand implementation
+	SetPolygonModeCommand::SetPolygonModeCommand(uint32_t face, uint32_t mode)
+		: m_face(face), m_mode(mode)
+	{
+	}
+
+	void SetPolygonModeCommand::Execute()
+	{
+		RenderCommand::PolygonMode(m_face, m_mode);
 	}
 
 	// RenderCommandQueue implementation

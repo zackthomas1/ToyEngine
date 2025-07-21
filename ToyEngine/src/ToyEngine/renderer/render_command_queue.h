@@ -1,14 +1,16 @@
 #pragma once
 #include "ToyEngine/core.h"
-#include "ToyEngine/model/model.h"
-#include "ToyEngine/renderer/shader.h"
 #include <glm/glm.hpp>
 #include <vector>
-#include <queue>
 #include <memory>
 
 namespace ToyEngine
 {
+	// Forward declarations to avoid circular dependencies
+	class Model;
+	class Mesh;
+	class Shader;
+
 	// Base interface for all render commands
 	class IRenderCommand
 	{
@@ -40,6 +42,18 @@ namespace ToyEngine
 		glm::vec4 m_clear_color;
 	};
 
+	// Command to set polygon mode (wireframe, filled, etc.)
+	class SetPolygonModeCommand : public IRenderCommand
+	{
+	public:
+		SetPolygonModeCommand(uint32_t face, uint32_t mode);
+		virtual void Execute() override;
+
+	private:
+		uint32_t m_face;
+		uint32_t m_mode;
+	};
+
 	// Command queue that stores and executes render commands
 	class RenderCommandQueue
 	{
@@ -61,6 +75,9 @@ namespace ToyEngine
 
 		// Check if the queue is empty
 		bool Empty() const { return m_commands.empty(); }
+
+		// Reserve space for commands to avoid reallocations
+		void Reserve(size_t capacity) { m_commands.reserve(capacity); }
 
 	private:
 		std::vector<Scope<IRenderCommand>> m_commands;

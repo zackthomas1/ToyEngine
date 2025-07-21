@@ -71,4 +71,17 @@ namespace ToyEngine
 		// Execute all queued render commands
 		s_instance->m_command_queue.ExecuteAll();
 	}
+
+	void Renderer::SetPolygonMode(uint32_t face, uint32_t mode)
+	{
+		// Enqueue a polygon mode command
+		auto polygon_mode_command = MakeScope<SetPolygonModeCommand>(face, mode);
+		s_instance->m_command_queue.Enqueue(std::move(polygon_mode_command));
+	}
+
+	void Renderer::ReserveCommands(size_t capacity)
+	{
+		// Reserve space in the command queue to avoid reallocations
+		s_instance->m_command_queue.Reserve(capacity);
+	}
 }

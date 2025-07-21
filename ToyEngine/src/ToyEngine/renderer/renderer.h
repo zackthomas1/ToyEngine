@@ -30,6 +30,10 @@ namespace ToyEngine
 		static void Submit(SceneNode* scene);
 		static void EndScene();
 
+		// Additional command queue methods
+		static void SetPolygonMode(uint32_t face, uint32_t mode);
+		static void ReserveCommands(size_t capacity);
+
 		static eRenderAPI API() { return Renderer::s_instance->api_; }
 		static UniformManager& GetUniformManager() { return Renderer::s_instance->m_uniform_manager; }
 
