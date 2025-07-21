@@ -43,17 +43,9 @@ namespace ToyEngine
 		*/
 		uint32_t GetHeight() const { return height_; }
 
-		/**
-		* @brief Creates a frame buffer with the specified dimensions.
-		* @param width The width in pixels.
-		* @param height The height in pixels.
-		* @return Reference to the created FrameBuffer.
-		*/
 		static Ref<FrameBuffer> Create(uint32_t width, uint32_t height);
-
 	protected:
 		FrameBuffer(uint32_t width, uint32_t height) : width_(width), height_(height) {}
-
 	protected:
 		uint32_t id_, width_, height_;
 	};
