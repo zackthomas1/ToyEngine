@@ -5,6 +5,7 @@
 #include "ToyEngine/renderer/camera.h"
 #include "ToyEngine/renderer/shader.h"
 #include "ToyEngine/renderer/uniform_buffer.h"
+#include "ToyEngine/renderer/render_command_queue.h"
 
 namespace ToyEngine
 {
@@ -40,5 +41,6 @@ namespace ToyEngine
 		eRenderAPI api_;
 		UniformManager m_uniform_manager;
 		SceneData m_data;
+		RenderCommandQueue m_command_queue;
 	};
 }

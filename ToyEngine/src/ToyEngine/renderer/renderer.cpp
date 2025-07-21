@@ -2,6 +2,7 @@
 #include "renderer.h"
 #include "ToyEngine/services/locator.h"
 #include "ToyEngine/renderer/render_api.h"
+#include "ToyEngine/renderer/render_command_queue.h"
 
 namespace ToyEngine
 {
@@ -28,8 +29,12 @@ namespace ToyEngine
 
 	void Renderer::BeginScene(Ref<Camera> camera, const LightBlock* light_block)
 	{
-		// Clear the background to prepare for rendering a new frame.
-		RenderCommand::ClearSetBackground();
+		// Clear any existing commands in the queue
+		s_instance->m_command_queue.Clear();
+
+		// Enqueue the clear background command
+		auto clear_command = MakeScope<ClearBackgroundCommand>();
+		s_instance->m_command_queue.Enqueue(std::move(clear_command));
 
 		// Update uniform buffer objects
 		Ref<UniformBuffer> camera_uniforms = Renderer::GetUniformManager().GetBuffer("ViewProjectMats");
@@ -44,17 +49,9 @@ namespace ToyEngine
 
 	void Renderer::Submit(Ref<Model> model, const glm::mat4& world_transform)
 	{
-		Ref<Shader> shader = model->m_shader;
-		shader->Use();
-		for (Ref<Mesh> mesh : model->m_meshes) {
-			shader->SetMat4("uModel", world_transform);
-			mesh->m_material->BindTextures(shader);
-
-			// draw mesh
-			RenderCommand::BindVertexArray(mesh->m_vao);
-			RenderCommand::DrawIndexed(mesh->m_indices.size());
-			RenderCommand::BindVertexArray(0);
-		}
+		// Enqueue a draw command instead of immediate rendering
+		auto draw_command = MakeScope<DrawMeshCommand>(model, world_transform);
+		s_instance->m_command_queue.Enqueue(std::move(draw_command));
 	}
 
 	void Renderer::Submit(SceneNode* scene)
@@ -69,5 +66,9 @@ namespace ToyEngine
 		}
 	}
 
-	void Renderer::EndScene() {}
+	void Renderer::EndScene() 
+	{
+		// Execute all queued render commands
+		s_instance->m_command_queue.ExecuteAll();
+	}
 }
