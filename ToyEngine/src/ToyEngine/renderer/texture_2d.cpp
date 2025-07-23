@@ -5,10 +5,6 @@
 
 namespace ToyEngine
 {
-	Texture2D::Texture2D(const std::string& path, eTextureType type) :
-		m_path(path), m_type(type)
-	 {}
-
 	Ref<Texture2D> Texture2D::Create(const std::string& path, eTextureType type, bool flip_vertically)
 	{
 		switch (Renderer::API())

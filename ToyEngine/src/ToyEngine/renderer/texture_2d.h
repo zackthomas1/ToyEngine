@@ -18,7 +18,7 @@ namespace ToyEngine
 		std::string m_path;
 		eTextureType m_type;
 	protected:
-		Texture2D(const std::string& path, eTextureType type);
+		Texture2D(const std::string& path, eTextureType type) : m_path(path), m_type(type) { }
 		uint32_t nr_channels_;
 	};
 }
