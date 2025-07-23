@@ -33,7 +33,6 @@ public:
 		ToyEngine::Renderer::GetUniformManager().BindUniformBlockToShader(flatShader, "LightBlock");
 		ToyEngine::Renderer::GetUniformManager().BindUniformBlockToShader(textureShader, "LightBlock");
 		ToyEngine::Renderer::GetUniformManager().BindUniformBlockToShader(phongShader, "LightBlock");
-
 	}
 
 	virtual void OnAttach()
