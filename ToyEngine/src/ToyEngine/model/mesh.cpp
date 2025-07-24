@@ -1,12 +1,11 @@
 #include "pch.h"
 #include "mesh.h"
-
+#include "ToyEngine/enum.h"
 #include "ToyEngine/renderer/render_api.h"
-#include <glad/glad.h>
 
 namespace ToyEngine
 {
-    Mesh::Mesh(Vector<Vertex>& vertices, Vector<uint32_t>& indices, Ref<Material> material) :
+	Mesh::Mesh(Vector<Vertex>& vertices, Vector<uint32_t>& indices, Ref<Material> material) :
 		m_vertices(vertices), m_indices(indices), m_material(material)
 	{
 		setupMesh();
@@ -14,44 +13,34 @@ namespace ToyEngine
 
 	Mesh::~Mesh()
 	{
-        RenderCommand::DeleteVertexArray(m_vao);
-        RenderCommand::DeleteBuffer(m_vbo);
-        RenderCommand::DeleteBuffer(m_ebo);
+		RenderCommand::DeleteVertexArray(m_vao);
+		RenderCommand::DeleteBuffer(m_vbo);
+		RenderCommand::DeleteBuffer(m_ebo);
 	}
 
 	void Mesh::setupMesh()
 	{
-        // Gen buffers
-        glGenVertexArrays(1, &m_vao);
-        glGenBuffers(1, &m_vbo);
-        glGenBuffers(1, &m_ebo);
+		// Generate buffers
+		RenderCommand::GenVertexArrays(1, m_vao);
+		RenderCommand::GenBuffers(1, m_vbo);
+		RenderCommand::GenBuffers(1, m_ebo);
+		RenderCommand::BindVertexArray(m_vao);
 
-        // Bind buffers
-        glBindVertexArray(m_vao);
-        glBindBuffer(GL_ARRAY_BUFFER, m_vbo);
+		// Fill buffers
+		RenderCommand::BindBuffer(eBufferType::kARRAY_BUFFER, m_vbo); 
+		RenderCommand::BufferData(eBufferType::kARRAY_BUFFER, m_vertices.size() * sizeof(Vertex), &m_vertices[0]);
+		RenderCommand::BindBuffer(eBufferType::kELEMENT_ARRAY_BUFFER, m_ebo);
+		RenderCommand::BufferData(eBufferType::kELEMENT_ARRAY_BUFFER, m_indices.size() * sizeof(uint32_t), &m_indices[0]);
 
-        // Set vertice buffer
-        glBufferData(GL_ARRAY_BUFFER, m_vertices.size() * sizeof(Vertex), &m_vertices[0], GL_STATIC_DRAW);
+		// Set vertex attribute pointers
+		// aPos
+		RenderCommand::CreateVertexAttrib(0, 3, eDataType::kFLOAT, sizeof(Vertex), 0);
+		// aNormals
+		RenderCommand::CreateVertexAttrib(1, 3, eDataType::kFLOAT, sizeof(Vertex), offsetof(Vertex, Normal));
+		// aTexCoords
+		RenderCommand::CreateVertexAttrib(2, 2, eDataType::kFLOAT, sizeof(Vertex), offsetof(Vertex, TexCoords));
 
-        // Set element array buffer 
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_ebo);
-        glBufferData(GL_ELEMENT_ARRAY_BUFFER, m_indices.size() * sizeof(uint32_t), &m_indices[0], GL_STATIC_DRAW);
-
-        // Set vertex attribute pointers
-        // --------------
-        // aPos
-        glEnableVertexAttribArray(0);
-        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)0);
-
-        // aNormals
-        glEnableVertexAttribArray(1);
-        glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, Normal));
-
-        // aTexCoords
-        glEnableVertexAttribArray(2);
-        glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, TexCoords));
-
-        // Release vertex array object 
-        glBindVertexArray(0);
+		// Release vertex array object 
+		RenderCommand::BindVertexArray(0);
 	}
 }

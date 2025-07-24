@@ -12,14 +12,29 @@ namespace ToyEngine
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     }
 
-	void OpenGLRenderAPI::CreateVertexArray(uint32_t& vao) const
+	void OpenGLRenderAPI::GenVertexArrays(const int size, uint32_t& vao) const
 	{
 		glGenVertexArrays(1, &vao);
+	}
+	
+	void OpenGLRenderAPI::GenBuffers(const int size, uint32_t& buffer_object) const
+	{
+		glGenBuffers(1, &buffer_object);
 	}
 
 	void OpenGLRenderAPI::BindVertexArray(const uint32_t& vao) const
 	{
 		glBindVertexArray(static_cast<GLuint>(vao));
+	}
+
+	void OpenGLRenderAPI::BindBuffer(eBufferType buffer_type, const uint32_t buffer_object) const
+	{
+		glBindBuffer(static_cast<GLenum>(buffer_type), buffer_object);
+	}
+
+	void OpenGLRenderAPI::BufferData(eBufferType buffer_type, uint32_t size, const void* data) const
+	{
+		glBufferData(static_cast<GLenum>(buffer_type), size, data, GL_STATIC_DRAW);
 	}
 	
 	void OpenGLRenderAPI::DeleteVertexArray(uint32_t& id) const
@@ -28,13 +43,10 @@ namespace ToyEngine
 		glDeleteVertexArrays(1, &static_cast<GLuint>(id));
 	}
 
-	void OpenGLRenderAPI::CreateVertexBuffer(uint32_t& vbo, float* vertex_array, const int size) const
+	void OpenGLRenderAPI::CreateVertexAttrib(uint32_t location, uint32_t elements, eDataType data_type, uint32_t size, uint32_t offset) const
 	{
-		// create Vertex Buffer Object (VBO)
-		glGenBuffers(1, &vbo);
-
-		glBindBuffer(GL_ARRAY_BUFFER, vbo);
-		glBufferData(GL_ARRAY_BUFFER, size, vertex_array, GL_STATIC_DRAW);
+		glEnableVertexAttribArray(location);
+		glVertexAttribPointer(location, elements, static_cast<GLuint>(data_type), GL_FALSE, size, (void*)offset);
 	}
 
 	void OpenGLRenderAPI::DeleteBuffer(uint32_t& id) const

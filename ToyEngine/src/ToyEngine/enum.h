@@ -56,6 +56,17 @@ namespace ToyEngine
 		kOpenGL = 1,
 	};
 
+	enum class eBufferType
+	{
+		kARRAY_BUFFER			= 0x8892,
+		kELEMENT_ARRAY_BUFFER	= 0x8893,
+		kFRAME_BUFFER,
+	};
+
+	enum class eDataType {
+		kFLOAT = 0x1406,
+	};
+
 	enum class eLightType {
 		kDirectional = 1,
 		kPoint		= 2,
