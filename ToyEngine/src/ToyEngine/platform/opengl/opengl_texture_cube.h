@@ -9,9 +9,6 @@ namespace ToyEngine {
 		OpenGLTextureCube(Array<std::string, CUBE_SIDES>& files); 
 		~OpenGLTextureCube() {};
 
-		virtual void Bind() const override; 
-	private:
-		uint32_t id_;
-		int width_, height_, nrChannels_;
+		virtual void Bind(uint32_t slot = 0) const override; 
 	};
 }

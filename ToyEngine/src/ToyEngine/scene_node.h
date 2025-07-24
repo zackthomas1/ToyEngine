@@ -1,6 +1,6 @@
 #pragma once
 #include "core.h"
-#include "ToyEngine/model/model.h"
+#include "ToyEngine/entity.h"
 
 namespace ToyEngine {
 	class SceneNode {
@@ -11,12 +11,12 @@ namespace ToyEngine {
 				local_transform_(glm::mat4(1.0f)),
 				world_transform_(glm::mat4(1.0f)),
 				parent_(nullptr) { }
-			SceneNode(const char* name, std::shared_ptr<Model> model) :
+			SceneNode(const char* name, std::shared_ptr<Entity> entity) :
 				name_(name),
 				is_dirty(false),
 				local_transform_(glm::mat4(1.0f)),
 				world_transform_(glm::mat4(1.0f)),
-				entity_(model),
+				entity_(entity),
 				parent_(nullptr) { }
 
 			bool SetParent(SceneNode* parent);
@@ -24,7 +24,7 @@ namespace ToyEngine {
 			const std::string& GetName() const { return name_; }
 			const Vector<Scope<SceneNode>>& GetChildren() const { return children_; }
 			const glm::mat4& GetWorldTransform() const { return world_transform_; }
-			std::shared_ptr<Model> GetEntity() const { return entity_; }
+			std::shared_ptr<Entity> GetEntity() const { return entity_; }
 			void SetLocalTransform(glm::mat4& mat);
 			void MarkDirty() { is_dirty = true; }
 			void UpdateWorldTransform();
@@ -41,6 +41,6 @@ namespace ToyEngine {
 			glm::mat4 world_transform_;
 			Vector<Scope<SceneNode>> children_;
 			SceneNode* parent_;
-			Ref<Model> entity_;
+			Ref<Entity> entity_;
 	};
 }

@@ -18,7 +18,17 @@ namespace ToyEngine
 
 	void OpenGLShader::Use()
 	{
+		if (id_ == 0) {
+			TY_CORE_ERROR("SHADER::{} - Attempting to use invalid shader program (ID = 0)", m_name);
+			return;
+		}
+
 		glUseProgram(id_);
+		
+		GLenum error = glGetError();
+		if (error != GL_NO_ERROR) {
+			TY_CORE_ERROR("SHADER::{}(id={}) - glUseProgram failed with error: {}", m_name, id_, error);
+		}
 	}
 
 	void ToyEngine::OpenGLShader::BindUniformBlock(const char* uniform_block, uint32_t binding_point) const
@@ -108,6 +118,9 @@ namespace ToyEngine
 		if (!success) {
 			glGetProgramInfoLog(shader_program, 512, NULL, info_log);
 			TY_CORE_ERROR("ERROR::SHADERPROGRAM::COMPILIATION_FAILED\n{}", info_log);
+			
+			glDeleteProgram(shader_program);
+			shader_program = 0;
 		}
 
 		// Clean-up. Delete shaders. 

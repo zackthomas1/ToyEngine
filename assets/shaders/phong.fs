@@ -6,6 +6,8 @@
 #define DIFFUSE_INFLUENCE 1
 #define SPECULAR_INFLUENCE 0.5
 
+#define SHININESS 32.0
+
 // Recommended default attenuation values for realistic quadratic light falloff
 #define CONSTANT_ATTEN 1.0
 #define LINEAR_ATTEN 0.09
@@ -134,7 +136,7 @@ vec3 CalcDirLight(Light light, vec3 normal, vec3 viewDir)
     // Calculates angular distance between reflection direction and view direction.
     // Smaller angular distance result in greater specular light contribute.
     vec3 reflectDir = reflect(-lightDir, normal);
-    float specularIntensity = pow(max(dot(reflectDir, viewDir), 0.0), material.shininess);
+    float specularIntensity = pow(max(dot(reflectDir, viewDir), 0.0), SHININESS);
     vec3 specularColor = texture(material.texture_specular1, fs_in.texCoords).rgb * specularIntensity * (light.value.xyz * SPECULAR_INFLUENCE);
 
     return ( ambientColor + diffuseColor + specularColor);
@@ -171,7 +173,7 @@ vec3 CalcPointLight(Light light, vec3 normal, vec3 viewDir, vec3 fragPos)
 
     // Note: Calculate the angular distance between this reflection vector and the view direction.
     // The closer the angle between them, the greater the impact of the specular light.
-    float specularIntensity = pow(max(dot(reflectDir, viewDir), 0.0),material.shininess);
+    float specularIntensity = pow(max(dot(reflectDir, viewDir), 0.0),SHININESS);
     vec3 specularColor = (texture(material.texture_specular1, fs_in.texCoords).rgb * specularIntensity) * (light.value.xyz * SPECULAR_INFLUENCE);
 
     ambientColor    *= attenuation;
@@ -212,7 +214,7 @@ vec3 CalcSpotLight(Light light, vec3 normal, vec3 viewDir, vec3 fragPos)
     // -------------------
     vec3 reflectDir = reflect(-lightDir, normal); 
 
-    float specularIntensity = pow(max(dot(reflectDir, viewDir), 0.0),material.shininess);
+    float specularIntensity = pow(max(dot(reflectDir, viewDir), 0.0),SHININESS);
     vec3 specularColor = (texture(material.texture_specular1, fs_in.texCoords).rgb * specularIntensity) * (light.value.xyz * SPECULAR_INFLUENCE);
 
     diffuseColor    *= intensity;

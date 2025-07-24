@@ -18,28 +18,28 @@ public:
 	{
 		TY_INFO("Compiling shaders...");
 		m_shader_lib = ToyEngine::MakeRef<ToyEngine::ShaderLibrary>();
-		ToyEngine::Ref<ToyEngine::Shader> flatShader = ToyEngine::Shader::Create("flat_color", "../assets/shaders/flat_color.vs", "../assets/shaders/flat_color.fs");
+		ToyEngine::Ref<ToyEngine::Shader> flatShader	= ToyEngine::Shader::Create("flat_color", "../assets/shaders/flat_color.vs", "../assets/shaders/flat_color.fs");
 		ToyEngine::Ref<ToyEngine::Shader> textureShader = ToyEngine::Shader::Create("flat_texture", "../assets/shaders/flat_texture.vs", "../assets/shaders/flat_texture.fs");
-		ToyEngine::Ref<ToyEngine::Shader> phongShader = ToyEngine::Shader::Create("phong", "../assets/shaders/phong.vs", "../assets/shaders/phong.fs");
+		ToyEngine::Ref<ToyEngine::Shader> phongShader	= ToyEngine::Shader::Create("phong", "../assets/shaders/phong.vs", "../assets/shaders/phong.fs");
+		ToyEngine::Ref<ToyEngine::Shader> skyboxShader	= ToyEngine::Shader::Create("skybox", "../assets/shaders/skybox.vs", "../assets/shaders/skybox.fs");
 
 		m_shader_lib->Add(flatShader);
 		m_shader_lib->Add(textureShader);
 		m_shader_lib->Add(phongShader);
+		m_shader_lib->Add(skyboxShader);
 
 		ToyEngine::Renderer::GetUniformManager().BindUniformBlockToShader(flatShader, "ViewProjectMats");
 		ToyEngine::Renderer::GetUniformManager().BindUniformBlockToShader(textureShader, "ViewProjectMats");
 		ToyEngine::Renderer::GetUniformManager().BindUniformBlockToShader(phongShader, "ViewProjectMats");
+		ToyEngine::Renderer::GetUniformManager().BindUniformBlockToShader(skyboxShader, "ViewProjectMats");
 
-		ToyEngine::Renderer::GetUniformManager().BindUniformBlockToShader(flatShader, "LightBlock");
-		ToyEngine::Renderer::GetUniformManager().BindUniformBlockToShader(textureShader, "LightBlock");
 		ToyEngine::Renderer::GetUniformManager().BindUniformBlockToShader(phongShader, "LightBlock");
-
 	}
 
 	virtual void OnAttach()
 	{
 		TY_INFO("Initializing Camera...");
-		m_camera = ToyEngine::MakeRef<ToyEngine::Camera>(ToyEngine::eCameraType::kFlyCamera);
+		m_camera = ToyEngine::MakeScope<ToyEngine::Camera>(ToyEngine::eCameraType::kFlyCamera);
 
 		TY_INFO("Creating lights...");
 		m_light_block = ToyEngine::MakeScope<ToyEngine::LightBlock>();
@@ -55,17 +55,31 @@ public:
 		m_light_block->m_lights[3].m_enabled = true;
 		m_light_block->m_lights[4].m_enabled = true;
 
-		// Create scene geometry
+		// Create scene 
 		TY_INFO("Create scene...");
 		m_scene_graph = ToyEngine::MakeScope<ToyEngine::SceneNode>("root");
-		ToyEngine::Ref<ToyEngine::Model> backpack	= (ToyEngine::Model::Create("../assets/models/backpack/backpack.obj", true));
-		ToyEngine::Ref<ToyEngine::Model> cyborg		= (ToyEngine::Model::Create("../assets/models/cyborg/cyborg.obj", false));
-		ToyEngine::Ref<ToyEngine::Shader> phongShader = m_shader_lib->Get("phong");
+
+		ToyEngine::Ref<ToyEngine::Model> backpack		= (ToyEngine::Model::Create("../assets/models/backpack/backpack.obj", true));
+		ToyEngine::Ref<ToyEngine::Model> cyborg			= (ToyEngine::Model::Create("../assets/models/cyborg/cyborg.obj", false));
+		ToyEngine::Ref<ToyEngine::Shader> phongShader	= m_shader_lib->Get("phong");
 		backpack->m_shader = phongShader;
 		cyborg->m_shader = phongShader;
 		m_scene_graph->AddChild(ToyEngine::MakeScope<ToyEngine::SceneNode>("backepack_model", backpack));
 		m_scene_graph->AddChild(ToyEngine::MakeScope<ToyEngine::SceneNode>("cyborg_model", cyborg));
-	}
+	
+		ToyEngine::Array<std::string, 6> skybox_files = {
+			"../assets/skybox/right.jpg",	// +X (right)
+			"../assets/skybox/left.jpg",	// -X (left)
+			"../assets/skybox/top.jpg",		// +Y (top)
+			"../assets/skybox/bottom.jpg",	// -Y (bottom)
+			"../assets/skybox/front.jpg",	// +Z (front)
+			"../assets/skybox/back.jpg",	// -Z (back)
+		};
+		ToyEngine::Ref<ToyEngine::TextureCube> sky_texture = ToyEngine::TextureCube::Create(skybox_files);
+
+		ToyEngine::Ref<ToyEngine::Skybox> skybox = ToyEngine::MakeRef<ToyEngine::Skybox>(sky_texture, m_shader_lib->Get("skybox"));
+		m_scene_graph->AddChild(ToyEngine::MakeScope<ToyEngine::SceneNode>("skybox", skybox));
+}
 
 	virtual void OnDetach() {}
 
@@ -101,10 +115,7 @@ public:
 		m_light_block->m_lights[4].m_value			= glm::vec4(m_spot_light_color, 0.0f);
 
 		// Draw Scene
-		ToyEngine::Renderer::BeginScene(m_camera, m_light_block.get());
-		ToyEngine::Ref<ToyEngine::Shader> phongShader = m_shader_lib->Get("phong");
-		// models
-		phongShader->SetFloat("material.shininess", m_shininess);
+		ToyEngine::Renderer::BeginScene(m_camera.get(), m_light_block.get());
 		m_scene_graph->SetLocalTransform(glm::translate(glm::mat4(1.0f), m_translate));
 		m_scene_graph->GetChildren()[1]->SetLocalTransform(
 			glm::rotate(glm::translate(glm::mat4(1.0f), m_translate_cyborg),
@@ -197,7 +208,7 @@ public:
 	}
 public: 
 	ToyEngine::Ref<ToyEngine::ShaderLibrary> m_shader_lib;
-	ToyEngine::Ref<ToyEngine::Camera> m_camera;
+	ToyEngine::Scope<ToyEngine::Camera> m_camera;
 
 	// Model control parameters
 	ToyEngine::Scope<ToyEngine::SceneNode> m_scene_graph;
