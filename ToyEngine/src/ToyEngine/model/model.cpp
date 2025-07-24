@@ -22,7 +22,7 @@ namespace ToyEngine{
 			// draw mesh
 			RenderCommand::BindVertexArray(mesh->m_vao);
 			mesh->m_material->BindTextures(m_shader);
-			RenderCommand::DrawIndexed(mesh->m_indices.size());
+			RenderCommand::DrawElements(ePrimType::kTRIANGLE, mesh->m_indices.size(), 0);
 			RenderCommand::BindVertexArray(0);
 		}
 	}

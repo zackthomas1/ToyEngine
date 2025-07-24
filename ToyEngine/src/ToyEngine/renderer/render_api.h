@@ -16,17 +16,24 @@ namespace ToyEngine
 
 		// Methods
 		virtual void ClearSetBackground(const glm::vec4& clear_color) const = 0;
-		virtual void GenVertexArrays(const int size, uint32_t& vao) const = 0;
-		virtual void GenBuffers(const int size, uint32_t & buffer_object) const = 0;
-		virtual void BindVertexArray(const uint32_t& vao) const = 0;
-		virtual void BindBuffer(eBufferType buffer_type, const uint32_t buffer_object) const = 0;
+		virtual void GenVertexArrays(uint32_t size, uint32_t& vao) const = 0;
+		virtual void GenBuffers(uint32_t size, uint32_t & buffer_object) const = 0;
+		virtual void BindVertexArray(uint32_t vao) const = 0;
+		virtual void BindBuffer(eBufferType buffer_type, uint32_t buffer_object) const = 0;
 		virtual void BufferData(eBufferType buffer_type, uint32_t size, const void* data) const = 0;
 		virtual void DeleteVertexArray(uint32_t& id) const = 0;
-		virtual void CreateVertexAttrib(uint32_t location, uint32_t elements, eDataType data_type, uint32_t size, uint32_t offset) const = 0;
+		virtual void EnableVertexAttribArray(uint32_t index) const = 0;
+		virtual void VertexAttribPointer(uint32_t location, uint32_t elements, eDataType data_type, uint32_t size, uint32_t offset) const = 0;
 		virtual void DeleteBuffer(uint32_t& id) const = 0;
-		virtual void DrawArrays(uint32_t vertices) const = 0;
-		virtual void DrawIndexed(uint32_t vao) const = 0;
+		virtual void DrawArrays(ePrimType type, uint32_t start_index, uint32_t vertices) const = 0;
+		virtual void DrawElements(ePrimType type, uint32_t indices, uint32_t offset) const = 0;
 		virtual void PolygonMode(uint32_t face, uint32_t mode) const = 0;
+		virtual void Enable(eParamType cap) const = 0;
+		virtual void Disable(eParamType cap) const = 0;
+		virtual void GetBooleanv(eParamType pname, bool* data) const = 0;
+		virtual void GetIntegerv(eParamType pname, int* data) const = 0;
+		virtual void DepthMask(bool flag) const = 0; 
+		virtual void DepthFunc(eDepthFunc func) const = 0;
 	};
 
 	class RenderCommand
@@ -47,22 +54,22 @@ namespace ToyEngine
 			RenderAPI::s_instance->ClearSetBackground(clear_color); 
 		}
 
-		static void GenVertexArrays(const int size, uint32_t& vao)
+		static void GenVertexArrays(uint32_t size, uint32_t& vao)
 		{
 			RenderAPI::s_instance->GenVertexArrays(size, vao);
 		}
 
-		static void GenBuffers(const int size, uint32_t& buffer_object)
+		static void GenBuffers(uint32_t size, uint32_t& buffer_object)
 		{
 			RenderAPI::s_instance->GenBuffers(size, buffer_object);
 		}
 
-		static void BindVertexArray(const uint32_t& vao)
+		static void BindVertexArray(uint32_t vao)
 		{ 
 			RenderAPI::s_instance->BindVertexArray(vao); 
 		}
 		
-		static void BindBuffer(eBufferType buffer_type, const uint32_t buffer_object) 
+		static void BindBuffer(eBufferType buffer_type, uint32_t buffer_object) 
 		{
 			RenderAPI::s_instance->BindBuffer(buffer_type, buffer_object); 
 		}
@@ -77,18 +84,62 @@ namespace ToyEngine
 			RenderAPI::s_instance->DeleteVertexArray(id); 
 		}
 
-		static void CreateVertexAttrib(uint32_t location, uint32_t elements, eDataType data_type, uint32_t size, uint32_t offset)
+		static void EnableVertexAttribArray(uint32_t index)
 		{
-			RenderAPI::s_instance->CreateVertexAttrib(location, elements, data_type, size, offset);
+			RenderAPI::s_instance->EnableVertexAttribArray(index);
+		}
+
+		static void VertexAttribPointer(uint32_t location, uint32_t elements, eDataType data_type, uint32_t size, uint32_t offset)
+		{
+			RenderAPI::s_instance->VertexAttribPointer(location, elements, data_type, size, offset);
 		}
 
 		static void DeleteBuffer(uint32_t& id)
-		{ RenderAPI::s_instance->DeleteBuffer(id); }
-		static void DrawArrays(uint32_t vertices)
-		{ RenderAPI::s_instance->DrawArrays(vertices); }
-		static void DrawIndexed(uint32_t vao)
-		{ RenderAPI::s_instance->DrawIndexed(vao); }
+		{ 
+			RenderAPI::s_instance->DeleteBuffer(id); 
+		}
+		
+		static void DrawArrays(ePrimType type, uint32_t start_index, uint32_t vertices)
+		{ 
+			RenderAPI::s_instance->DrawArrays(type, start_index, vertices);
+		}
+		
+		static void DrawElements(ePrimType type, uint32_t indices, uint32_t offset)
+		{ 
+			RenderAPI::s_instance->DrawElements(type, indices, offset); 
+		}
+		
 		static void PolygonMode(uint32_t face, uint32_t mode) 
 		{ RenderAPI::s_instance->PolygonMode(face, mode); }
+
+		static void Enable(eParamType cap)
+		{
+			RenderAPI::s_instance->Enable(cap);
+		}
+
+		static void Disable(eParamType cap)
+		{
+			RenderAPI::s_instance->Disable(cap);
+		}
+
+		static void GetBooleanv(eParamType pname, bool* data)
+		{
+			RenderAPI::s_instance->GetBooleanv(pname, data);
+		}
+
+		static void GetIntegerv(eParamType pname, int* data)
+		{
+			RenderAPI::s_instance->GetIntegerv(pname, data);
+		}
+
+		static void DepthMask(bool flag)
+		{
+			RenderAPI::s_instance->DepthMask(flag);
+		}
+
+		static void DepthFunc(eDepthFunc func)
+		{
+			RenderAPI::s_instance->DepthFunc(func);
+		}
 	};
 }

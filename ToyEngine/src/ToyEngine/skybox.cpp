@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "skybox.h"
-#include <glad/glad.h>
 #include "renderer/renderer.h"
+#include "ToyEngine/renderer/render_api.h"
 
 namespace ToyEngine
 {
@@ -52,37 +52,43 @@ namespace ToyEngine
 
 	uint32_t Skybox::s_vao = 0;
 	uint32_t Skybox::s_vbo = 0;
+	int Skybox::s_ref_count = 0;
 
 	Skybox::Skybox(Ref<TextureCube> texture, Ref<Shader> shader) : texture_(texture), m_shader(shader)
 	{
 		TY_CORE_ASSERT(texture_, "Skybox - Null TextureCube provided");
 		TY_CORE_ASSERT(shader, "Skybox - Null Shader provided");
 
+		s_ref_count++;
+
 		if (s_vao == 0 || s_vbo == 0) {
-			glGenVertexArrays(1, &s_vao);
-			glGenBuffers(1, &s_vbo);
-			glBindVertexArray(s_vao);
-			glBindBuffer(GL_ARRAY_BUFFER, s_vbo);
-			glBufferData(GL_ARRAY_BUFFER, sizeof(s_vertices), &s_vertices[0], GL_STATIC_DRAW);
+			RenderCommand::GenVertexArrays(1, s_vao);
+			RenderCommand::GenBuffers(1, s_vbo);
+			RenderCommand::BindVertexArray(s_vao);
+			RenderCommand::BindBuffer(eBufferType::kARRAY_BUFFER, s_vbo); 
+			RenderCommand::BufferData(eBufferType::kARRAY_BUFFER, sizeof(s_vertices), &s_vertices[0]);
 		
 			// aPos
-			glEnableVertexAttribArray(0);
-			glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+			RenderCommand::EnableVertexAttribArray(0);
+			RenderCommand::VertexAttribPointer(0,3, eDataType::kFLOAT, 3 * sizeof(float), 0);
 			
 			// Set binding back to default
-			glBindVertexArray(0);
+			RenderCommand::BindVertexArray(0);
 		}
 	}
 
 	Skybox::~Skybox()
 	{
-		if (s_vao != 0) {
-			glDeleteVertexArrays(1, &s_vao);
-			s_vao = 0;
-		}
-		if (s_vbo != 0) {
-			glDeleteBuffers(1, &s_vbo);
-			s_vbo = 0;
+		s_ref_count--; 
+		if(s_ref_count == 0){
+			if (s_vao != 0) {
+				RenderCommand::DeleteVertexArray(s_vao);
+				s_vao = 0;
+			}
+			if (s_vbo != 0) {
+				RenderCommand::DeleteBuffer(s_vbo);
+				s_vbo = 0;
+			}
 		}
 	}
 
@@ -94,37 +100,28 @@ namespace ToyEngine
 		TY_CORE_ASSERT(s_vao != 0, "Skybox - Invalid VAO");
 
 		// Save current OpenGL state
-		GLboolean depthMask;
-		glGetBooleanv(GL_DEPTH_WRITEMASK, &depthMask);
-		GLboolean cullFace;
-		glGetBooleanv(GL_CULL_FACE, &cullFace);
-		GLenum depthFunc;
-		glGetIntegerv(GL_DEPTH_FUNC, (GLint*)&depthFunc);
+		bool depthMask;
+		RenderCommand::GetBooleanv(eParamType::kDEPTH_WRITEMASK, &depthMask);
+		bool cullFace;
+		RenderCommand::GetBooleanv(eParamType::kCULL_FACE, &cullFace);
+		int depthFunc;
+		RenderCommand::GetIntegerv(eParamType::kDEPTH_FUNC, &depthFunc);
 
 		// Set skybox rendering state
-		glDepthMask(GL_FALSE); // Don't write to depth buffer
-		glDisable(GL_CULL_FACE);
-		glDepthFunc(GL_LEQUAL);
+		RenderCommand::DepthMask(false);
+		RenderCommand::Disable(eParamType::kCULL_FACE);
+		RenderCommand::DepthFunc(eDepthFunc::kLEQUAL);
 
 		m_shader->Use();
 		m_shader->SetInt("skybox_texture", 0);
-
-		glBindVertexArray(s_vao);
-
+		RenderCommand::BindVertexArray(s_vao);
 		texture_->Bind(0);
-		glDrawArrays(GL_TRIANGLES, 0, 36);
-
-		// Check for errors
-		GLenum error = glGetError();
-		if (error != GL_NO_ERROR) {
-			TY_CORE_ERROR("Skybox render error: {}", error);
-		}
-
-		glBindVertexArray(0);
+		RenderCommand::DrawArrays(ePrimType::kTRIANGLE, 0, 36);
+		RenderCommand::BindVertexArray(0);
 
 		// Restore previous OpenGL state
-		glDepthMask(depthMask);
-		if (cullFace) glEnable(GL_CULL_FACE);
-		glDepthFunc(depthFunc);
+		RenderCommand::DepthMask(depthMask);
+		if (cullFace) RenderCommand::Enable(eParamType::kCULL_FACE);
+		RenderCommand::DepthFunc((eDepthFunc)depthFunc);
 	}
 }

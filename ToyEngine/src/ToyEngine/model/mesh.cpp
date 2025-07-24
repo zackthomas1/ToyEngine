@@ -34,11 +34,14 @@ namespace ToyEngine
 
 		// Set vertex attribute pointers
 		// aPos
-		RenderCommand::CreateVertexAttrib(0, 3, eDataType::kFLOAT, sizeof(Vertex), 0);
+		RenderCommand::EnableVertexAttribArray(0);
+		RenderCommand::VertexAttribPointer(0, 3, eDataType::kFLOAT, sizeof(Vertex), 0);
 		// aNormals
-		RenderCommand::CreateVertexAttrib(1, 3, eDataType::kFLOAT, sizeof(Vertex), offsetof(Vertex, Normal));
+		RenderCommand::EnableVertexAttribArray(1);
+		RenderCommand::VertexAttribPointer(1, 3, eDataType::kFLOAT, sizeof(Vertex), offsetof(Vertex, Normal));
 		// aTexCoords
-		RenderCommand::CreateVertexAttrib(2, 2, eDataType::kFLOAT, sizeof(Vertex), offsetof(Vertex, TexCoords));
+		RenderCommand::EnableVertexAttribArray(2);
+		RenderCommand::VertexAttribPointer(2, 2, eDataType::kFLOAT, sizeof(Vertex), offsetof(Vertex, TexCoords));
 
 		// Release vertex array object 
 		RenderCommand::BindVertexArray(0);
