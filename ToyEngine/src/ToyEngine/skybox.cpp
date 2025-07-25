@@ -116,7 +116,7 @@ namespace ToyEngine
 		m_shader->SetInt("skybox_texture", 0);
 		RenderCommand::BindVertexArray(s_vao);
 		texture_->Bind(0);
-		RenderCommand::DrawArrays(ePrimType::kTRIANGLE, 0, 36);
+		RenderCommand::DrawArrays(ePrimType::kTRIANGLE, 0, sizeof(s_vertices) / (3 * sizeof(float)));
 		RenderCommand::BindVertexArray(0);
 
 		// Restore previous OpenGL state

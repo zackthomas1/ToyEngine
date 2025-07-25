@@ -1,4 +1,5 @@
 #version 330 core
+#define EPLSILON 0.001
 
 #define MAX_LIGHTS 12
 
@@ -90,6 +91,7 @@ void main()
     vec3 diffuseTex = texture(material.texture_diffuse1, fs_in.texCoords).rgb;
     vec3 specularTex = texture(material.texture_specular1, fs_in.texCoords).rgb;
 
+    // Calculating light contribution
     vec3 result = vec3(0.0);
     for (int i = 0; i < uNumLight && i < MAX_LIGHTS; ++i){
         Light light = uLights[i]; 
@@ -110,6 +112,7 @@ void main()
         }
     }
 
+    // calculate reflection and refraction values
     if(material.has_environment_map && (material.metallic > 0.001 || material.transmission > 0.001))
     {
         // Calculate reflection once
@@ -254,7 +257,7 @@ vec3 CalcSpecularColor(Light light, vec3 normal, vec3 lightDir, vec3 viewDir, ve
 
     // Note: Calculate the angular distance between this reflection vector and the view direction.
     // The closer the angle between them, the greater the impact of the specular light.
-    float normalizeRoughness = clamp(material.roughness / 256.0, 0.001, 1.0); 
+    float normalizeRoughness = clamp(material.roughness / 256.0, EPLSILON, 1.0); 
     float specularExponent = 1 / (normalizeRoughness);
     float specularIntensity = pow(max(dot(reflectDir, viewDir), 0.0),specularExponent);
 
@@ -272,7 +275,7 @@ vec3 CalcReflection(vec3 normal, vec3 viewDir)
     
     // calculate mip level based on roughness (range[0.1, 256])
     // map roughness to mip levels [0 to maxMipLevels]
-    float normalizeRoughness = clamp(material.roughness / 256.0, 0.001, 1.0); 
+    float normalizeRoughness = clamp(material.roughness / 256.0, EPLSILON, 1.0); 
     float mipLevel = (normalizeRoughness * normalizeRoughness) * float(uMaxMipLevel);
 
     return textureLod(material.environment_map, reflect_dir, mipLevel).rgb;
@@ -287,11 +290,11 @@ vec3 CalcRefraction(vec3 normal, vec3 viewDir)
     vec3 refraction_dir = refract(-viewDir, normal, 1.0 / material.refractive_index);
 
     // Handle total internal reflections
-    if(length(refraction_dir) < 0.001){
+    if(length(refraction_dir) < EPLSILON){
         return CalcReflection(normal, viewDir);
     }
 
-    float normalizeRoughness = clamp(material.roughness / 256.0, 0.001, 1.0); 
+    float normalizeRoughness = clamp(material.roughness / 256.0, EPLSILON, 1.0); 
     float mipLevel = (normalizeRoughness * normalizeRoughness) * float(uMaxMipLevel);
 
     return textureLod(material.environment_map, refraction_dir, mipLevel).rgb;

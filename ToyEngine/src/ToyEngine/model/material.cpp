@@ -11,8 +11,8 @@ namespace ToyEngine
 	Ref<TextureCube> Material::GetDefaultEnvironmentMap()
 	{
 		if (!s_default_environment_map) {
-			TY_CORE_WARN("Using default environmnet map: "
-				"OpenGL requires that all active samplers in shaderhave valid texture bound to texture units,"
+			TY_CORE_WARN("Using default environment map: "
+				"OpenGL requires that all active samplers in shader have valid textures bound to texture units,"
 				"regardless of whether they are sampled in shader logic."
 				"OpenGL still validates that the sampler has a bound texture during a draw call"
 			);
@@ -65,7 +65,6 @@ namespace ToyEngine
 		}
 
 		// set material properties
-		//TY_CORE_INFO("{}", transmission_);
 		shader->SetFloat("material.roughness", roughness_);
 		shader->SetFloat("material.metallic", metallic_);
 		shader->SetFloat("material.transmission", transmission_);
