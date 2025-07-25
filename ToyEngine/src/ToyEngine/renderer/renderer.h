@@ -36,6 +36,12 @@ namespace ToyEngine
 		/// <param name="frontFace">Winding order for front faces (counter-clockwise by default).</param>
 		static void SetFaceCulling(bool enabled, eCullFaceMode cullMode = eCullFaceMode::kBACK, eFrontFace frontFace = eFrontFace::kCCW);
 
+		/// <summary>
+		/// Gets the current face culling enabled state.
+		/// </summary>
+		/// <returns>True if face culling is enabled, false otherwise.</returns>
+		static bool IsFaceCullingEnabled();
+
 		static eRenderAPI API() { return Renderer::s_instance->api_; }
 		static UniformManager& GetUniformManager() { return Renderer::s_instance->m_uniform_manager; }
 

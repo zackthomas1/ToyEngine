@@ -13,6 +13,7 @@ ToyEngine serves as both a learning platform for game engine development and a f
 - **Modern OpenGL Rendering**: PBR-based lighting with support for multiple light types
 - **Asset Loading**: Support for 3D models (.obj), textures, and materials via Assimp
 - **Scene Management**: Hierarchical scene graph with efficient culling
+- **Back Face Culling**: Automatic culling of back-facing polygons for improved performance
 - **Input System**: Comprehensive keyboard and mouse input handling
 - **Camera System**: Fly camera with smooth movement and controls
 - **Material System**: Shader-based material pipeline with uniform management

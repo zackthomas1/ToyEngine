@@ -27,6 +27,7 @@ namespace ToyEngine
 		RenderCommand::Enable(eParamType::kCULL_FACE);
 		RenderCommand::CullFace(eCullFaceMode::kBACK);		// Cull back faces
 		RenderCommand::FrontFace(eFrontFace::kCCW);			// Counter-clockwise winding is front face
+		TY_CORE_INFO("Face culling enabled: culling back faces with counter-clockwise front face winding");
 
 		Renderer::GetUniformManager().CreateBuffer("ViewProjectMats", 2 * sizeof(glm::mat4) + sizeof(glm::vec3) + sizeof(float));
 		Renderer::GetUniformManager().CreateBuffer("LightBlock", sizeof(LightBlock));
@@ -76,8 +77,17 @@ namespace ToyEngine
 			RenderCommand::Enable(eParamType::kCULL_FACE);
 			RenderCommand::CullFace(cullMode);
 			RenderCommand::FrontFace(frontFace);
+			TY_CORE_TRACE("Face culling enabled: mode={}, front_face={}", static_cast<int>(cullMode), static_cast<int>(frontFace));
 		} else {
 			RenderCommand::Disable(eParamType::kCULL_FACE);
+			TY_CORE_TRACE("Face culling disabled");
 		}
+	}
+
+	bool Renderer::IsFaceCullingEnabled()
+	{
+		bool enabled = false;
+		RenderCommand::GetBooleanv(eParamType::kCULL_FACE, &enabled);
+		return enabled;
 	}
 }
