@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "opengl_texture_2d.h"
 #include <glad/glad.h>
-#include "ToyEngine/stb_image.cpp"
+#include "stb_image.h"
 
 namespace ToyEngine
 {

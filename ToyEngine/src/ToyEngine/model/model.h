@@ -1,16 +1,21 @@
 #pragma once
-#include "ToyEngine/model/mesh.h"
-#include "ToyEngine/model/material.h"
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
 
+#include "ToyEngine/entity.h"
+#include "ToyEngine/model/mesh.h"
+#include "ToyEngine/model/material.h"
+
 namespace ToyEngine
 {
-	class Model
+	class Model : public Entity
 	{
 	public:
 		Model(const char* path, bool flip_vertically = false, bool gamma = false);
+
+		virtual void Update(const TimeStep& time_step) override;
+		virtual void Render(const glm::mat4& world_transform = glm::mat4(1.0f)) const override;
 
 		static Ref<Model> Create(const char* path, bool flip_vertically = false, bool gamma = false);
 	public:

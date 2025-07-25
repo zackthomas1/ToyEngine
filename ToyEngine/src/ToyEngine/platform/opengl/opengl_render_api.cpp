@@ -12,14 +12,29 @@ namespace ToyEngine
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     }
 
-	void OpenGLRenderAPI::CreateVertexArray(uint32_t& vao) const
+	void OpenGLRenderAPI::GenVertexArrays(uint32_t size, uint32_t& vao) const
 	{
 		glGenVertexArrays(1, &vao);
 	}
+	
+	void OpenGLRenderAPI::GenBuffers(uint32_t size, uint32_t& buffer_object) const
+	{
+		glGenBuffers(1, &buffer_object);
+	}
 
-	void OpenGLRenderAPI::BindVertexArray(const uint32_t& vao) const
+	void OpenGLRenderAPI::BindVertexArray(uint32_t vao) const
 	{
 		glBindVertexArray(static_cast<GLuint>(vao));
+	}
+
+	void OpenGLRenderAPI::BindBuffer(eBufferType buffer_type, uint32_t buffer_object) const
+	{
+		glBindBuffer(static_cast<GLenum>(buffer_type), buffer_object);
+	}
+
+	void OpenGLRenderAPI::BufferData(eBufferType buffer_type, uint32_t size, const void* data) const
+	{
+		glBufferData(static_cast<GLenum>(buffer_type), size, data, GL_STATIC_DRAW);
 	}
 	
 	void OpenGLRenderAPI::DeleteVertexArray(uint32_t& id) const
@@ -28,13 +43,14 @@ namespace ToyEngine
 		glDeleteVertexArrays(1, &static_cast<GLuint>(id));
 	}
 
-	void OpenGLRenderAPI::CreateVertexBuffer(uint32_t& vbo, float* vertex_array, const int size) const
+	void OpenGLRenderAPI::EnableVertexAttribArray(uint32_t index) const
 	{
-		// create Vertex Buffer Object (VBO)
-		glGenBuffers(1, &vbo);
+		glEnableVertexAttribArray(index);
+	}
 
-		glBindBuffer(GL_ARRAY_BUFFER, vbo);
-		glBufferData(GL_ARRAY_BUFFER, size, vertex_array, GL_STATIC_DRAW);
+	void OpenGLRenderAPI::VertexAttribPointer(uint32_t location, uint32_t elements, eDataType data_type, uint32_t size, uint32_t offset) const
+	{
+		glVertexAttribPointer(location, elements, static_cast<GLuint>(data_type), GL_FALSE, size, (void*)offset);
 	}
 
 	void OpenGLRenderAPI::DeleteBuffer(uint32_t& id) const
@@ -42,14 +58,26 @@ namespace ToyEngine
 		glDeleteBuffers(1, &id);
 	}
 
-	void OpenGLRenderAPI::DrawArrays(uint32_t vertices) const
+	void OpenGLRenderAPI::DrawArrays(ePrimType type, uint32_t start_index, uint32_t vertices) const
 	{
-		glDrawArrays(GL_TRIANGLES, 0, vertices); 
+		glDrawArrays(static_cast<GLuint>(type), start_index, vertices);
+
+		// Check for errors
+		GLenum error = glGetError();
+		if (error != GL_NO_ERROR) {
+			TY_CORE_ERROR("draw arrays error: {}", error);
+		}
 	}
 
-	void OpenGLRenderAPI::DrawIndexed(uint32_t indices) const
+	void OpenGLRenderAPI::DrawElements(ePrimType type, uint32_t indices, uint32_t offset) const
 	{
-		glDrawElements(GL_TRIANGLES, indices, GL_UNSIGNED_INT, 0);
+		glDrawElements(static_cast<GLuint>(type), indices, GL_UNSIGNED_INT, (void*)offset);
+
+		// Check for errors
+		GLenum error = glGetError();
+		if (error != GL_NO_ERROR) {
+			TY_CORE_ERROR("draw elements error: {}", error);
+		}
 	}
 
 	void OpenGLRenderAPI::PolygonMode(uint32_t face, uint32_t mode) const
@@ -69,6 +97,35 @@ namespace ToyEngine
 		//	Polygon attributes such as GL_POLYGON_SMOOTH control the rasterization of the polygon.
 
 		glPolygonMode(face, mode);	// render primitives as wireframes
+	}
+	void OpenGLRenderAPI::Enable(eParamType cap) const
+	{
+		glEnable((GLenum)cap);
+	}
+
+	void OpenGLRenderAPI::Disable(eParamType cap) const
+	{
+		glDisable((GLenum)cap);
+	}
+
+	void OpenGLRenderAPI::GetBooleanv(eParamType pname, bool* data) const
+	{
+		glGetBooleanv((GLenum)pname, (GLboolean*)data);
+	}
+	
+	void OpenGLRenderAPI::GetIntegerv(eParamType pname, int* data) const
+	{
+		glGetIntegerv((GLenum)pname, (GLint*)data);
+	}
+
+	void OpenGLRenderAPI::DepthMask(bool flag) const
+	{
+		glDepthMask(flag);
+	}
+
+	void ToyEngine::OpenGLRenderAPI::DepthFunc(eDepthFunc func) const
+	{
+		glDepthFunc((GLenum)func);
 	}
 }
 

@@ -18,27 +18,28 @@ public:
 	{
 		TY_INFO("Compiling shaders...");
 		m_shader_lib = ToyEngine::MakeRef<ToyEngine::ShaderLibrary>();
-		ToyEngine::Ref<ToyEngine::Shader> flatShader = ToyEngine::Shader::Create("flat_color", "../assets/shaders/flat_color.vs", "../assets/shaders/flat_color.fs");
+		ToyEngine::Ref<ToyEngine::Shader> flatShader	= ToyEngine::Shader::Create("flat_color", "../assets/shaders/flat_color.vs", "../assets/shaders/flat_color.fs");
 		ToyEngine::Ref<ToyEngine::Shader> textureShader = ToyEngine::Shader::Create("flat_texture", "../assets/shaders/flat_texture.vs", "../assets/shaders/flat_texture.fs");
-		ToyEngine::Ref<ToyEngine::Shader> phongShader = ToyEngine::Shader::Create("phong", "../assets/shaders/phong.vs", "../assets/shaders/phong.fs");
+		ToyEngine::Ref<ToyEngine::Shader> phongShader	= ToyEngine::Shader::Create("phong", "../assets/shaders/phong.vs", "../assets/shaders/phong.fs");
+		ToyEngine::Ref<ToyEngine::Shader> skyboxShader	= ToyEngine::Shader::Create("skybox", "../assets/shaders/skybox.vs", "../assets/shaders/skybox.fs");
 
 		m_shader_lib->Add(flatShader);
 		m_shader_lib->Add(textureShader);
 		m_shader_lib->Add(phongShader);
+		m_shader_lib->Add(skyboxShader);
 
 		ToyEngine::Renderer::GetUniformManager().BindUniformBlockToShader(flatShader, "ViewProjectMats");
 		ToyEngine::Renderer::GetUniformManager().BindUniformBlockToShader(textureShader, "ViewProjectMats");
 		ToyEngine::Renderer::GetUniformManager().BindUniformBlockToShader(phongShader, "ViewProjectMats");
+		ToyEngine::Renderer::GetUniformManager().BindUniformBlockToShader(skyboxShader, "ViewProjectMats");
 
-		ToyEngine::Renderer::GetUniformManager().BindUniformBlockToShader(flatShader, "LightBlock");
-		ToyEngine::Renderer::GetUniformManager().BindUniformBlockToShader(textureShader, "LightBlock");
 		ToyEngine::Renderer::GetUniformManager().BindUniformBlockToShader(phongShader, "LightBlock");
 	}
 
 	virtual void OnAttach()
 	{
 		TY_INFO("Initializing Camera...");
-		m_camera = ToyEngine::MakeRef<ToyEngine::Camera>(ToyEngine::eCameraType::kFlyCamera);
+		m_camera = ToyEngine::MakeScope<ToyEngine::Camera>(ToyEngine::eCameraType::kFlyCamera);
 
 		TY_INFO("Creating lights...");
 		m_light_block = ToyEngine::MakeScope<ToyEngine::LightBlock>();
@@ -54,16 +55,36 @@ public:
 		m_light_block->m_lights[3].m_enabled = true;
 		m_light_block->m_lights[4].m_enabled = true;
 
-		// Create scene geometry
+		// Create scene 
 		TY_INFO("Create scene...");
 		m_scene_graph = ToyEngine::MakeScope<ToyEngine::SceneNode>("root");
-		ToyEngine::Ref<ToyEngine::Model> backpack	= (ToyEngine::Model::Create("../assets/models/backpack/backpack.obj", true));
-		ToyEngine::Ref<ToyEngine::Model> cyborg		= (ToyEngine::Model::Create("../assets/models/cyborg/cyborg.obj", false));
-		ToyEngine::Ref<ToyEngine::Shader> phongShader = m_shader_lib->Get("phong");
+
+		ToyEngine::Ref<ToyEngine::Model> backpack		= (ToyEngine::Model::Create("../assets/models/backpack/backpack.obj", true));
+		ToyEngine::Ref<ToyEngine::Model> cyborg			= (ToyEngine::Model::Create("../assets/models/cyborg/cyborg.obj", false));
+		ToyEngine::Ref<ToyEngine::Shader> phongShader	= m_shader_lib->Get("phong");
 		backpack->m_shader = phongShader;
 		cyborg->m_shader = phongShader;
 		m_scene_graph->AddChild(ToyEngine::MakeScope<ToyEngine::SceneNode>("backepack_model", backpack));
 		m_scene_graph->AddChild(ToyEngine::MakeScope<ToyEngine::SceneNode>("cyborg_model", cyborg));
+	
+		ToyEngine::Array<std::string, 6> skybox_files = {
+			"../assets/cubemaps/skybox/right.jpg",	// +X (right)
+			"../assets/cubemaps/skybox/left.jpg",	// -X (left)
+			"../assets/cubemaps/skybox/top.jpg",	// +Y (top)
+			"../assets/cubemaps/skybox/bottom.jpg",	// -Y (bottom)
+			"../assets/cubemaps/skybox/front.jpg",	// +Z (front)
+			"../assets/cubemaps/skybox/back.jpg",	// -Z (back)
+		};
+		ToyEngine::Ref<ToyEngine::TextureCube> sky_texture = ToyEngine::TextureCube::Create(skybox_files);
+		ToyEngine::Ref<ToyEngine::Skybox> skybox = ToyEngine::MakeRef<ToyEngine::Skybox>(sky_texture, m_shader_lib->Get("skybox"));
+		m_scene_graph->AddChild(ToyEngine::MakeScope<ToyEngine::SceneNode>("skybox", skybox));
+
+		for (auto& mesh : backpack->m_meshes) {
+			mesh->m_material->SetEnvironmentMap(sky_texture);
+		}
+		for (auto& mesh : cyborg->m_meshes) {
+			mesh->m_material->SetEnvironmentMap(sky_texture);
+		}
 	}
 
 	virtual void OnDetach() {}
@@ -99,15 +120,37 @@ public:
 		m_light_block->m_lights[4].m_spotDirection	= glm::vec4(m_camera->front(), 0.0f);
 		m_light_block->m_lights[4].m_value			= glm::vec4(m_spot_light_color, 0.0f);
 
-		// Draw Scene
-		ToyEngine::Renderer::BeginScene(m_camera, m_light_block.get());
-		ToyEngine::Ref<ToyEngine::Shader> phongShader = m_shader_lib->Get("phong");
-		// models
-		phongShader->SetFloat("material.shininess", m_shininess);
+		// update model material properties
+		if (m_scene_graph->GetChildren().size() >= 2) {
+			auto& backpack_node = m_scene_graph->GetChildren()[0];
+			auto& cyborg_node = m_scene_graph->GetChildren()[1];
+
+			if (auto& backpack_model = std::dynamic_pointer_cast<ToyEngine::Model>(backpack_node->GetEntity())) {
+				for (auto& mesh : backpack_model->m_meshes) {
+					mesh->m_material->SetRoughness(m_roughness);
+					mesh->m_material->SetMetallic(m_metallic);
+					mesh->m_material->SetTransmission(m_transmission);
+					mesh->m_material->SetRefractiveIndex(m_refractive_index);
+				}
+			}
+			if (auto& cyborg_model = std::dynamic_pointer_cast<ToyEngine::Model>(cyborg_node->GetEntity())) {
+				for (auto& mesh : cyborg_model->m_meshes) {
+					mesh->m_material->SetRoughness(m_roughness);
+					mesh->m_material->SetMetallic(m_metallic);
+					mesh->m_material->SetTransmission(m_transmission);
+					mesh->m_material->SetRefractiveIndex(m_refractive_index);
+				}
+			}
+		}
+
+		// update model transforms
 		m_scene_graph->SetLocalTransform(glm::translate(glm::mat4(1.0f), m_translate));
 		m_scene_graph->GetChildren()[1]->SetLocalTransform(
 			glm::rotate(glm::translate(glm::mat4(1.0f), m_translate_cyborg),
 				glm::radians(m_rotation_degree), glm::vec3(0.0f, 1.0f, 0.0f)));
+
+		// Draw Scene
+		ToyEngine::Renderer::BeginScene(m_camera.get(), m_light_block.get());
 		ToyEngine::Renderer::Submit(m_scene_graph.get());
 		ToyEngine::Renderer::EndScene();
 	}
@@ -150,8 +193,15 @@ public:
 			ImGui::DragFloat3("Translate Root##TranslateRoot", glm::value_ptr(m_translate), 0.1f, -10.0f, 10.0f, "%.1f");
 			ImGui::DragFloat3("Translate Cyborg##TranslateCyborg", glm::value_ptr(m_translate_cyborg), 0.1f, -10.0f, 10.0f, "%.1f");
 			ImGui::DragFloat("Rotate Cyborg##RotateCyborg", &m_rotation_degree, 0.1f, 0.0f, 360.0f, "%.1f", ImGuiSliderFlags_WrapAround);
-			ImGui::DragFloat("Material Shininess##MaterialShininess", &m_shininess, 0.1f, 0.1f, 256.0f, "%.1f");
 		}
+		
+		if (ImGui::CollapsingHeader("Material Controls", ImGuiTreeNodeFlags_DefaultOpen)) {
+			ImGui::DragFloat("Roughness##MaterialRoughness", &m_roughness, 0.1f, 0.1f, 256.0f, "%.1f");
+			ImGui::DragFloat("Metallic##MaterialMetallic", &m_metallic, 0.01f, 0.00f, 1.00f, "%.2f");
+			ImGui::DragFloat("Transmission##MaterialMetallic", &m_transmission, 0.01f, 0.00f, 1.00f, "%.2f");
+			ImGui::DragFloat("IOR##MaterialIOR", &m_refractive_index, 0.1f, 0.1f, 100.0f, "%.2f");
+		}
+
 		if (ImGui::CollapsingHeader("Light Controls", ImGuiTreeNodeFlags_DefaultOpen))
 		{
 			ImGui::Text("Directional Light");
@@ -196,13 +246,13 @@ public:
 	}
 public: 
 	ToyEngine::Ref<ToyEngine::ShaderLibrary> m_shader_lib;
-	ToyEngine::Ref<ToyEngine::Camera> m_camera;
+	ToyEngine::Scope<ToyEngine::Camera> m_camera;
 
 	// Model control parameters
 	ToyEngine::Scope<ToyEngine::SceneNode> m_scene_graph;
 	float m_rotation_degree = 0;
 	glm::vec3 m_translate = glm::vec3(0.0f), m_translate_cyborg = glm::vec3(0.0f);
-	float m_shininess = 32.0f;
+	float m_roughness = 32.0f, m_metallic = 0.0f, m_transmission = 0.0f, m_refractive_index = 1.52f;
 
 	// Light control parameters
 	ToyEngine::Scope<ToyEngine::LightBlock> m_light_block;

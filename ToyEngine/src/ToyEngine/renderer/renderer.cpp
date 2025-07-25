@@ -2,6 +2,7 @@
 #include "renderer.h"
 #include "ToyEngine/services/locator.h"
 #include "ToyEngine/renderer/render_api.h"
+#include "ToyEngine/skybox.h"
 
 namespace ToyEngine
 {
@@ -26,7 +27,7 @@ namespace ToyEngine
 		Renderer::GetUniformManager().CreateBuffer("LightBlock", sizeof(LightBlock));
 	}
 
-	void Renderer::BeginScene(Ref<Camera> camera, const LightBlock* light_block)
+	void Renderer::BeginScene(const Camera* camera, const LightBlock* light_block)
 	{
 		// Clear the background to prepare for rendering a new frame.
 		RenderCommand::ClearSetBackground();
@@ -42,31 +43,24 @@ namespace ToyEngine
 		light_uniforms->SetData(0, sizeof(LightBlock), light_block);
 	}
 
-	void Renderer::Submit(Ref<Model> model, const glm::mat4& world_transform)
+	void Renderer::Submit(SceneNode* node)
 	{
-		Ref<Shader> shader = model->m_shader;
-		shader->Use();
-		for (Ref<Mesh> mesh : model->m_meshes) {
-			shader->SetMat4("uModel", world_transform);
-			mesh->m_material->BindTextures(shader);
+		if(!node) return;
 
-			// draw mesh
-			RenderCommand::BindVertexArray(mesh->m_vao);
-			RenderCommand::DrawIndexed(mesh->m_indices.size());
-			RenderCommand::BindVertexArray(0);
-		}
-	}
+		node->UpdateWorldTransform();
 
-	void Renderer::Submit(SceneNode* scene)
-	{
-		if(!scene) return;
-		scene->UpdateWorldTransform();
-		if(scene->GetEntity())
-			Renderer::Submit(scene->GetEntity(), scene->GetWorldTransform());
 
-		for (const Scope<SceneNode>& child : scene->GetChildren()) {
+		// Render non-skybox entities first
+		if (node->GetEntity() && !dynamic_cast<Skybox*>(node->GetEntity().get()))
+			node->GetEntity()->Render(node->GetWorldTransform());
+
+		for (const Scope<SceneNode>& child : node->GetChildren()) {
 			Renderer::Submit(child.get());
 		}
+
+		// Render skybox entities first
+		if (node->GetEntity() && dynamic_cast<Skybox*>(node->GetEntity().get()))
+			node->GetEntity()->Render(node->GetWorldTransform());
 	}
 
 	void Renderer::EndScene() {}

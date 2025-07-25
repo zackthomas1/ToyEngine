@@ -5,7 +5,32 @@
 
 namespace ToyEngine
 {
-	void Material::BindTextures(Ref<Shader> shader)
+
+	Ref<TextureCube> Material::s_default_environment_map = nullptr;
+
+	Ref<TextureCube> Material::GetDefaultEnvironmentMap()
+	{
+		if (!s_default_environment_map) {
+			TY_CORE_WARN("Using default environment map: "
+				"OpenGL requires that all active samplers in shader have valid textures bound to texture units,"
+				"regardless of whether they are sampled in shader logic."
+				"OpenGL still validates that the sampler has a bound texture during a draw call"
+			);
+
+			ToyEngine::Array<std::string, 6> files = {
+				"../assets/cubemaps/starfield/nx.png",	// +X (right)
+				"../assets/cubemaps/starfield/ny.png",	// -X (left)
+				"../assets/cubemaps/starfield/nz.png",	// +Y (top)
+				"../assets/cubemaps/starfield/px.png",	// -Y (bottom)
+				"../assets/cubemaps/starfield/py.png",	// +Z (front)
+				"../assets/cubemaps/starfield/pz.png",	// -Z (back)
+			};
+			s_default_environment_map = ToyEngine::TextureCube::Create(files);
+		}
+		return s_default_environment_map;
+	}
+
+	void Material::Bind(Ref<Shader> shader)
 	{
 		// bind texture on corresponding texture units
 		unsigned int i = 0, diffuseNR = 1, specularNR = 1;
@@ -24,5 +49,26 @@ namespace ToyEngine
 			}
 			}
 		}
+
+		// Bind environemnt map 
+		if (environment_map_) {
+			environment_map_->Bind(textures_.size());
+			shader->SetInt("uMaxMipLevel", std::max(0, environment_map_->GetMaxMipLevel()));
+			shader->SetInt("material.environment_map", textures_.size());
+			shader->SetBool("material.has_environment_map", true);
+		}
+		else {
+			GetDefaultEnvironmentMap()->Bind(textures_.size());
+			shader->SetInt("uMaxMipLevel", std::max(0, GetDefaultEnvironmentMap()->GetMaxMipLevel()));
+			shader->SetInt("material.environment_map", textures_.size());
+			shader->SetBool("material.has_environment_map", false);
+		}
+
+		// set material properties
+		shader->SetFloat("material.roughness", roughness_);
+		shader->SetFloat("material.metallic", metallic_);
+		shader->SetFloat("material.transmission", transmission_);
+		if(refractive_index_ < TY_EPSILON) TY_CORE_WARN(" Division by zero: refractive index equal to zero.");
+		shader->SetFloat("material.refractive_index", refractive_index_);
 	}
 }

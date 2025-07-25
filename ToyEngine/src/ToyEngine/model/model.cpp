@@ -1,11 +1,30 @@
 #include "pch.h"
 #include "model.h"
+#include "ToyEngine/renderer/render_api.h"
+
 
 namespace ToyEngine{
 	Model::Model(const char* path, bool flip_vertically, bool gamma) :
 		flip_vertically_(flip_vertically), gamma_(gamma)
 	{
 		loadModel(path);
+	}
+
+	void Model::Update(const TimeStep& time_step)
+	{
+	}
+
+	void Model::Render(const glm::mat4& world_transform) const
+	{
+		m_shader->Use();
+		m_shader->SetMat4("uModel", world_transform);
+		for (Ref<Mesh> mesh : m_meshes) {
+			// draw mesh
+			RenderCommand::BindVertexArray(mesh->m_vao);
+			mesh->m_material->Bind(m_shader);
+			RenderCommand::DrawElements(ePrimType::kTRIANGLE, mesh->m_indices.size(), 0);
+			RenderCommand::BindVertexArray(0);
+		}
 	}
 
 	void Model::loadModel(std::string path)

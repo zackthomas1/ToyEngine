@@ -43,7 +43,13 @@ namespace ToyEngine
 		// Add more flags as needed, each one should be a power of two
 	};
 
-	//
+
+	enum class eLightType {
+		kDirectional = 1,
+		kPoint = 2,
+		kSpot = 3,
+	};
+
 	enum class eTextureType
 	{
 		kDiffuse = 1,
@@ -56,9 +62,36 @@ namespace ToyEngine
 		kOpenGL = 1,
 	};
 
-	enum class eLightType {
-		kDirectional = 1,
-		kPoint		= 2,
-		kSpot		= 3,
+	enum class eBufferType
+	{
+		kARRAY_BUFFER			= 0x8892,
+		kELEMENT_ARRAY_BUFFER	= 0x8893,
+		kFRAME_BUFFER,
+	};
+
+	enum class eDataType {
+		kFLOAT = 0x1406,
+	};
+
+	enum class ePrimType {
+		kTRIANGLE = 0x0004, 
+	};
+
+	enum class eParamType 
+	{
+		kDEPTH_WRITEMASK	= 0x0B72,
+		kCULL_FACE			= 0x0B44,
+		kDEPTH_FUNC			= 0x0B74,
+	};
+
+	enum class eDepthFunc {
+		kNEVER = 0x0200,    // GL_NEVER
+		kLESS = 0x0201,     // GL_LESS  
+		kEQUAL = 0x0202,    // GL_EQUAL
+		kLEQUAL = 0x0203,   // GL_LEQUAL
+		kGREATER = 0x0204,  // GL_GREATER
+		kNOTEQUAL = 0x0205, // GL_NOTEQUAL
+		kGEQUAL = 0x0206,   // GL_GEQUAL
+		kALWAYS = 0x0207    // GL_ALWAYS
 	};
 }
