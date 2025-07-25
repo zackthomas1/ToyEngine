@@ -31,6 +31,8 @@ struct Material{
     float refractive_index;
 }; uniform Material material;
 
+uniform int uMaxMipLevel;
+
 // Each Light struct is padded to a multiple of 16 bytes (total 80 bytes)
 struct Light{
                         // base alignment   // aligned offset
@@ -104,26 +106,28 @@ void main()
         }
     }
 
-    // Transmission 
-    if(material.has_environment_map && material.transmission > 0.001) {
+    if(material.has_environment_map && (material.metallic > 0.001 || material.transmission > 0.001))
+    {
+        // Calculate reflection once
         vec3 reflection     = CalcReflection(norm, viewDir);
-        vec3 refraction     = CalcRefraction(norm, viewDir);
+        
+        // Handle transmission (glass-like materials)
+        if (material.transmission > 0.001) 
+        {
+            vec3 refraction = vec3(0.0f);
+            refraction      = CalcRefraction(norm, viewDir);
+            float fresnel   = CalcFresnel(norm, viewDir, material.refractive_index);
+            refraction      = mix(refraction, reflection, fresnel);
+            result          = mix(result, refraction, material.transmission);
+        }
 
-        float fresnel       = CalcFresnel(norm, viewDir, 1.0/material.refractive_index);
-        vec3 environmental  = mix(refraction, reflection, fresnel);
-
-        // blend with lighting result
-        result = mix(result, environmental, material.transmission);
+        // Handle Metallic (mirror-like)
+        if (material.metallic > 0.001)
+        {
+            // For metals, replace diffuse with reflection
+            result = mix(result, reflection, material.metallic);
+        }
     }
-
-    // Metallic
-    if(material.has_environment_map && material.metallic > 0.001) {
-        vec3 reflection     = CalcReflection(norm, viewDir);
-
-        // blend with lighting result
-        result = mix(result, reflection, material.metallic);
-    }
-
     FragColor = vec4(result, 1.0);
 }
 
@@ -149,15 +153,15 @@ vec3 CalcDirLight(Light light, vec3 normal, vec3 viewDir)
     // Light direction (from fragment to light)
     vec3 lightDir = normalize(-light.direction.xyz);
 
-    // Ambient: texture modulated by ambient light
-    vec3 ambientColor = texture(material.texture_diffuse1, fs_in.texCoords).rgb * (light.value.xyz * AMBIENT_INFLUENCE);
-
     // Diffuse texture color
-    vec3 diffuseTexColor = texture(material.texture_diffuse1, fs_in.texCoords).rgb;
+    vec3 diffuseTex = texture(material.texture_diffuse1, fs_in.texCoords).rgb;
+
+    // Ambient: texture modulated by ambient light
+    vec3 ambientColor = diffuseTex * (light.value.xyz * AMBIENT_INFLUENCE);
 
     // Diffuse: Lambertian reflectance
     float cosineTerm = max(dot(normal, lightDir), 0.0);
-    vec3 diffuseColor = diffuseTexColor * cosineTerm * (light.value.xyz * DIFFUSE_INFLUENCE);
+    vec3 diffuseColor = diffuseTex * cosineTerm * (light.value.xyz * DIFFUSE_INFLUENCE);
     
     // Specular: Phong reflection with texture
     // Calculates angular distance between reflection direction and view direction.
@@ -176,16 +180,19 @@ vec3 CalcPointLight(Light light, vec3 normal, vec3 viewDir, vec3 fragPos)
     float distance = distance(light.position.xyz, fragPos);
     float attenuation = 1.0 / (CONSTANT_ATTEN + (LINEAR_ATTEN * distance) + (QUADRATIC_ATTEN * pow(distance, 2)));
 
+    // Sample the diffuse texture once light calculation
+    vec3 diffuseTex = texture(material.texture_diffuse1, fs_in.texCoords).rgb;
+
     // ambient color
     // ------------------
-    vec3 ambientColor = texture(material.texture_diffuse1, fs_in.texCoords).rgb * (light.value.xyz * AMBIENT_INFLUENCE);
+    vec3 ambientColor = diffuseTex * (light.value.xyz * AMBIENT_INFLUENCE);
 
     // diffuse color
     // -----------------
     // Note: The cosine term is the factor that describes how much light interacts with surface. 
     // A fragments brightness increases the closer it aligns with the incoming light rays from the source.
-    float cosineTerm = max(dot(normal, lightDir), 0.0);
-    vec3 diffuseColor = texture(material.texture_diffuse1, fs_in.texCoords).rgb * cosineTerm * (light.value.xyz * DIFFUSE_INFLUENCE);
+    float cosineTerm    = max(dot(normal, lightDir), 0.0);
+    vec3 diffuseColor   = diffuseTex * cosineTerm * (light.value.xyz * DIFFUSE_INFLUENCE);
 
     // specular color
     // -------------------
@@ -216,14 +223,17 @@ vec3 CalcSpotLight(Light light, vec3 normal, vec3 viewDir, vec3 fragPos)
     }
     float intensity = clamp((theta - light.outerAngle) / epsilon, 0.0, 1.0);
 
+    // Sample the diffuse texture once light calculation
+    vec3 diffuseTex = texture(material.texture_diffuse1, fs_in.texCoords).rgb;
+
     // ambient color
     // ------------------
-    vec3 ambientColor = texture(material.texture_diffuse1, fs_in.texCoords).rgb * (light.value.xyz * AMBIENT_INFLUENCE);
+    vec3 ambientColor = diffuseTex * (light.value.xyz * AMBIENT_INFLUENCE);
 
     // diffuse color
     // -----------------   
     float cosineTerm = max(dot(normal, lightDir), 0.0);
-    vec3 diffuseColor = texture(material.texture_diffuse1, fs_in.texCoords).rgb * cosineTerm * (light.value.xyz * DIFFUSE_INFLUENCE);
+    vec3 diffuseColor = diffuseTex * cosineTerm * (light.value.xyz * DIFFUSE_INFLUENCE);
 
     // specular color
     // -------------------
@@ -239,8 +249,6 @@ vec3 CalcSpotLight(Light light, vec3 normal, vec3 viewDir, vec3 fragPos)
     return ambientColor + diffuseColor + specularColor;
 }
 
-#define BLEND_FACTOR 0.8
-
 vec3 CalcSpecularColor(Light light, vec3 normal, vec3 lightDir, vec3 viewDir)
 {   
     // Note: The lightDir vector is negated. The reflect function expects the first vector 
@@ -251,20 +259,12 @@ vec3 CalcSpecularColor(Light light, vec3 normal, vec3 lightDir, vec3 viewDir)
 
     // Note: Calculate the angular distance between this reflection vector and the view direction.
     // The closer the angle between them, the greater the impact of the specular light.
-    float specularIntensity = pow(max(dot(reflectDir, viewDir), 0.0),material.roughness);
+    float normalizeRoughness = clamp(material.roughness / 256.0, 0.001, 1.0); 
+    float specularExponent = 1 / (normalizeRoughness);
+    float specularIntensity = pow(max(dot(reflectDir, viewDir), 0.0),specularExponent);
     vec3 specularTexColor   = texture(material.texture_specular1, fs_in.texCoords).rgb;
-    float specularMask       = dot(specularTexColor, vec3(0.299, 0.587, 0.114)); // Convert to grayscale
 
-    vec3 specularColor;
-    if (material.has_environment_map){
-        vec3 env_reflection = CalcReflection(normal, viewDir).rgb;
-
-        float envReflectionStrength = specularMask * BLEND_FACTOR;
-        specularColor = mix(specularTexColor, env_reflection, envReflectionStrength)
-                        * specularIntensity * (light.value.xyz * SPECULAR_INFLUENCE);
-    } else {
-        specularColor = texture(material.texture_specular1, fs_in.texCoords).rgb * specularIntensity * (light.value.xyz * SPECULAR_INFLUENCE);
-    }
+    vec3 specularColor = specularTexColor * specularIntensity * (light.value.xyz * SPECULAR_INFLUENCE);
     return specularColor;
 }
 
@@ -275,7 +275,13 @@ vec3 CalcReflection(vec3 normal, vec3 viewDir)
     }
 
     vec3 reflect_dir = reflect(-viewDir, normal);
-    return texture(material.environment_map, reflect_dir).rgb;
+    
+    // calculate mip level based on roughness (range[0.1, 256])
+    // map roughness to mip levels [0 to maxMipLevels]
+    float normalizeRoughness = clamp(material.roughness / 256.0, 0.001, 1.0); 
+    float mipLevel = (normalizeRoughness * normalizeRoughness) * float(uMaxMipLevel);
+
+    return textureLod(material.environment_map, reflect_dir, mipLevel).rgb;
 }
 
 vec3 CalcRefraction(vec3 normal, vec3 viewDir)
@@ -291,7 +297,10 @@ vec3 CalcRefraction(vec3 normal, vec3 viewDir)
         return CalcReflection(normal, viewDir);
     }
 
-    return texture(material.environment_map, refraction_dir).rgb;
+    float normalizeRoughness = clamp(material.roughness / 256.0, 0.001, 1.0); 
+    float mipLevel = (normalizeRoughness * normalizeRoughness) * float(uMaxMipLevel);
+
+    return textureLod(material.environment_map, refraction_dir, mipLevel).rgb;
 }
 
 float CalcFresnel(vec3 normal, vec3 viewDir, float refractive_index)

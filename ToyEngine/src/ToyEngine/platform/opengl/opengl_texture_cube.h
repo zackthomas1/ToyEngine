@@ -10,5 +10,8 @@ namespace ToyEngine {
 		~OpenGLTextureCube() {};
 
 		virtual void Bind(uint32_t slot = 0) const override; 
+		virtual void GenerateMipMaps() override;
+	private:
+		int width_ = 0, height_ = 0, nrChannels_ = 0;
 	};
 }

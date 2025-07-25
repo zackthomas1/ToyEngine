@@ -199,7 +199,7 @@ public:
 			ImGui::DragFloat("Roughness##MaterialRoughness", &m_roughness, 0.1f, 0.1f, 256.0f, "%.1f");
 			ImGui::DragFloat("Metallic##MaterialMetallic", &m_metallic, 0.01f, 0.00f, 1.00f, "%.2f");
 			ImGui::DragFloat("Transmission##MaterialMetallic", &m_transmission, 0.01f, 0.00f, 1.00f, "%.2f");
-			ImGui::DragFloat("IOR##MaterialIOR", &m_refractive_index, 0.1f, 1.00f, 100.0f, "%.2f");
+			ImGui::DragFloat("IOR##MaterialIOR", &m_refractive_index, 0.1f, 0.1f, 100.0f, "%.2f");
 		}
 
 		if (ImGui::CollapsingHeader("Light Controls", ImGuiTreeNodeFlags_DefaultOpen))
