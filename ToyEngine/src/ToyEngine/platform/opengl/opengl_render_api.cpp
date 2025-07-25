@@ -127,5 +127,15 @@ namespace ToyEngine
 	{
 		glDepthFunc((GLenum)func);
 	}
+
+	void OpenGLRenderAPI::CullFace(eCullFaceMode mode) const
+	{
+		glCullFace((GLenum)mode);
+	}
+
+	void OpenGLRenderAPI::FrontFace(eFrontFace mode) const
+	{
+		glFrontFace((GLenum)mode);
+	}
 }
 

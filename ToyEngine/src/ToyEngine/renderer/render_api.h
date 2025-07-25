@@ -34,6 +34,8 @@ namespace ToyEngine
 		virtual void GetIntegerv(eParamType pname, int* data) const = 0;
 		virtual void DepthMask(bool flag) const = 0; 
 		virtual void DepthFunc(eDepthFunc func) const = 0;
+		virtual void CullFace(eCullFaceMode mode) const = 0;
+		virtual void FrontFace(eFrontFace mode) const = 0;
 	};
 
 	class RenderCommand
@@ -140,6 +142,16 @@ namespace ToyEngine
 		static void DepthFunc(eDepthFunc func)
 		{
 			RenderAPI::s_instance->DepthFunc(func);
+		}
+
+		static void CullFace(eCullFaceMode mode)
+		{
+			RenderAPI::s_instance->CullFace(mode);
+		}
+
+		static void FrontFace(eFrontFace mode)
+		{
+			RenderAPI::s_instance->FrontFace(mode);
 		}
 	};
 }

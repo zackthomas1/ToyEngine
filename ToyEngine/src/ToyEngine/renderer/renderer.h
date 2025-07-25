@@ -28,6 +28,14 @@ namespace ToyEngine
 		static void Submit(SceneNode* node);
 		static void EndScene();
 
+		/// <summary>
+		/// Enables or disables face culling and sets the culling mode.
+		/// </summary>
+		/// <param name="enabled">Whether to enable face culling.</param>
+		/// <param name="cullMode">Which faces to cull (back faces by default).</param>
+		/// <param name="frontFace">Winding order for front faces (counter-clockwise by default).</param>
+		static void SetFaceCulling(bool enabled, eCullFaceMode cullMode = eCullFaceMode::kBACK, eFrontFace frontFace = eFrontFace::kCCW);
+
 		static eRenderAPI API() { return Renderer::s_instance->api_; }
 		static UniformManager& GetUniformManager() { return Renderer::s_instance->m_uniform_manager; }
 

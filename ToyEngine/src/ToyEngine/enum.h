@@ -84,6 +84,19 @@ namespace ToyEngine
 		kDEPTH_FUNC			= 0x0B74,
 	};
 
+	enum class eCullFaceMode 
+	{
+		kFRONT				= 0x0404,	// GL_FRONT
+		kBACK				= 0x0405,	// GL_BACK  
+		kFRONT_AND_BACK		= 0x0408,	// GL_FRONT_AND_BACK
+	};
+
+	enum class eFrontFace 
+	{
+		kCW					= 0x0900,	// GL_CW (clockwise)
+		kCCW				= 0x0901,	// GL_CCW (counter-clockwise)
+	};
+
 	enum class eDepthFunc {
 		kNEVER = 0x0200,    // GL_NEVER
 		kLESS = 0x0201,     // GL_LESS  
