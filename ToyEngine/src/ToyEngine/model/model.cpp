@@ -21,7 +21,7 @@ namespace ToyEngine{
 		for (Ref<Mesh> mesh : m_meshes) {
 			// draw mesh
 			RenderCommand::BindVertexArray(mesh->m_vao);
-			mesh->m_material->BindTextures(m_shader);
+			mesh->m_material->Bind(m_shader);
 			RenderCommand::DrawElements(ePrimType::kTRIANGLE, mesh->m_indices.size(), 0);
 			RenderCommand::BindVertexArray(0);
 		}

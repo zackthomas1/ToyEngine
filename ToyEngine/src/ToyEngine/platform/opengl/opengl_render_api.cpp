@@ -65,7 +65,7 @@ namespace ToyEngine
 		// Check for errors
 		GLenum error = glGetError();
 		if (error != GL_NO_ERROR) {
-			TY_CORE_ERROR("Skybox render error: {}", error);
+			TY_CORE_ERROR("draw arrays error: {}", error);
 		}
 	}
 
@@ -76,7 +76,7 @@ namespace ToyEngine
 		// Check for errors
 		GLenum error = glGetError();
 		if (error != GL_NO_ERROR) {
-			TY_CORE_ERROR("Skybox render error: {}", error);
+			TY_CORE_ERROR("draw elements error: {}", error);
 		}
 	}
 

@@ -6,8 +6,6 @@
 #define DIFFUSE_INFLUENCE 1
 #define SPECULAR_INFLUENCE 0.5
 
-#define SHININESS 32.0
-
 // Recommended default attenuation values for realistic quadratic light falloff
 #define CONSTANT_ATTEN 1.0
 #define LINEAR_ATTEN 0.09
@@ -25,7 +23,12 @@ struct Material{
     // Instantiating this struct outside of a uniform may cause GLSL errors.
     sampler2D texture_diffuse1;
     sampler2D texture_specular1;
-    float shininess;
+    samplerCube environment_map; 
+    bool has_environment_map;
+    float roughness;
+    float metallic;
+    float transmission;
+    float refractive_index;
 }; uniform Material material;
 
 // Each Light struct is padded to a multiple of 16 bytes (total 80 bytes)
@@ -50,9 +53,13 @@ layout (std140) uniform LightBlock{
     int uNumLight;              // offset , base alignment 4, but next member must start at 16 (vec4 boundary)
 };
 
+vec3 CalcSpecularColor(Light light, vec3 normal, vec3 lightDir, vec3 viewDir);
 vec3 CalcDirLight(Light light, vec3 normal, vec3 viewDir);
 vec3 CalcPointLight(Light light, vec3 normal, vec3 viewDir, vec3 fragPos);
 vec3 CalcSpotLight(Light light, vec3 normal, vec3 viewDir, vec3 fragPos);
+vec3 CalcReflection(vec3 normal, vec3 viewDir); 
+vec3 CalcRefraction(vec3 normal, vec3 viewDir); 
+float CalcFresnel(vec3 normal, vec3 viewDir, float refractive_index);
 
 out vec4 FragColor;
 
@@ -74,7 +81,7 @@ out vec4 FragColor;
 void main()
 {
     vec3 norm = normalize(fs_in.normal); 
-    vec3 viewDir = normalize(fs_in.fragPos - fs_in.viewPos);
+    vec3 viewDir = normalize(fs_in.viewPos - fs_in.fragPos);    // from fragment to camera
 
     vec3 result = vec3(0.0);
 
@@ -95,6 +102,26 @@ void main()
             default:
                 break;
         }
+    }
+
+    // Transmission 
+    if(material.has_environment_map && material.transmission > 0.001) {
+        vec3 reflection     = CalcReflection(norm, viewDir);
+        vec3 refraction     = CalcRefraction(norm, viewDir);
+
+        float fresnel       = CalcFresnel(norm, viewDir, 1.0/material.refractive_index);
+        vec3 environmental  = mix(refraction, reflection, fresnel);
+
+        // blend with lighting result
+        result = mix(result, environmental, material.transmission);
+    }
+
+    // Metallic
+    if(material.has_environment_map && material.metallic > 0.001) {
+        vec3 reflection     = CalcReflection(norm, viewDir);
+
+        // blend with lighting result
+        result = mix(result, reflection, material.metallic);
     }
 
     FragColor = vec4(result, 1.0);
@@ -135,11 +162,9 @@ vec3 CalcDirLight(Light light, vec3 normal, vec3 viewDir)
     // Specular: Phong reflection with texture
     // Calculates angular distance between reflection direction and view direction.
     // Smaller angular distance result in greater specular light contribute.
-    vec3 reflectDir = reflect(-lightDir, normal);
-    float specularIntensity = pow(max(dot(reflectDir, viewDir), 0.0), SHININESS);
-    vec3 specularColor = texture(material.texture_specular1, fs_in.texCoords).rgb * specularIntensity * (light.value.xyz * SPECULAR_INFLUENCE);
+    vec3 specularColor = CalcSpecularColor(light, normal, lightDir, viewDir);
 
-    return ( ambientColor + diffuseColor + specularColor);
+    return (ambientColor + diffuseColor + specularColor);
 }
 
 vec3 CalcPointLight(Light light, vec3 normal, vec3 viewDir, vec3 fragPos)
@@ -164,17 +189,7 @@ vec3 CalcPointLight(Light light, vec3 normal, vec3 viewDir, vec3 fragPos)
 
     // specular color
     // -------------------
-
-    // Note: The lightDir vector is negated. The reflect function expects the first vector 
-    // to point from the light source towards the fragment's position. The lightDir vector 
-    // currently points the other way around. To make sure we get the correct reflect vector
-    // we reverse the lightDir vector. 
-    vec3 reflectDir = reflect(-lightDir, normal); 
-
-    // Note: Calculate the angular distance between this reflection vector and the view direction.
-    // The closer the angle between them, the greater the impact of the specular light.
-    float specularIntensity = pow(max(dot(reflectDir, viewDir), 0.0),SHININESS);
-    vec3 specularColor = (texture(material.texture_specular1, fs_in.texCoords).rgb * specularIntensity) * (light.value.xyz * SPECULAR_INFLUENCE);
+    vec3 specularColor = CalcSpecularColor(light, normal, lightDir, viewDir);
 
     ambientColor    *= attenuation;
     diffuseColor    *= attenuation;
@@ -212,10 +227,7 @@ vec3 CalcSpotLight(Light light, vec3 normal, vec3 viewDir, vec3 fragPos)
 
     // specular color
     // -------------------
-    vec3 reflectDir = reflect(-lightDir, normal); 
-
-    float specularIntensity = pow(max(dot(reflectDir, viewDir), 0.0),SHININESS);
-    vec3 specularColor = (texture(material.texture_specular1, fs_in.texCoords).rgb * specularIntensity) * (light.value.xyz * SPECULAR_INFLUENCE);
+    vec3 specularColor = CalcSpecularColor(light, normal, lightDir, viewDir);
 
     diffuseColor    *= intensity;
     specularColor   *= intensity;
@@ -225,4 +237,66 @@ vec3 CalcSpotLight(Light light, vec3 normal, vec3 viewDir, vec3 fragPos)
     specularColor   *= attenuation;
 
     return ambientColor + diffuseColor + specularColor;
+}
+
+#define BLEND_FACTOR 0.8
+
+vec3 CalcSpecularColor(Light light, vec3 normal, vec3 lightDir, vec3 viewDir)
+{   
+    // Note: The lightDir vector is negated. The reflect function expects the first vector 
+    // to point from the light source towards the fragment's position. The lightDir vector 
+    // currently points the other way around. To make sure we get the correct reflect vector
+    // we reverse the lightDir vector. 
+    vec3 reflectDir = reflect(-lightDir, normal); 
+
+    // Note: Calculate the angular distance between this reflection vector and the view direction.
+    // The closer the angle between them, the greater the impact of the specular light.
+    float specularIntensity = pow(max(dot(reflectDir, viewDir), 0.0),material.roughness);
+    vec3 specularTexColor   = texture(material.texture_specular1, fs_in.texCoords).rgb;
+    float specularMask       = dot(specularTexColor, vec3(0.299, 0.587, 0.114)); // Convert to grayscale
+
+    vec3 specularColor;
+    if (material.has_environment_map){
+        vec3 env_reflection = CalcReflection(normal, viewDir).rgb;
+
+        float envReflectionStrength = specularMask * BLEND_FACTOR;
+        specularColor = mix(specularTexColor, env_reflection, envReflectionStrength)
+                        * specularIntensity * (light.value.xyz * SPECULAR_INFLUENCE);
+    } else {
+        specularColor = texture(material.texture_specular1, fs_in.texCoords).rgb * specularIntensity * (light.value.xyz * SPECULAR_INFLUENCE);
+    }
+    return specularColor;
+}
+
+vec3 CalcReflection(vec3 normal, vec3 viewDir)
+{
+    if(!material.has_environment_map){
+        return vec3(0.0);
+    }
+
+    vec3 reflect_dir = reflect(-viewDir, normal);
+    return texture(material.environment_map, reflect_dir).rgb;
+}
+
+vec3 CalcRefraction(vec3 normal, vec3 viewDir)
+{
+    if(!material.has_environment_map){
+        return vec3(0.0);
+    }
+
+    vec3 refraction_dir = refract(-viewDir, normal, 1.0 / material.refractive_index);
+
+    // Handle total internal reflections
+    if(length(refraction_dir) < 0.001){
+        return CalcReflection(normal, viewDir);
+    }
+
+    return texture(material.environment_map, refraction_dir).rgb;
+}
+
+float CalcFresnel(vec3 normal, vec3 viewDir, float refractive_index)
+{
+    float cosTheta = max(dot(normal, viewDir), 0.0); 
+    float r0 = pow((1.0 - refractive_index) / (1.0 + refractive_index), 2.0); 
+    return r0 + (1.0 - r0) * pow(1.0 - cosTheta, 5.0); 
 }
