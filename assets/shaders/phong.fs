@@ -55,10 +55,11 @@ layout (std140) uniform LightBlock{
     int uNumLight;              // offset , base alignment 4, but next member must start at 16 (vec4 boundary)
 };
 
-vec3 CalcSpecularColor(Light light, vec3 normal, vec3 lightDir, vec3 viewDir);
-vec3 CalcDirLight(Light light, vec3 normal, vec3 viewDir);
-vec3 CalcPointLight(Light light, vec3 normal, vec3 viewDir, vec3 fragPos);
-vec3 CalcSpotLight(Light light, vec3 normal, vec3 viewDir, vec3 fragPos);
+vec3 CalcDirLight(Light light, vec3 normal, vec3 viewDir, vec3 diffuseTex, vec3 specularTex);
+vec3 CalcPointLight(Light light, vec3 normal, vec3 viewDir, vec3 fragPos, vec3 diffuseTex, vec3 specularTex);
+vec3 CalcSpotLight(Light light, vec3 normal, vec3 viewDir, vec3 fragPos, vec3 diffuseTex, vec3 specularTex);
+
+vec3 CalcSpecularColor(Light light, vec3 normal, vec3 lightDir, vec3 viewDir, vec3 specularTex);
 vec3 CalcReflection(vec3 normal, vec3 viewDir); 
 vec3 CalcRefraction(vec3 normal, vec3 viewDir); 
 float CalcFresnel(vec3 normal, vec3 viewDir, float refractive_index);
@@ -85,21 +86,24 @@ void main()
     vec3 norm = normalize(fs_in.normal); 
     vec3 viewDir = normalize(fs_in.viewPos - fs_in.fragPos);    // from fragment to camera
 
-    vec3 result = vec3(0.0);
+    // texture samples
+    vec3 diffuseTex = texture(material.texture_diffuse1, fs_in.texCoords).rgb;
+    vec3 specularTex = texture(material.texture_specular1, fs_in.texCoords).rgb;
 
+    vec3 result = vec3(0.0);
     for (int i = 0; i < uNumLight && i < MAX_LIGHTS; ++i){
         Light light = uLights[i]; 
         if(light.enabled == 0) continue;
 
         switch(light.type){
             case 1:
-                result += CalcDirLight(light, norm, viewDir);
+                result += CalcDirLight(light, norm, viewDir, diffuseTex, specularTex);
                 break;
             case 2:
-                result += CalcPointLight(light, norm, viewDir, fs_in.fragPos);
+                result += CalcPointLight(light, norm, viewDir, fs_in.fragPos, diffuseTex, specularTex);
                 break;
             case 3:
-                result += CalcSpotLight(light, norm, viewDir, fs_in.fragPos);
+                result += CalcSpotLight(light, norm, viewDir, fs_in.fragPos, diffuseTex, specularTex);
                 break;
             default:
                 break;
@@ -148,13 +152,10 @@ void main()
  * 5. Calculates the specular component using the Phong reflection model and the specular texture.
  * 6. Returns the sum of ambient, diffuse, and specular components as the final color.
  */
-vec3 CalcDirLight(Light light, vec3 normal, vec3 viewDir)
+vec3 CalcDirLight(Light light, vec3 normal, vec3 viewDir, vec3 diffuseTex, vec3 specularTex)
 {
     // Light direction (from fragment to light)
     vec3 lightDir = normalize(-light.direction.xyz);
-
-    // Diffuse texture color
-    vec3 diffuseTex = texture(material.texture_diffuse1, fs_in.texCoords).rgb;
 
     // Ambient: texture modulated by ambient light
     vec3 ambientColor = diffuseTex * (light.value.xyz * AMBIENT_INFLUENCE);
@@ -166,12 +167,12 @@ vec3 CalcDirLight(Light light, vec3 normal, vec3 viewDir)
     // Specular: Phong reflection with texture
     // Calculates angular distance between reflection direction and view direction.
     // Smaller angular distance result in greater specular light contribute.
-    vec3 specularColor = CalcSpecularColor(light, normal, lightDir, viewDir);
+    vec3 specularColor = CalcSpecularColor(light, normal, lightDir, viewDir, specularTex);
 
     return (ambientColor + diffuseColor + specularColor);
 }
 
-vec3 CalcPointLight(Light light, vec3 normal, vec3 viewDir, vec3 fragPos)
+vec3 CalcPointLight(Light light, vec3 normal, vec3 viewDir, vec3 fragPos, vec3 diffuseTex, vec3 specularTex)
 {
     // light caster
     // ------------------
@@ -179,9 +180,6 @@ vec3 CalcPointLight(Light light, vec3 normal, vec3 viewDir, vec3 fragPos)
 
     float distance = distance(light.position.xyz, fragPos);
     float attenuation = 1.0 / (CONSTANT_ATTEN + (LINEAR_ATTEN * distance) + (QUADRATIC_ATTEN * pow(distance, 2)));
-
-    // Sample the diffuse texture once light calculation
-    vec3 diffuseTex = texture(material.texture_diffuse1, fs_in.texCoords).rgb;
 
     // ambient color
     // ------------------
@@ -196,7 +194,7 @@ vec3 CalcPointLight(Light light, vec3 normal, vec3 viewDir, vec3 fragPos)
 
     // specular color
     // -------------------
-    vec3 specularColor = CalcSpecularColor(light, normal, lightDir, viewDir);
+    vec3 specularColor = CalcSpecularColor(light, normal, lightDir, viewDir, specularTex);
 
     ambientColor    *= attenuation;
     diffuseColor    *= attenuation;
@@ -205,7 +203,7 @@ vec3 CalcPointLight(Light light, vec3 normal, vec3 viewDir, vec3 fragPos)
     return ambientColor + diffuseColor + specularColor;
 }
 
-vec3 CalcSpotLight(Light light, vec3 normal, vec3 viewDir, vec3 fragPos)
+vec3 CalcSpotLight(Light light, vec3 normal, vec3 viewDir, vec3 fragPos, vec3 diffuseTex, vec3 specularTex)
 {
     // light caster
     // ------------------
@@ -223,9 +221,6 @@ vec3 CalcSpotLight(Light light, vec3 normal, vec3 viewDir, vec3 fragPos)
     }
     float intensity = clamp((theta - light.outerAngle) / epsilon, 0.0, 1.0);
 
-    // Sample the diffuse texture once light calculation
-    vec3 diffuseTex = texture(material.texture_diffuse1, fs_in.texCoords).rgb;
-
     // ambient color
     // ------------------
     vec3 ambientColor = diffuseTex * (light.value.xyz * AMBIENT_INFLUENCE);
@@ -237,7 +232,7 @@ vec3 CalcSpotLight(Light light, vec3 normal, vec3 viewDir, vec3 fragPos)
 
     // specular color
     // -------------------
-    vec3 specularColor = CalcSpecularColor(light, normal, lightDir, viewDir);
+    vec3 specularColor = CalcSpecularColor(light, normal, lightDir, viewDir, specularTex);
 
     diffuseColor    *= intensity;
     specularColor   *= intensity;
@@ -249,7 +244,7 @@ vec3 CalcSpotLight(Light light, vec3 normal, vec3 viewDir, vec3 fragPos)
     return ambientColor + diffuseColor + specularColor;
 }
 
-vec3 CalcSpecularColor(Light light, vec3 normal, vec3 lightDir, vec3 viewDir)
+vec3 CalcSpecularColor(Light light, vec3 normal, vec3 lightDir, vec3 viewDir, vec3 specularTex)
 {   
     // Note: The lightDir vector is negated. The reflect function expects the first vector 
     // to point from the light source towards the fragment's position. The lightDir vector 
@@ -262,9 +257,8 @@ vec3 CalcSpecularColor(Light light, vec3 normal, vec3 lightDir, vec3 viewDir)
     float normalizeRoughness = clamp(material.roughness / 256.0, 0.001, 1.0); 
     float specularExponent = 1 / (normalizeRoughness);
     float specularIntensity = pow(max(dot(reflectDir, viewDir), 0.0),specularExponent);
-    vec3 specularTexColor   = texture(material.texture_specular1, fs_in.texCoords).rgb;
 
-    vec3 specularColor = specularTexColor * specularIntensity * (light.value.xyz * SPECULAR_INFLUENCE);
+    vec3 specularColor = specularTex * specularIntensity * (light.value.xyz * SPECULAR_INFLUENCE);
     return specularColor;
 }
 
