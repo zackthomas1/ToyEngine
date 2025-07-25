@@ -53,13 +53,13 @@ namespace ToyEngine
 		// Bind environemnt map 
 		if (environment_map_) {
 			environment_map_->Bind(textures_.size());
-			shader->SetInt("uMaxMipLevel", std::max(0, environment_map_->GeMaxMipLevel()));
+			shader->SetInt("uMaxMipLevel", std::max(0, environment_map_->GetMaxMipLevel()));
 			shader->SetInt("material.environment_map", textures_.size());
 			shader->SetBool("material.has_environment_map", true);
 		}
 		else {
 			GetDefaultEnvironmentMap()->Bind(textures_.size());
-			shader->SetInt("uMaxMipLevel", std::max(0, GetDefaultEnvironmentMap()->GeMaxMipLevel()));
+			shader->SetInt("uMaxMipLevel", std::max(0, GetDefaultEnvironmentMap()->GetMaxMipLevel()));
 			shader->SetInt("material.environment_map", textures_.size());
 			shader->SetBool("material.has_environment_map", false);
 		}

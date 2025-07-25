@@ -14,7 +14,7 @@ namespace ToyEngine
 		virtual void GenerateMipMaps() = 0;
 
 		uint32_t id() const { return id_; }
-		int GeMaxMipLevel() const { return max_mip_level_; }
+		int GetMaxMipLevel() const { return max_mip_level_; }
 
 		static Ref<TextureCube> Create(Array<std::string, CUBE_SIDES>& files);
 	protected:
