@@ -34,6 +34,8 @@ namespace ToyEngine
 		virtual void GetIntegerv(eParamType pname, int* data) const = 0;
 		virtual void DepthMask(bool flag) const = 0; 
 		virtual void DepthFunc(eDepthFunc func) const = 0;
+		virtual void CullFace(eParamType face_mode) const = 0;
+		virtual void FrontFace(eParamType winding_order) const = 0;
 	};
 
 	class RenderCommand
@@ -110,7 +112,9 @@ namespace ToyEngine
 		}
 		
 		static void PolygonMode(uint32_t face, uint32_t mode) 
-		{ RenderAPI::s_instance->PolygonMode(face, mode); }
+		{ 
+			RenderAPI::s_instance->PolygonMode(face, mode); 
+		}
 
 		static void Enable(eParamType cap)
 		{
@@ -141,5 +145,16 @@ namespace ToyEngine
 		{
 			RenderAPI::s_instance->DepthFunc(func);
 		}
+
+		static void CullFace(eParamType face_mode)
+		{
+			RenderAPI::s_instance->CullFace(face_mode);
+		}
+
+		static void FrontFace(eParamType winding_order)
+		{
+			RenderAPI::s_instance->FrontFace(winding_order);
+		}
+
 	};
 }

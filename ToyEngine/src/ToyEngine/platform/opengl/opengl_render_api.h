@@ -29,5 +29,7 @@ namespace ToyEngine
 		virtual void GetIntegerv(eParamType pname, int* data) const override;
 		virtual void DepthMask(bool flag) const override;
 		virtual void DepthFunc(eDepthFunc func) const override;
+		virtual void CullFace(eParamType face_mode) const override;
+		virtual void FrontFace(eParamType winding_order) const override;
 	};
 }
