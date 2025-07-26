@@ -127,5 +127,16 @@ namespace ToyEngine
 	{
 		glDepthFunc((GLenum)func);
 	}
+	void OpenGLRenderAPI::CullFace(eParamType face_mode) const
+	{
+		TY_CORE_ASSERT(face_mode == eParamType::kFRONT || face_mode == eParamType::kFRONT, "Face culling mode set to an invalid state.");
+		glCullFace((GLenum)face_mode);
+
+	}
+	void OpenGLRenderAPI::FrontFace(eParamType winding_order) const
+	{
+		TY_CORE_ASSERT(face_mode == eParamType::kCW || face_mode == eParamType::kCCW, "Front face mode set to an invalid state.");
+		glFrontFace((GLenum)winding_order);
+	}
 }
 

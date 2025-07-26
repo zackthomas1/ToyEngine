@@ -82,6 +82,10 @@ namespace ToyEngine
 		kDEPTH_WRITEMASK	= 0x0B72,
 		kCULL_FACE			= 0x0B44,
 		kDEPTH_FUNC			= 0x0B74,
+		kFRONT				= 0x0404,
+		kBACK				= 0x0405,
+		kCW					= 0x0900,
+		kCCW				= 0x0901,
 	};
 
 	enum class eDepthFunc {

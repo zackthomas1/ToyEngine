@@ -3,6 +3,7 @@
 #include "ToyEngine/services/locator.h"
 #include "ToyEngine/renderer/render_api.h"
 #include "ToyEngine/skybox.h"
+#include <glad/glad.h>
 
 namespace ToyEngine
 {
@@ -29,6 +30,11 @@ namespace ToyEngine
 
 	void Renderer::BeginScene(const Camera* camera, const LightBlock* light_block)
 	{
+		// Set back face culling
+		RenderCommand::Enable(eParamType::kCULL_FACE);
+		RenderCommand::CullFace(eParamType::kBACK);	
+		RenderCommand::FrontFace(eParamType::kCCW);
+
 		// Clear the background to prepare for rendering a new frame.
 		RenderCommand::ClearSetBackground();
 
