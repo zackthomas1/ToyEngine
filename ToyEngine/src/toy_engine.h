@@ -11,6 +11,7 @@
 #include "ToyEngine/renderer/shader.h"
 #include "ToyEngine/renderer/renderer.h"
 #include "ToyEngine/renderer/uniform_buffer.h"
+#include "ToyEngine/renderer/frame_buffer.h"
 
 //----------- entry point -------------
 #include "ToyEngine/entry_point.h"

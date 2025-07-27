@@ -41,6 +41,10 @@ public:
 		TY_INFO("Initializing Camera...");
 		m_camera = ToyEngine::MakeRef<ToyEngine::Camera>(ToyEngine::eCameraType::kFlyCamera);
 
+		// Create frame buffer for off-screen rendering
+		TY_INFO("Creating Frame Buffer...");
+		m_frame_buffer = ToyEngine::FrameBuffer::Create(800, 600);
+
 		TY_INFO("Creating lights...");
 		m_light_block = ToyEngine::MakeScope<ToyEngine::LightBlock>();
 		m_light_block->m_num_lights = 5;
@@ -100,7 +104,8 @@ public:
 		m_light_block->m_lights[4].m_spotDirection	= glm::vec4(m_camera->front(), 0.0f);
 		m_light_block->m_lights[4].m_value			= glm::vec4(m_spot_light_color, 0.0f);
 
-		// Draw Scene
+		// Draw Scene to FrameBuffer
+		m_frame_buffer->Bind();
 		ToyEngine::Renderer::BeginScene(m_camera, m_light_block.get());
 		ToyEngine::Ref<ToyEngine::Shader> phongShader = m_shader_lib->Get("phong");
 		// models
@@ -111,6 +116,7 @@ public:
 				glm::radians(m_rotation_degree), glm::vec3(0.0f, 1.0f, 0.0f)));
 		ToyEngine::Renderer::Submit(m_scene_graph.get());
 		ToyEngine::Renderer::EndScene();
+		m_frame_buffer->Unbind();
 	}
 
 	virtual void OnImGuiRender() 
@@ -179,6 +185,25 @@ public:
 		ImGui::Begin("Scene Graph");
 		DrawSceneNodeTree(m_scene_graph.get());
 		ImGui::End();
+
+		// Frame Buffer Viewer - demonstrate framebuffer usage
+		ImGui::Begin("Frame Buffer Viewer");
+		ImGui::Text("Rendered Scene (Off-screen):");
+		ImGui::Text("FrameBuffer Size: %dx%d", m_frame_buffer->GetWidth(), m_frame_buffer->GetHeight());
+		
+		// Display the color attachment as an image
+		uint32_t colorTexture = m_frame_buffer->GetColorAttachment();
+		ImGui::Image(reinterpret_cast<void*>(static_cast<uintptr_t>(colorTexture)), 
+					 ImVec2(400, 300), 
+					 ImVec2(0, 1), ImVec2(1, 0)); // Flip Y coordinate for OpenGL
+		
+		if (ImGui::Button("Resize FrameBuffer to 1024x768")) {
+			m_frame_buffer = ToyEngine::FrameBuffer::Create(1024, 768);
+		}
+		if (ImGui::Button("Resize FrameBuffer to 512x384")) {
+			m_frame_buffer = ToyEngine::FrameBuffer::Create(512, 384);
+		}
+		ImGui::End();
 	}
 
 	virtual void OnEvent(ToyEngine::Event& e)
@@ -198,6 +223,7 @@ public:
 public: 
 	ToyEngine::Ref<ToyEngine::ShaderLibrary> m_shader_lib;
 	ToyEngine::Ref<ToyEngine::Camera> m_camera;
+	ToyEngine::Ref<ToyEngine::FrameBuffer> m_frame_buffer;
 
 	// Model control parameters
 	ToyEngine::Scope<ToyEngine::SceneNode> m_scene_graph;
