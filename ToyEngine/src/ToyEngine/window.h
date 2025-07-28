@@ -43,6 +43,8 @@ namespace ToyEngine {
 		/// </summary>
 		/// <param name="callback"></param>
 		virtual void SetCommandCallbackFn(const EventCallbackFn& callback) = 0;
+		int GetWidth() const { return data_.width; }
+		int GetHeight() const { return data_.height; }
 		float GetAspectRatio() const { return static_cast<float>(data_.width) / static_cast<float>(data_.height); }
 		void SetWindowSize(unsigned int width, unsigned int height) { data_.width = width; data_.height = height; }
 	protected:

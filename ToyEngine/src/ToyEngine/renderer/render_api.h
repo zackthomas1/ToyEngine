@@ -20,6 +20,7 @@ namespace ToyEngine
 		virtual void GenBuffers(uint32_t size, uint32_t & buffer_object) const = 0;
 		virtual void BindVertexArray(uint32_t vao) const = 0;
 		virtual void BindBuffer(eBufferType buffer_type, uint32_t buffer_object) const = 0;
+		virtual void BindTexture(eSamplerType texture_type, uint32_t texture_id) const = 0;
 		virtual void BufferData(eBufferType buffer_type, uint32_t size, const void* data) const = 0;
 		virtual void DeleteVertexArray(uint32_t& id) const = 0;
 		virtual void EnableVertexAttribArray(uint32_t index) const = 0;
@@ -74,6 +75,11 @@ namespace ToyEngine
 		static void BindBuffer(eBufferType buffer_type, uint32_t buffer_object) 
 		{
 			RenderAPI::s_instance->BindBuffer(buffer_type, buffer_object); 
+		}
+		
+		static void BindTexture(eSamplerType texture_type, uint32_t texture_id)
+		{
+			RenderAPI::s_instance->BindTexture(texture_type, texture_id);
 		}
 		
 		static void BufferData(eBufferType buffer_type, uint32_t size, const void* data)

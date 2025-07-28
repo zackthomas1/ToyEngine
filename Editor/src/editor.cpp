@@ -22,11 +22,13 @@ public:
 		ToyEngine::Ref<ToyEngine::Shader> textureShader = ToyEngine::Shader::Create("flat_texture", "../assets/shaders/flat_texture.vs", "../assets/shaders/flat_texture.fs");
 		ToyEngine::Ref<ToyEngine::Shader> phongShader	= ToyEngine::Shader::Create("phong", "../assets/shaders/phong.vs", "../assets/shaders/phong.fs");
 		ToyEngine::Ref<ToyEngine::Shader> skyboxShader	= ToyEngine::Shader::Create("skybox", "../assets/shaders/skybox.vs", "../assets/shaders/skybox.fs");
+		ToyEngine::Ref<ToyEngine::Shader> postfxShader	= ToyEngine::Shader::Create("postfx", "../assets/shaders/post_process.vs", "../assets/shaders/post_process.fs");
 
 		m_shader_lib->Add(flatShader);
 		m_shader_lib->Add(textureShader);
 		m_shader_lib->Add(phongShader);
 		m_shader_lib->Add(skyboxShader);
+		m_shader_lib->Add(postfxShader);
 
 		ToyEngine::Renderer::GetUniformManager().BindUniformBlockToShader(flatShader, "ViewProjectMats");
 		ToyEngine::Renderer::GetUniformManager().BindUniformBlockToShader(textureShader, "ViewProjectMats");
@@ -85,6 +87,11 @@ public:
 		for (auto& mesh : cyborg->m_meshes) {
 			mesh->m_material->SetEnvironmentMap(sky_texture);
 		}
+		TY_INFO("Create Framebuffer...");
+		uint32_t window_width	= ToyEngine::Application::AccessWindow().GetWidth();
+		uint32_t window_height	= ToyEngine::Application::AccessWindow().GetHeight();
+		m_frame_buffer = ToyEngine::FrameBuffer::Create(window_width, window_height);
+		m_render_quad = ToyEngine::TextureQuad();
 	}
 
 	virtual void OnDetach() {}
@@ -150,9 +157,29 @@ public:
 				glm::radians(m_rotation_degree), glm::vec3(0.0f, 1.0f, 0.0f)));
 
 		// Draw Scene
+		m_frame_buffer->Bind();
 		ToyEngine::Renderer::BeginScene(m_camera.get(), m_light_block.get());
 		ToyEngine::Renderer::Submit(m_scene_graph.get());
 		ToyEngine::Renderer::EndScene();
+		m_frame_buffer->Unbind();
+
+		// Draw quad with post-processing 
+		ToyEngine::Ref<ToyEngine::Shader> postfxShader = m_shader_lib->Get("postfx");
+		postfxShader->Use();
+		postfxShader->SetInt("screenTexture", 0);
+		
+		bool depth_test;
+		ToyEngine::RenderCommand::GetBooleanv(ToyEngine::eParamType::kDEPTH_TEST, &depth_test);
+
+		ToyEngine::RenderCommand::Disable(ToyEngine::eParamType::kDEPTH_TEST);
+		ToyEngine::RenderCommand::ClearSetBackground();
+
+		ToyEngine::RenderCommand::BindVertexArray(ToyEngine::TextureQuad::s_vao);
+		ToyEngine::RenderCommand::BindTexture( ToyEngine::eSamplerType::kTexture2D, m_frame_buffer->GetColorAttachment());
+		ToyEngine::RenderCommand::DrawArrays(ToyEngine::ePrimType::kTRIANGLE, 0, ToyEngine::TextureQuad::s_vertex_count);
+		ToyEngine::RenderCommand::BindVertexArray(0);
+		if (depth_test) ToyEngine::RenderCommand::Enable(ToyEngine::eParamType::kDEPTH_TEST);
+
 	}
 
 	virtual void OnImGuiRender() 
@@ -164,6 +191,15 @@ public:
 		// Show the big demo window (Most of the sample code is in ImGui::ShowDemoWindow()! 
 		// You can browse its code to learn more about Dear ImGui!).
 		ImGui::ShowDemoWindow();
+
+		ImGui::Begin("Scene Window"); 
+		uint32_t color_attachment = m_frame_buffer->GetColorAttachment();
+		uint32_t width = m_frame_buffer->GetWidth();
+		uint32_t height = m_frame_buffer->GetHeight();
+		ImGui::Image(color_attachment,
+			ImVec2(width, height),
+			ImVec2(0, 1), ImVec2(1, 0));
+		ImGui::End();
 
 		// Show simple window
 		ImGui::Begin("Controls");
@@ -247,6 +283,8 @@ public:
 public: 
 	ToyEngine::Ref<ToyEngine::ShaderLibrary> m_shader_lib;
 	ToyEngine::Scope<ToyEngine::Camera> m_camera;
+	ToyEngine::Ref<ToyEngine::FrameBuffer> m_frame_buffer; 
+	ToyEngine::TextureQuad m_render_quad;
 
 	// Model control parameters
 	ToyEngine::Scope<ToyEngine::SceneNode> m_scene_graph;

@@ -7,7 +7,6 @@ namespace ToyEngine
 {
     void OpenGLRenderAPI::ClearSetBackground(const glm::vec4& clear_color) const
     {
-		glEnable(GL_DEPTH_TEST);
 		glClearColor(clear_color.r, clear_color.g, clear_color.b, clear_color.a);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     }
@@ -30,6 +29,11 @@ namespace ToyEngine
 	void OpenGLRenderAPI::BindBuffer(eBufferType buffer_type, uint32_t buffer_object) const
 	{
 		glBindBuffer(static_cast<GLenum>(buffer_type), buffer_object);
+	}
+
+	void OpenGLRenderAPI::BindTexture(eSamplerType texture_type, uint32_t texture_id) const
+	{
+		glBindTexture(static_cast<GLenum>(texture_type), texture_id);
 	}
 
 	void OpenGLRenderAPI::BufferData(eBufferType buffer_type, uint32_t size, const void* data) const

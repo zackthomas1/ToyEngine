@@ -16,6 +16,10 @@ namespace ToyEngine
 		RenderCommand::DeleteVertexArray(m_vao);
 		RenderCommand::DeleteBuffer(m_vbo);
 		RenderCommand::DeleteBuffer(m_ebo);
+
+		m_vao = 0;
+		m_vbo = 0;
+		m_ebo = 0;
 	}
 
 	void Mesh::setupMesh()

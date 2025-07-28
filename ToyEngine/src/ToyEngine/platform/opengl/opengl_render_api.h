@@ -15,6 +15,7 @@ namespace ToyEngine
 		virtual void GenBuffers(uint32_t size, uint32_t & buffer_object) const override;
 		virtual void BindVertexArray(uint32_t vao) const override;
 		virtual void BindBuffer(eBufferType buffer_type, uint32_t buffer_object) const override;
+		virtual void BindTexture(eSamplerType texture_type, uint32_t texture_id) const;
 		virtual void BufferData(eBufferType buffer_type, uint32_t size, const void* data) const override;
 		virtual void DeleteVertexArray(uint32_t& id) const override;
 		virtual void EnableVertexAttribArray(uint32_t index) const override;

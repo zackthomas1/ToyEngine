@@ -30,12 +30,13 @@ namespace ToyEngine
 
 	void Renderer::BeginScene(const Camera* camera, const LightBlock* light_block)
 	{
-		// Set back face culling
+		// Reset state for scene rendering.
+		RenderCommand::Enable(eParamType::kDEPTH_TEST);
+
 		RenderCommand::Enable(eParamType::kCULL_FACE);
 		RenderCommand::CullFace(eParamType::kBACK);	
 		RenderCommand::FrontFace(eParamType::kCCW);
 
-		// Clear the background to prepare for rendering a new frame.
 		RenderCommand::ClearSetBackground();
 
 		// Update uniform buffer objects
@@ -54,7 +55,6 @@ namespace ToyEngine
 		if(!node) return;
 
 		node->UpdateWorldTransform();
-
 
 		// Render non-skybox entities first
 		if (node->GetEntity() && !dynamic_cast<Skybox*>(node->GetEntity().get()))
