@@ -1,4 +1,4 @@
-#version 330 core 
+ #version 330 core 
 in vec2 TexCoords; 
 
 uniform sampler2D screenTexture; 
@@ -60,7 +60,7 @@ void main()
     }
     vec3 color = vec3(0.0); 
     for(int i = 0; i < 9; i++){
-        color += sampleTex[i] * sobel_kernel[i];
+        color += sampleTex[i] * sharpen_kernel[i];
     }
 
     FragColor = vec4(color, 1.0);

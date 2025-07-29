@@ -54,8 +54,7 @@ namespace ToyEngine
 	};
 
 	struct PlanePrim {
-		const uint32_t vertex_count = 6;
-		const float vertices[48] = {
+		const float m_vertices[48] = {
 			// positions			// normals			// texture coords
 			-0.5f, -0.5f,  0.5f,	0.0f,  0.0f, 1.0f,	0.0f, 0.0f,
 			 0.5f, -0.5f,  0.5f,	0.0f,  0.0f, 1.0f,	1.0f, 0.0f,
@@ -67,8 +66,7 @@ namespace ToyEngine
 	};
 
 	struct TrianglePrim {
-		const uint32_t vertex_count = 3;
-		float vertices_[24] = {
+		float m_vertices[24] = {
 			// positions			// normals			// texture coords
 			 0.5f, -0.5f, 0.0f,		0.0f, 0.0f, 1.0f,	1.0f,  0.0f,	// bottom right
 			-0.5f, -0.5f, 0.0f,		0.0f, 0.0f, 1.0f,	0.0f,  0.0f,	// bottom left

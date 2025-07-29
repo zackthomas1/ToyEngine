@@ -11,6 +11,8 @@
 #include "ToyEngine/renderer/camera.h"
 #include "ToyEngine/renderer/shader.h"
 #include "ToyEngine/renderer/renderer.h"
+#include "ToyEngine/renderer/vertex_array.h"
+#include "ToyEngine/renderer/buffer.h"
 #include "ToyEngine/renderer/uniform_buffer.h"
 #include "ToyEngine/renderer/frame_buffer.h"
 #include "ToyEngine/skybox.h"

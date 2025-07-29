@@ -91,7 +91,25 @@ public:
 		uint32_t window_width	= ToyEngine::Application::AccessWindow().GetWidth();
 		uint32_t window_height	= ToyEngine::Application::AccessWindow().GetHeight();
 		m_frame_buffer = ToyEngine::FrameBuffer::Create(window_width, window_height);
-		m_render_quad = ToyEngine::TextureQuad();
+
+		float quad_vertices[24] = {
+			// positions	// texCoords
+			-1.0f,  1.0f,	0.0f, 1.0f,
+			-1.0f, -1.0f,	0.0f, 0.0f,
+			 1.0f, -1.0f,	1.0f, 0.0f,
+
+			-1.0f,  1.0f,	0.0f, 1.0f,
+			 1.0f, -1.0f,	1.0f, 0.0f,
+			 1.0f,  1.0f,	1.0f, 1.0f
+		};
+		m_quad_vertex_array = ToyEngine::VertexArray::Create();
+		ToyEngine::Ref<ToyEngine::VertexBuffer>quad_vertex_buffer = ToyEngine::VertexBuffer::Create(quad_vertices, sizeof(quad_vertices));
+		ToyEngine::BufferLayout quad_layout = {
+			{ ToyEngine::eShaderDataType::Vec2, "aPos" },
+			{ ToyEngine::eShaderDataType::Vec2, "aTexCoords" },
+		};
+		quad_vertex_buffer->SetLayout(quad_layout);
+		m_quad_vertex_array->AddBuffer(quad_vertex_buffer);
 	}
 
 	virtual void OnDetach() {}
@@ -174,12 +192,12 @@ public:
 		ToyEngine::RenderCommand::Disable(ToyEngine::eParamType::kDEPTH_TEST);
 		ToyEngine::RenderCommand::ClearSetBackground();
 
-		ToyEngine::RenderCommand::BindVertexArray(ToyEngine::TextureQuad::s_vao);
+		m_quad_vertex_array->Bind();
 		ToyEngine::RenderCommand::BindTexture( ToyEngine::eSamplerType::kTexture2D, m_frame_buffer->GetColorAttachment());
 		ToyEngine::RenderCommand::DrawArrays(ToyEngine::ePrimType::kTRIANGLE, 0, ToyEngine::TextureQuad::s_vertex_count);
-		ToyEngine::RenderCommand::BindVertexArray(0);
-		if (depth_test) ToyEngine::RenderCommand::Enable(ToyEngine::eParamType::kDEPTH_TEST);
+		m_quad_vertex_array->Unbind();
 
+		if (depth_test) ToyEngine::RenderCommand::Enable(ToyEngine::eParamType::kDEPTH_TEST);
 	}
 
 	virtual void OnImGuiRender() 
@@ -284,7 +302,7 @@ public:
 	ToyEngine::Ref<ToyEngine::ShaderLibrary> m_shader_lib;
 	ToyEngine::Scope<ToyEngine::Camera> m_camera;
 	ToyEngine::Ref<ToyEngine::FrameBuffer> m_frame_buffer; 
-	ToyEngine::TextureQuad m_render_quad;
+	ToyEngine::Ref<ToyEngine::VertexArray> m_quad_vertex_array;
 
 	// Model control parameters
 	ToyEngine::Scope<ToyEngine::SceneNode> m_scene_graph;
