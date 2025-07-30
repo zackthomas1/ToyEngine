@@ -6,7 +6,7 @@ namespace ToyEngine
 	class OpenGLVertexBuffer : public VertexBuffer
 	{
 	public:
-		OpenGLVertexBuffer(float* data, uint32_t size);
+		OpenGLVertexBuffer(const void* data, uint32_t size);
 		~OpenGLVertexBuffer ();
 
 		virtual void Bind() const override;

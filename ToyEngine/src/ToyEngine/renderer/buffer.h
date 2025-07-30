@@ -53,7 +53,7 @@ namespace ToyEngine {
 			{
 				case eShaderDataType::Bool	:	return 1;
 				case eShaderDataType::Int	:	return 1;
-				case eShaderDataType::Float:	return 1;
+				case eShaderDataType::Float	:	return 1;
 				case eShaderDataType::Vec2	:	return 2;
 				case eShaderDataType::Vec3	:	return 3;
 				case eShaderDataType::Vec4	:	return 4;
@@ -95,7 +95,7 @@ namespace ToyEngine {
 		virtual const BufferLayout& GetLayout() const = 0;
 		virtual void SetLayout(const BufferLayout& layout) = 0;
 
-		static Ref<VertexBuffer> Create(float* data, uint32_t size);
+		static Ref<VertexBuffer> Create(const void* data, uint32_t size);
 	protected:
 		VertexBuffer() {}
 	};

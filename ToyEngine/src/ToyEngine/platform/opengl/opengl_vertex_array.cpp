@@ -64,12 +64,15 @@ namespace ToyEngine
 				ShaderDataTypeToOpenGL(element.m_type),
 				element.m_normalize ? GL_TRUE : GL_FALSE,
 				layout.GetStride(),
-				(void*)element.m_offset
+				(const void*)element.m_offset
 			);
 			++vertex_buffer_index_;
 		}
 		vertex_buffers_.push_back(buffer);
-		glEnableVertexAttribArray(0);
+		
+		// Unbind vertex buffer and vao to clean up state
+		buffer->Unbind();
+		glBindVertexArray(0);
 	}
 
 	void OpenGLVertexArray::SetIndexBuffer(const Ref<IndexBuffer> buffer)
@@ -77,5 +80,8 @@ namespace ToyEngine
 		glBindVertexArray(id_);
 		buffer->Bind(); 
 		index_buffer_ = buffer;
+
+		// Unbind vao to clean up state
+		glBindVertexArray(0);
 	}
 }

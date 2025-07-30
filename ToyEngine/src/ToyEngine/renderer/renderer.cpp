@@ -67,7 +67,7 @@ namespace ToyEngine
 			Renderer::Submit(child.get());
 		}
 
-		// Render skybox entities first
+		// Render skybox entities last
 		if (node->GetEntity() && dynamic_cast<Skybox*>(node->GetEntity().get()))
 			node->GetEntity()->Render(node->GetWorldTransform());
 	}

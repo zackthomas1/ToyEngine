@@ -20,10 +20,8 @@ namespace ToyEngine{
 		m_shader->SetMat4("uModel", world_transform);
 		for (Ref<Mesh> mesh : m_meshes) {
 			// draw mesh
-			RenderCommand::BindVertexArray(mesh->m_vao);
 			mesh->m_material->Bind(m_shader);
-			RenderCommand::DrawElements(ePrimType::kTRIANGLE, mesh->m_indices.size(), 0);
-			RenderCommand::BindVertexArray(0);
+			Renderer::Submit(mesh->m_vao.get());
 		}
 	}
 
@@ -97,6 +95,10 @@ namespace ToyEngine{
 		indices.reserve(mesh->mNumFaces * 3);
 		for (unsigned int i = 0; i < mesh->mNumFaces; i++) {
 			aiFace face = mesh->mFaces[i];
+			if (face.mNumIndices != 3) {
+				TY_CORE_WARN("Non-triangular face found with {} indices, skipping", face.mNumIndices);
+				continue;
+			}
 			for (unsigned int j = 0; j < face.mNumIndices; j++) {
 				indices.push_back(static_cast<uint32_t>(face.mIndices[j]));
 			}

@@ -22,7 +22,7 @@ namespace ToyEngine {
 		}
 	}
 
-	Ref<VertexBuffer> VertexBuffer::Create(float* data, uint32_t size)
+	Ref<VertexBuffer> VertexBuffer::Create(const void* data, uint32_t size)
 	{
 		switch (Renderer::API())
 		{

@@ -8,48 +8,33 @@ namespace ToyEngine
 	Mesh::Mesh(Vector<Vertex>& vertices, Vector<uint32_t>& indices, Ref<Material> material) :
 		m_vertices(vertices), m_indices(indices), m_material(material)
 	{
-		setupMesh();
+		Setup();
 	}
 
 	Mesh::~Mesh()
 	{
-		RenderCommand::DeleteVertexArray(m_vao);
-		RenderCommand::DeleteBuffer(m_vbo);
-		RenderCommand::DeleteBuffer(m_ebo);
-
-		m_vao = 0;
-		m_vbo = 0;
-		m_ebo = 0;
+		if (m_vao) {
+			m_vao.reset(); // This will trigger proper cleanup
+		}
 	}
 
-	void Mesh::setupMesh()
+	void Mesh::Setup()
 	{
-		// Generate buffers
-		Ref<VertexArray> vao = ToyEngine::VertexArray::Create();
+		// Check for empty data
+		if (m_vertices.empty() || m_indices.empty()) {
+			TY_CORE_ERROR("Cannot create mesh with empty vertices or indices");
+			return;
+		}
 
-		RenderCommand::GenVertexArrays(1, m_vao);
-		RenderCommand::GenBuffers(1, m_vbo);
-		RenderCommand::GenBuffers(1, m_ebo);
-		RenderCommand::BindVertexArray(m_vao);
-
-		// Fill buffers
-		RenderCommand::BindBuffer(eBufferType::kARRAY_BUFFER, m_vbo); 
-		RenderCommand::BufferData(eBufferType::kARRAY_BUFFER, m_vertices.size() * sizeof(Vertex), &m_vertices[0]);
-		RenderCommand::BindBuffer(eBufferType::kELEMENT_ARRAY_BUFFER, m_ebo);
-		RenderCommand::BufferData(eBufferType::kELEMENT_ARRAY_BUFFER, m_indices.size() * sizeof(uint32_t), &m_indices[0]);
-
-		// Set vertex attribute pointers
-		// aPos
-		RenderCommand::EnableVertexAttribArray(0);
-		RenderCommand::VertexAttribPointer(0, 3, eDataType::kFLOAT, sizeof(Vertex), 0);
-		// aNormals
-		RenderCommand::EnableVertexAttribArray(1);
-		RenderCommand::VertexAttribPointer(1, 3, eDataType::kFLOAT, sizeof(Vertex), offsetof(Vertex, Normal));
-		// aTexCoords
-		RenderCommand::EnableVertexAttribArray(2);
-		RenderCommand::VertexAttribPointer(2, 2, eDataType::kFLOAT, sizeof(Vertex), offsetof(Vertex, TexCoords));
-
-		// Release vertex array object 
-		RenderCommand::BindVertexArray(0);
+		m_vao = VertexArray::Create();
+		Ref<VertexBuffer> buffer = VertexBuffer::Create(m_vertices.data(), m_vertices.size() * sizeof(Vertex));
+		BufferLayout layout = BufferLayout {
+			{ eShaderDataType::Vec3, "aPos", },
+			{ eShaderDataType::Vec3, "aNormal" },
+			{ eShaderDataType::Vec2, "aTexCoords" }, };
+		buffer->SetLayout(layout);
+		Ref<IndexBuffer> indices = IndexBuffer::Create(m_indices.data(), m_indices.size());
+		m_vao->AddBuffer(buffer);
+		m_vao->SetIndexBuffer(indices);
 	}
 }
