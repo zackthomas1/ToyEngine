@@ -11,76 +11,9 @@ namespace ToyEngine
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     }
 
-	void OpenGLRenderAPI::GenVertexArrays(uint32_t size, uint32_t& vao) const
-	{
-		glGenVertexArrays(1, &vao);
-	}
-	
-	void OpenGLRenderAPI::GenBuffers(uint32_t size, uint32_t& buffer_object) const
-	{
-		glGenBuffers(1, &buffer_object);
-	}
-
-	void OpenGLRenderAPI::BindVertexArray(uint32_t vao) const
-	{
-		glBindVertexArray(static_cast<GLuint>(vao));
-	}
-
-	void OpenGLRenderAPI::BindBuffer(eBufferType buffer_type, uint32_t buffer_object) const
-	{
-		glBindBuffer(static_cast<GLenum>(buffer_type), buffer_object);
-	}
-
 	void OpenGLRenderAPI::BindTexture(eSamplerType texture_type, uint32_t texture_id) const
 	{
 		glBindTexture(static_cast<GLenum>(texture_type), texture_id);
-	}
-
-	void OpenGLRenderAPI::BufferData(eBufferType buffer_type, uint32_t size, const void* data) const
-	{
-		glBufferData(static_cast<GLenum>(buffer_type), size, data, GL_STATIC_DRAW);
-	}
-	
-	void OpenGLRenderAPI::DeleteVertexArray(uint32_t& id) const
-	{
-
-		glDeleteVertexArrays(1, &static_cast<GLuint>(id));
-	}
-
-	void OpenGLRenderAPI::EnableVertexAttribArray(uint32_t index) const
-	{
-		glEnableVertexAttribArray(index);
-	}
-
-	void OpenGLRenderAPI::VertexAttribPointer(uint32_t location, uint32_t elements, eDataType data_type, uint32_t size, uint32_t offset) const
-	{
-		glVertexAttribPointer(location, elements, static_cast<GLuint>(data_type), GL_FALSE, size, (void*)offset);
-	}
-
-	void OpenGLRenderAPI::DeleteBuffer(uint32_t& id) const
-	{
-		glDeleteBuffers(1, &id);
-	}
-
-	void OpenGLRenderAPI::DrawArrays(ePrimType type, uint32_t start_index, uint32_t vertices) const
-	{
-		glDrawArrays(static_cast<GLuint>(type), start_index, vertices);
-
-		// Check for errors
-		GLenum error = glGetError();
-		if (error != GL_NO_ERROR) {
-			TY_CORE_ERROR("draw arrays error: {}", error);
-		}
-	}
-
-	void OpenGLRenderAPI::DrawElements(ePrimType type, uint32_t indices, uint32_t offset) const
-	{
-		glDrawElements(static_cast<GLuint>(type), indices, GL_UNSIGNED_INT, (void*)offset);
-		// Check for errors
-		GLenum error = glGetError();
-		if (error != GL_NO_ERROR) {
-			TY_CORE_ERROR("draw elements error: {}", error);
-		}
 	}
 
 	void ToyEngine::OpenGLRenderAPI::DrawElements(ePrimType type, const VertexArray* vao) const
