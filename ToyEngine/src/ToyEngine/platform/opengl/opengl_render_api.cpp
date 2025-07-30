@@ -76,6 +76,16 @@ namespace ToyEngine
 	void OpenGLRenderAPI::DrawElements(ePrimType type, uint32_t indices, uint32_t offset) const
 	{
 		glDrawElements(static_cast<GLuint>(type), indices, GL_UNSIGNED_INT, (void*)offset);
+		// Check for errors
+		GLenum error = glGetError();
+		if (error != GL_NO_ERROR) {
+			TY_CORE_ERROR("draw elements error: {}", error);
+		}
+	}
+
+	void ToyEngine::OpenGLRenderAPI::DrawElements(ePrimType type, const VertexArray* vao) const
+	{
+		glDrawElements(static_cast<GLuint>(type), vao->GetIndexBuffer()->GetCount(), GL_UNSIGNED_INT, (void*)0);
 
 		// Check for errors
 		GLenum error = glGetError();

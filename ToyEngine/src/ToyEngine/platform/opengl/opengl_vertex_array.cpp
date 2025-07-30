@@ -23,6 +23,7 @@ namespace ToyEngine
 	}
 
 	OpenGLVertexArray::OpenGLVertexArray()
+		: vertex_buffer_index_(0)
 	{
 		glGenVertexArrays(1, &id_);
 

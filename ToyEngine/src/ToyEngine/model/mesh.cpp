@@ -25,6 +25,8 @@ namespace ToyEngine
 	void Mesh::setupMesh()
 	{
 		// Generate buffers
+		Ref<VertexArray> vao = ToyEngine::VertexArray::Create();
+
 		RenderCommand::GenVertexArrays(1, m_vao);
 		RenderCommand::GenBuffers(1, m_vbo);
 		RenderCommand::GenBuffers(1, m_ebo);

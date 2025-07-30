@@ -1,5 +1,6 @@
 #pragma once
 #include "ToyEngine/enum.h"
+#include "ToyEngine/renderer/vertex_array.h"
 
 namespace ToyEngine
 {
@@ -28,6 +29,7 @@ namespace ToyEngine
 		virtual void DeleteBuffer(uint32_t& id) const = 0;
 		virtual void DrawArrays(ePrimType type, uint32_t start_index, uint32_t vertices) const = 0;
 		virtual void DrawElements(ePrimType type, uint32_t indices, uint32_t offset) const = 0;
+		virtual void DrawElements(ePrimType type, const VertexArray* vao) const = 0;
 		virtual void PolygonMode(uint32_t face, uint32_t mode) const = 0;
 		virtual void Enable(eParamType cap) const = 0;
 		virtual void Disable(eParamType cap) const = 0;
@@ -106,15 +108,19 @@ namespace ToyEngine
 		{ 
 			RenderAPI::s_instance->DeleteBuffer(id); 
 		}
-		
+
 		static void DrawArrays(ePrimType type, uint32_t start_index, uint32_t vertices)
-		{ 
+		{
 			RenderAPI::s_instance->DrawArrays(type, start_index, vertices);
 		}
-		
+
 		static void DrawElements(ePrimType type, uint32_t indices, uint32_t offset)
+		{
+			RenderAPI::s_instance->DrawElements(type, indices, offset);
+		}
+		static void DrawElements(ePrimType type, const VertexArray* vao)
 		{ 
-			RenderAPI::s_instance->DrawElements(type, indices, offset); 
+			RenderAPI::s_instance->DrawElements(type, vao);
 		}
 		
 		static void PolygonMode(uint32_t face, uint32_t mode) 

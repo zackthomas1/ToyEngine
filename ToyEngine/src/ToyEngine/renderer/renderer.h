@@ -5,6 +5,7 @@
 #include "ToyEngine/renderer/camera.h"
 #include "ToyEngine/renderer/shader.h"
 #include "ToyEngine/renderer/uniform_buffer.h"
+#include "ToyEngine/renderer/render_api.h"
 
 namespace ToyEngine
 {
@@ -25,6 +26,7 @@ namespace ToyEngine
 		/// <param name="camera">The camera to use for view and projection matrices.</param>
 		/// <param name="light_block">Pointer to the LightBlock containing scene lighting data.</param>
 		static void BeginScene(const Camera* camera, const LightBlock* light_block);
+		static void Submit(const VertexArray* vao);
 		static void Submit(SceneNode* node);
 		static void EndScene();
 

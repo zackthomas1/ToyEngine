@@ -18,7 +18,7 @@ namespace ToyEngine {
 		{
 			element.m_offset	= offset; 
 			offset				+= element.m_size; 
-			stride_			+= element.m_size;
+			stride_				+= element.m_size;
 		}
 	}
 

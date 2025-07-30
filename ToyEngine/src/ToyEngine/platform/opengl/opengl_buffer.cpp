@@ -33,7 +33,7 @@ namespace ToyEngine {
 	OpenGLIndexBuffer::OpenGLIndexBuffer(uint32_t* indices, uint32_t count)
 		: count_(count)
 	{
-		glCreateBuffers(1, &id_);
+		glGenBuffers(1, &id_);
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, id_);
 		glBufferData(GL_ELEMENT_ARRAY_BUFFER, count * sizeof(uint32_t), indices, GL_STATIC_DRAW);
 	}

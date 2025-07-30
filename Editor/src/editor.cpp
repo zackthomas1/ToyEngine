@@ -1,5 +1,4 @@
 #include <toy_engine.h>
-#include <glad/glad.h>
 
 void DrawSceneNodeTree(ToyEngine::SceneNode* node) {
 	if(!node) return; 
@@ -87,30 +86,20 @@ public:
 		for (auto& mesh : cyborg->m_meshes) {
 			mesh->m_material->SetEnvironmentMap(sky_texture);
 		}
+
+		// Create  Framebuffer
 		TY_INFO("Create Framebuffer...");
 		uint32_t window_width	= ToyEngine::Application::AccessWindow().GetWidth();
 		uint32_t window_height	= ToyEngine::Application::AccessWindow().GetHeight();
 		m_frame_buffer = ToyEngine::FrameBuffer::Create(window_width, window_height);
 
-		float quad_vertices[24] = {
-			// positions	// texCoords
-			-1.0f,  1.0f,	0.0f, 1.0f,
-			-1.0f, -1.0f,	0.0f, 0.0f,
-			 1.0f, -1.0f,	1.0f, 0.0f,
-
-			-1.0f,  1.0f,	0.0f, 1.0f,
-			 1.0f, -1.0f,	1.0f, 0.0f,
-			 1.0f,  1.0f,	1.0f, 1.0f
-		};
 		m_quad_vertex_array = ToyEngine::VertexArray::Create();
-		ToyEngine::Ref<ToyEngine::VertexBuffer>quad_vertex_buffer = ToyEngine::VertexBuffer::Create(quad_vertices, sizeof(quad_vertices));
-		ToyEngine::BufferLayout quad_layout = {
-			{ ToyEngine::eShaderDataType::Vec2, "aPos" },
-			{ ToyEngine::eShaderDataType::Vec2, "aTexCoords" },
-		};
-		quad_vertex_buffer->SetLayout(quad_layout);
+		ToyEngine::Ref<ToyEngine::VertexBuffer>quad_vertex_buffer = ToyEngine::VertexBuffer::Create(&ToyEngine::TextureQuadPrim::m_vertices[0], sizeof(ToyEngine::TextureQuadPrim::m_vertices));
+		quad_vertex_buffer->SetLayout(ToyEngine::TextureQuadPrim::m_layout);
 		m_quad_vertex_array->AddBuffer(quad_vertex_buffer);
-	}
+		ToyEngine::Ref<ToyEngine::IndexBuffer>quad_index_buffer = ToyEngine::IndexBuffer::Create(&ToyEngine::TextureQuadPrim::m_indices[0], sizeof(ToyEngine::TextureQuadPrim::m_indices) / sizeof(uint32_t));
+		m_quad_vertex_array->SetIndexBuffer(quad_index_buffer);
+}
 
 	virtual void OnDetach() {}
 
@@ -185,18 +174,12 @@ public:
 		ToyEngine::Ref<ToyEngine::Shader> postfxShader = m_shader_lib->Get("postfx");
 		postfxShader->Use();
 		postfxShader->SetInt("screenTexture", 0);
-		
 		bool depth_test;
 		ToyEngine::RenderCommand::GetBooleanv(ToyEngine::eParamType::kDEPTH_TEST, &depth_test);
-
 		ToyEngine::RenderCommand::Disable(ToyEngine::eParamType::kDEPTH_TEST);
 		ToyEngine::RenderCommand::ClearSetBackground();
-
-		m_quad_vertex_array->Bind();
-		ToyEngine::RenderCommand::BindTexture( ToyEngine::eSamplerType::kTexture2D, m_frame_buffer->GetColorAttachment());
-		ToyEngine::RenderCommand::DrawArrays(ToyEngine::ePrimType::kTRIANGLE, 0, ToyEngine::TextureQuad::s_vertex_count);
-		m_quad_vertex_array->Unbind();
-
+		ToyEngine::RenderCommand::BindTexture(ToyEngine::eSamplerType::kTexture2D, m_frame_buffer->GetColorAttachment());
+		ToyEngine::Renderer::Submit(m_quad_vertex_array.get());
 		if (depth_test) ToyEngine::RenderCommand::Enable(ToyEngine::eParamType::kDEPTH_TEST);
 	}
 

@@ -1,88 +1,36 @@
 #pragma once
 #include <cstdint>
-#include "ToyEngine/renderer/render_api.h"
+#include <string>
+#include <initializer_list>
+#include "ToyEngine/renderer/buffer.h"
 
 namespace ToyEngine
 {
 	struct CubePrim
 	{
-		const uint32_t vertex_count = 36;
-		const float vertices[288] = {
-			// positions			// normals			// texture coords
-			-0.5f, -0.5f, -0.5f,	0.0f,  0.0f, -1.0f,	0.0f, 0.0f,
-			 0.5f, -0.5f, -0.5f,	0.0f,  0.0f, -1.0f,	1.0f, 0.0f,
-			 0.5f,  0.5f, -0.5f,	0.0f,  0.0f, -1.0f,	1.0f, 1.0f,
-			 0.5f,  0.5f, -0.5f,	0.0f,  0.0f, -1.0f,	1.0f, 1.0f,
-			-0.5f,  0.5f, -0.5f,	0.0f,  0.0f, -1.0f,	0.0f, 1.0f,
-			-0.5f, -0.5f, -0.5f,	0.0f,  0.0f, -1.0f,	0.0f, 0.0f,
-
-			-0.5f, -0.5f,  0.5f,	0.0f,  0.0f, 1.0f,	0.0f, 0.0f,
-			 0.5f, -0.5f,  0.5f,	0.0f,  0.0f, 1.0f,	1.0f, 0.0f,
-			 0.5f,  0.5f,  0.5f,	0.0f,  0.0f, 1.0f,	1.0f, 1.0f,
-			 0.5f,  0.5f,  0.5f,	0.0f,  0.0f, 1.0f,	1.0f, 1.0f,
-			-0.5f,  0.5f,  0.5f,	0.0f,  0.0f, 1.0f,	0.0f, 1.0f,
-			-0.5f, -0.5f,  0.5f,	0.0f,  0.0f, 1.0f,	0.0f, 0.0f,
-
-			-0.5f,  0.5f,  0.5f, -	1.0f,  0.0f,  0.0f,	1.0f, 0.0f,
-			-0.5f,  0.5f, -0.5f, -	1.0f,  0.0f,  0.0f,	1.0f, 1.0f,
-			-0.5f, -0.5f, -0.5f, -	1.0f,  0.0f,  0.0f,	0.0f, 1.0f,
-			-0.5f, -0.5f, -0.5f, -	1.0f,  0.0f,  0.0f,	0.0f, 1.0f,
-			-0.5f, -0.5f,  0.5f, -	1.0f,  0.0f,  0.0f,	0.0f, 0.0f,
-			-0.5f,  0.5f,  0.5f, -	1.0f,  0.0f,  0.0f,	1.0f, 0.0f,
-
-			 0.5f,  0.5f,  0.5f,	1.0f,  0.0f,  0.0f,	1.0f, 0.0f,
-			 0.5f,  0.5f, -0.5f,	1.0f,  0.0f,  0.0f,	1.0f, 1.0f,
-			 0.5f, -0.5f, -0.5f,	1.0f,  0.0f,  0.0f,	0.0f, 1.0f,
-			 0.5f, -0.5f, -0.5f,	1.0f,  0.0f,  0.0f,	0.0f, 1.0f,
-			 0.5f, -0.5f,  0.5f,	1.0f,  0.0f,  0.0f,	0.0f, 0.0f,
-			 0.5f,  0.5f,  0.5f,	1.0f,  0.0f,  0.0f,	1.0f, 0.0f,
-
-			-0.5f, -0.5f, -0.5f,	0.0f, -1.0f,  0.0f,	0.0f, 1.0f,
-			 0.5f, -0.5f, -0.5f,	0.0f, -1.0f,  0.0f,	1.0f, 1.0f,
-			 0.5f, -0.5f,  0.5f,	0.0f, -1.0f,  0.0f,	1.0f, 0.0f,
-			 0.5f, -0.5f,  0.5f,	0.0f, -1.0f,  0.0f,	1.0f, 0.0f,
-			-0.5f, -0.5f,  0.5f,	0.0f, -1.0f,  0.0f,	0.0f, 0.0f,
-			-0.5f, -0.5f, -0.5f,	0.0f, -1.0f,  0.0f,	0.0f, 1.0f,
-
-			-0.5f,  0.5f, -0.5f,	0.0f,  1.0f,  0.0f,	0.0f, 1.0f,
-			 0.5f,  0.5f, -0.5f,	0.0f,  1.0f,  0.0f,	1.0f, 1.0f,
-			 0.5f,  0.5f,  0.5f,	0.0f,  1.0f,  0.0f,	1.0f, 0.0f,
-			 0.5f,  0.5f,  0.5f,	0.0f,  1.0f,  0.0f,	1.0f, 0.0f,
-			-0.5f,  0.5f,  0.5f,	0.0f,  1.0f,  0.0f,	0.0f, 0.0f,
-			-0.5f,  0.5f, -0.5f,	0.0f,  1.0f,  0.0f,	0.0f, 1.0f
-		};
+		static uint32_t m_vertex_count;
+		static float m_vertices[288];
+		static BufferLayout m_layout;
 	};
 
 	struct PlanePrim {
-		const float m_vertices[48] = {
-			// positions			// normals			// texture coords
-			-0.5f, -0.5f,  0.5f,	0.0f,  0.0f, 1.0f,	0.0f, 0.0f,
-			 0.5f, -0.5f,  0.5f,	0.0f,  0.0f, 1.0f,	1.0f, 0.0f,
-			 0.5f,  0.5f,  0.5f,	0.0f,  0.0f, 1.0f,	1.0f, 1.0f,
-			 0.5f,  0.5f,  0.5f,	0.0f,  0.0f, 1.0f,	1.0f, 1.0f,
-			-0.5f,  0.5f,  0.5f,	0.0f,  0.0f, 1.0f,	0.0f, 1.0f,
-			-0.5f, -0.5f,  0.5f,	0.0f,  0.0f, 1.0f,	0.0f, 0.0f,
-		};
+		static uint32_t m_vertex_count;
+		static float m_vertices[48];
+		static BufferLayout m_layout;
 	};
 
 	struct TrianglePrim {
-		float m_vertices[24] = {
-			// positions			// normals			// texture coords
-			 0.5f, -0.5f, 0.0f,		0.0f, 0.0f, 1.0f,	1.0f,  0.0f,	// bottom right
-			-0.5f, -0.5f, 0.0f,		0.0f, 0.0f, 1.0f,	0.0f,  0.0f,	// bottom left
-			 0.0f,  0.5f, 0.0f,		0.0f, 0.0f, 1.0f,	0.5f,  1.0f,	// top 		
-		};
+		static uint32_t m_vertex_count;
+		static float m_vertices[24];
+		static BufferLayout m_layout;
 	};
 
-	class TextureQuad {
-	public:
-		TextureQuad();
-		~TextureQuad();
 
-		static uint32_t s_vao, s_vbo;
-		static const uint32_t s_vertex_count = 6;
-	private:
-		static int s_ref_count;
-		static float s_vertices[24];
+
+	class TextureQuadPrim {
+	public:
+		static float		m_vertices[24];
+		static uint32_t		m_indices[6];
+		static BufferLayout m_layout;
 	};
 }

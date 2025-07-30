@@ -1,5 +1,8 @@
 #pragma once
 #include <cstdint>
+#include <string>
+#include <initializer_list>
+#include <vector>
 
 namespace ToyEngine {
 

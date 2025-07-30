@@ -23,6 +23,7 @@ namespace ToyEngine
 		virtual void DeleteBuffer(uint32_t& id) const override;
 		virtual void DrawArrays(ePrimType type, uint32_t start_index, uint32_t vertices) const override;
 		virtual void DrawElements(ePrimType type, uint32_t indices, uint32_t offset) const override;
+		virtual void DrawElements(ePrimType type, const VertexArray* vao) const override;
 		virtual void PolygonMode(uint32_t face, uint32_t mode) const override;
 		virtual void Enable(eParamType cap) const override;
 		virtual void Disable(eParamType cap) const override;

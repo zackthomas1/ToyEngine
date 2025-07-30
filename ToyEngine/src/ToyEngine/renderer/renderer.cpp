@@ -1,17 +1,13 @@
 #include "pch.h"
 #include "renderer.h"
-#include "ToyEngine/services/locator.h"
-#include "ToyEngine/renderer/render_api.h"
 #include "ToyEngine/skybox.h"
-#include <glad/glad.h>
 
 namespace ToyEngine
 {
 	Renderer* Renderer::s_instance = nullptr; 
 
-	Renderer::Renderer(eRenderAPI api, SceneData data) : api_(api), m_data(data)
-	{
-	}
+	Renderer::Renderer(eRenderAPI api, SceneData data) 
+		: api_(api), m_data(data) {}
 
 	void Renderer::Init()
 	{
@@ -48,6 +44,13 @@ namespace ToyEngine
 		Ref<UniformBuffer> light_uniforms = Renderer::GetUniformManager().GetBuffer("LightBlock");
 		//TY_CORE_ASSERT(sizeof(LightBlock) == 1024, "LightBlock Incorrect size");
 		light_uniforms->SetData(0, sizeof(LightBlock), light_block);
+	}
+
+	void Renderer::Submit(const VertexArray* vao)
+	{
+		vao->Bind();
+		RenderCommand::DrawElements(ePrimType::kTRIANGLE, vao);
+		vao->Unbind();
 	}
 
 	void Renderer::Submit(SceneNode* node)
