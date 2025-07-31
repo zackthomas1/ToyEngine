@@ -14,7 +14,7 @@ void main()
     vec3 inversion = vec3(1.0) - RGB;
 
     // Grayscale
-    float average = (0.2126 * RGB.r + 0.71552 * RGB.g + 0.0722 * RGB.b) / 3.0;
+    float average = 0.2126 * RGB.r + 0.71552 * RGB.g + 0.0722 * RGB.b;
     vec3 grayscale = vec3(average);
 
     // kernels 
