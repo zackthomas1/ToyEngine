@@ -16,7 +16,7 @@ namespace ToyEngine
 		glBindTexture(static_cast<GLenum>(texture_type), texture_id);
 	}
 
-	void ToyEngine::OpenGLRenderAPI::DrawElements(ePrimType type, const VertexArray* vao) const
+	void OpenGLRenderAPI::DrawElements(ePrimType type, const VertexArray* vao) const
 	{
 		glDrawElements(static_cast<GLuint>(type), vao->GetIndexBuffer()->GetCount(), GL_UNSIGNED_INT, (void*)0);
 
