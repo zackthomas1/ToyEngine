@@ -1,46 +1,13 @@
---premake5.lua 
-workspace "ToyEngine" 
-    architecture "x64"
-    startproject "Editor"
-
-    configurations 
-    { 
-        "Debug",
-        "Release",
-        "Dist"
-    }
-
-outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
-vendordir = "%{wks.location}/ToyEngine/vendor"
-
-include ("dependencies.lua")
-
-group "Dependencies"
-    include "ToyEngine/vendor/GLFW"
-    include "ToyEngine/vendor/glad"
-    include "ToyEngine/vendor/_premake/dearimgui.lua"
-    include "ToyEngine/vendor/_premake/assimp.lua"
-    include "ToyEngine/vendor/_premake/googletest.lua"
-group ""
-
-group "Applications"
-    include "Editor"
-    include "Tests"
-group ""
-
--- Toy Engine project --
-project "ToyEngine"
-    location "ToyEngine"
-    kind "StaticLib"
+-- Tests project
+project "Tests"
+    location "Tests"
+    kind "ConsoleApp"
     language "C++"
     cppdialect "C++17"
     staticruntime "on"
 
     targetdir ("bin/" .. outputdir .. "/%{prj.name}")
     objdir ("bin-int/" .. outputdir .. "/%{prj.name}")
-
-	pchheader "pch.h"
-	pchsource "ToyEngine/src/pch.cpp"
 
     files
     {
@@ -56,6 +23,7 @@ project "ToyEngine"
     includedirs
     {
         "%{prj.name}/src",
+        "ToyEngine/src",
         "%{IncludeDir.GLFW}",
         "%{IncludeDir.glad}",
         "%{IncludeDir.stb}",
@@ -64,6 +32,8 @@ project "ToyEngine"
         "%{IncludeDir.dearimgui}",
         "%{IncludeDir.assimp}",
         "%{IncludeDir.assimp_build}",
+        "%{IncludeDir.googletest}",
+        "%{IncludeDir.googlemock}",
     }
 
     libdirs
@@ -73,11 +43,13 @@ project "ToyEngine"
     
     links
     {
+        "ToyEngine",
         "GLFW",
         "glad",
         "opengl32.lib",
         "ImGui",
         "assimp",
+        "googletest",
     }
 
     filter "system:windows"
@@ -88,7 +60,6 @@ project "ToyEngine"
         {
             "TY_PLATFORM_WINDOWS",
             "TY_PLATFORM_OPENGL",
-            "TY_BUILD_DLL",
             "GLFW_INCLUDE_NONE",
         }
 

@@ -8,6 +8,8 @@ IncludeDir["spdlog"]        = "%{wks.location}/ToyEngine/vendor/spdlog/include"
 IncludeDir["dearimgui"]     = "%{wks.location}/ToyEngine/vendor/dearimgui"
 IncludeDir["assimp"]        = "%{wks.location}/ToyEngine/vendor/assimp/include"
 IncludeDir["assimp_build"]  = "%{wks.location}/ToyEngine/vendor/assimp/build/" .. outputdir .. "/include"
+IncludeDir["googletest"]    = "%{wks.location}/ToyEngine/vendor/googletest/googletest/include"
+IncludeDir["googlemock"]    = "%{wks.location}/ToyEngine/vendor/googletest/googlemock/include"
 
 -- Library directories relative to root folder (solution directory)
 LibDir = {}
