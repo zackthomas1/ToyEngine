@@ -43,7 +43,6 @@ namespace ToyEngine
 		// Add more flags as needed, each one should be a power of two
 	};
 
-
 	enum class eLightType {
 		kDirectional = 1,
 		kPoint = 2,
@@ -66,7 +65,7 @@ namespace ToyEngine
 	{
 		kARRAY_BUFFER			= 0x8892,
 		kELEMENT_ARRAY_BUFFER	= 0x8893,
-		kFRAME_BUFFER,
+		kFRAME_BUFFER			= 0x8D40,
 	};
 
 	enum class eDataType {
@@ -86,6 +85,13 @@ namespace ToyEngine
 		kBACK				= 0x0405,
 		kCW					= 0x0900,
 		kCCW				= 0x0901,
+		kDEPTH_TEST			= 0x0B71,
+	};
+
+	enum class eSamplerType
+	{
+		kTexture2D		= 0x0DE1,
+		kTextureCubeMap	= 0x8513,
 	};
 
 	enum class eDepthFunc {

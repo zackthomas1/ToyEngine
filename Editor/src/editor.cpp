@@ -1,5 +1,4 @@
 #include <toy_engine.h>
-#include <glad/glad.h>
 
 void DrawSceneNodeTree(ToyEngine::SceneNode* node) {
 	if(!node) return; 
@@ -22,11 +21,13 @@ public:
 		ToyEngine::Ref<ToyEngine::Shader> textureShader = ToyEngine::Shader::Create("flat_texture", "../assets/shaders/flat_texture.vs", "../assets/shaders/flat_texture.fs");
 		ToyEngine::Ref<ToyEngine::Shader> phongShader	= ToyEngine::Shader::Create("phong", "../assets/shaders/phong.vs", "../assets/shaders/phong.fs");
 		ToyEngine::Ref<ToyEngine::Shader> skyboxShader	= ToyEngine::Shader::Create("skybox", "../assets/shaders/skybox.vs", "../assets/shaders/skybox.fs");
+		ToyEngine::Ref<ToyEngine::Shader> postfxShader	= ToyEngine::Shader::Create("postfx", "../assets/shaders/post_process.vs", "../assets/shaders/post_process.fs");
 
 		m_shader_lib->Add(flatShader);
 		m_shader_lib->Add(textureShader);
 		m_shader_lib->Add(phongShader);
 		m_shader_lib->Add(skyboxShader);
+		m_shader_lib->Add(postfxShader);
 
 		ToyEngine::Renderer::GetUniformManager().BindUniformBlockToShader(flatShader, "ViewProjectMats");
 		ToyEngine::Renderer::GetUniformManager().BindUniformBlockToShader(textureShader, "ViewProjectMats");
@@ -85,7 +86,22 @@ public:
 		for (auto& mesh : cyborg->m_meshes) {
 			mesh->m_material->SetEnvironmentMap(sky_texture);
 		}
-	}
+
+		// Create  Framebuffer
+		TY_INFO("Create Framebuffer...");
+		m_frame_buffer = ToyEngine::FrameBuffer::Create(ToyEngine::FrameBufferProps(
+															ToyEngine::Application::AccessWindow().GetWidth(), 
+															ToyEngine::Application::AccessWindow().GetHeight()));
+
+		m_quad_vertex_array = ToyEngine::VertexArray::Create();
+		ToyEngine::Ref<ToyEngine::VertexBuffer>quad_vertex_buffer = ToyEngine::VertexBuffer::Create(ToyEngine::TextureQuadPrim::m_vertices.data(), 
+																								sizeof(ToyEngine::TextureQuadPrim::m_vertices));
+		quad_vertex_buffer->SetLayout(ToyEngine::TextureQuadPrim::m_layout);
+		m_quad_vertex_array->AddBuffer(quad_vertex_buffer);
+		ToyEngine::Ref<ToyEngine::IndexBuffer>quad_index_buffer = ToyEngine::IndexBuffer::Create(ToyEngine::TextureQuadPrim::m_indices.data(),
+																							 ToyEngine::TextureQuadPrim::m_indices.size());
+		m_quad_vertex_array->SetIndexBuffer(quad_index_buffer);
+}
 
 	virtual void OnDetach() {}
 
@@ -149,10 +165,32 @@ public:
 			glm::rotate(glm::translate(glm::mat4(1.0f), m_translate_cyborg),
 				glm::radians(m_rotation_degree), glm::vec3(0.0f, 1.0f, 0.0f)));
 
+		// Check if window was resized and recreate framebuffer if needed
+		uint32_t current_width = ToyEngine::Application::AccessWindow().GetWidth();
+		uint32_t current_height = ToyEngine::Application::AccessWindow().GetHeight();
+
+		if (current_width != m_frame_buffer->GetWidth() || current_height != m_frame_buffer->GetHeight()) {
+			m_frame_buffer->Resize(current_width, current_height);
+		}
+
 		// Draw Scene
+		m_frame_buffer->Bind();
 		ToyEngine::Renderer::BeginScene(m_camera.get(), m_light_block.get());
 		ToyEngine::Renderer::Submit(m_scene_graph.get());
 		ToyEngine::Renderer::EndScene();
+		m_frame_buffer->Unbind();
+
+		// Draw quad with post-processing 
+		ToyEngine::Ref<ToyEngine::Shader> postfxShader = m_shader_lib->Get("postfx");
+		postfxShader->Use();
+		postfxShader->SetInt("screenTexture", 0);
+		bool depth_test;
+		ToyEngine::RenderCommand::GetBooleanv(ToyEngine::eParamType::kDEPTH_TEST, &depth_test);
+		ToyEngine::RenderCommand::Disable(ToyEngine::eParamType::kDEPTH_TEST);
+		ToyEngine::RenderCommand::ClearSetBackground();
+		ToyEngine::RenderCommand::BindTexture(ToyEngine::eSamplerType::kTexture2D, m_frame_buffer->GetColorAttachment());
+		ToyEngine::Renderer::Submit(m_quad_vertex_array.get());
+		if (depth_test) ToyEngine::RenderCommand::Enable(ToyEngine::eParamType::kDEPTH_TEST);
 	}
 
 	virtual void OnImGuiRender() 
@@ -164,6 +202,15 @@ public:
 		// Show the big demo window (Most of the sample code is in ImGui::ShowDemoWindow()! 
 		// You can browse its code to learn more about Dear ImGui!).
 		ImGui::ShowDemoWindow();
+
+		ImGui::Begin("Scene Window"); 
+		uint32_t color_attachment = m_frame_buffer->GetColorAttachment();
+		uint32_t width = m_frame_buffer->GetWidth();
+		uint32_t height = m_frame_buffer->GetHeight();
+		ImGui::Image(color_attachment,
+			ImVec2(width, height),
+			ImVec2(0, 1), ImVec2(1, 0));
+		ImGui::End();
 
 		// Show simple window
 		ImGui::Begin("Controls");
@@ -247,6 +294,8 @@ public:
 public: 
 	ToyEngine::Ref<ToyEngine::ShaderLibrary> m_shader_lib;
 	ToyEngine::Scope<ToyEngine::Camera> m_camera;
+	ToyEngine::Ref<ToyEngine::FrameBuffer> m_frame_buffer; 
+	ToyEngine::Ref<ToyEngine::VertexArray> m_quad_vertex_array;
 
 	// Model control parameters
 	ToyEngine::Scope<ToyEngine::SceneNode> m_scene_graph;

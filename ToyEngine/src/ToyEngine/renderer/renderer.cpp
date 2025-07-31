@@ -1,17 +1,13 @@
 #include "pch.h"
 #include "renderer.h"
-#include "ToyEngine/services/locator.h"
-#include "ToyEngine/renderer/render_api.h"
 #include "ToyEngine/skybox.h"
-#include <glad/glad.h>
 
 namespace ToyEngine
 {
 	Renderer* Renderer::s_instance = nullptr; 
 
-	Renderer::Renderer(eRenderAPI api, SceneData data) : api_(api), m_data(data)
-	{
-	}
+	Renderer::Renderer(eRenderAPI api, SceneData data) 
+		: api_(api), m_data(data) {}
 
 	void Renderer::Init()
 	{
@@ -30,12 +26,13 @@ namespace ToyEngine
 
 	void Renderer::BeginScene(const Camera* camera, const LightBlock* light_block)
 	{
-		// Set back face culling
+		// Reset state for scene rendering.
+		RenderCommand::Enable(eParamType::kDEPTH_TEST);
+
 		RenderCommand::Enable(eParamType::kCULL_FACE);
 		RenderCommand::CullFace(eParamType::kBACK);	
 		RenderCommand::FrontFace(eParamType::kCCW);
 
-		// Clear the background to prepare for rendering a new frame.
 		RenderCommand::ClearSetBackground();
 
 		// Update uniform buffer objects
@@ -49,12 +46,18 @@ namespace ToyEngine
 		light_uniforms->SetData(0, sizeof(LightBlock), light_block);
 	}
 
+	void Renderer::Submit(const VertexArray* vao)
+	{
+		vao->Bind();
+		RenderCommand::DrawElements(ePrimType::kTRIANGLE, vao);
+		vao->Unbind();
+	}
+
 	void Renderer::Submit(SceneNode* node)
 	{
 		if(!node) return;
 
 		node->UpdateWorldTransform();
-
 
 		// Render non-skybox entities first
 		if (node->GetEntity() && !dynamic_cast<Skybox*>(node->GetEntity().get()))
@@ -64,7 +67,7 @@ namespace ToyEngine
 			Renderer::Submit(child.get());
 		}
 
-		// Render skybox entities first
+		// Render skybox entities last
 		if (node->GetEntity() && dynamic_cast<Skybox*>(node->GetEntity().get()))
 			node->GetEntity()->Render(node->GetWorldTransform());
 	}
