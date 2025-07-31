@@ -13,7 +13,7 @@ namespace ToyEngine
 			return MakeRef<OpenGLVertexArray>();
 		}
 		default:
-			TY_CORE_ERROR("Unknow Render API");
+			TY_CORE_ERROR("Unknown Render API");
 			return nullptr;
 		}
 	}
