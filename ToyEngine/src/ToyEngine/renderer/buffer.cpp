@@ -30,7 +30,7 @@ namespace ToyEngine {
 			return MakeRef<OpenGLVertexBuffer>(data, size);
 		}
 		default:
-			TY_CORE_ERROR("Unknow Render API");
+			TY_CORE_ERROR("Unknown Render API");
 			return nullptr; 
 		}
 	}

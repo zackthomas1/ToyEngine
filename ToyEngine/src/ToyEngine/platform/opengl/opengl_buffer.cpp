@@ -81,7 +81,7 @@ namespace ToyEngine {
 		}
 	}
 
-	void ToyEngine::OpenGLIndexBuffer::Bind() const
+	void OpenGLIndexBuffer::Bind() const
 	{
 		if (id_ == 0) {
 			TY_CORE_ERROR("Attempting to bind invalid index buffer");
