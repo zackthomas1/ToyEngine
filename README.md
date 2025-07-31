@@ -110,6 +110,30 @@ After building, run the Editor application to see the engine in action:
 #### Required Tools
 - **[Premake5](https://premake.github.io/)** - Build configuration system (included in `vendor/premake/`)
 
+## Testing
+
+ToyEngine includes a comprehensive testing framework built on Google Test (gtest) to ensure reliability and performance of all engine subsystems.
+
+### Quick Start
+```bash
+# Generate project files
+scripts/Win-GenProjects.bat
+
+# Build Tests project in Visual Studio or via command line
+msbuild ToyEngine.sln -t:Tests -p:Configuration=Debug
+
+# Run tests
+scripts/Run-Tests.bat
+```
+
+### Test Coverage
+- **Unit Tests**: Individual component testing (Camera, Shader, Model, Application systems)
+- **Integration Tests**: Cross-subsystem interaction validation
+- **Performance Tests**: Benchmarking of critical operations
+- **Mock Testing**: Dependency isolation for reliable testing
+
+For detailed testing documentation, see [Testing Guide](Tests/README.md) and [Testing Plan](docs/TestingPlan.md).
+
 ## Documentation
 
 For detailed documentation, architecture diagrams, and development guides, visit our [Wiki](docs/README.md).
