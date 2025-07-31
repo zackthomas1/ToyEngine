@@ -18,7 +18,7 @@ namespace ToyEngine
 			case eShaderDataType::Mat3	:	return GL_FLOAT;
 			case eShaderDataType::Mat4	:	return GL_FLOAT;
 		}
-		TY_CORE_ASSERT(false, "Unknown ShaderDatayType.");
+		TY_CORE_ASSERT(false, "Unknown ShaderDataType.");
 		return 0;
 	}
 
