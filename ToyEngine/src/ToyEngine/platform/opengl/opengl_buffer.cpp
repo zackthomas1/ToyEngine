@@ -84,7 +84,7 @@ namespace ToyEngine {
 	void ToyEngine::OpenGLIndexBuffer::Bind() const
 	{
 		if (id_ == 0) {
-			TY_CORE_ERROR("Attempting to bind invalid vertex buffer");
+			TY_CORE_ERROR("Attempting to bind invalid index buffer");
 			return;
 		}
 	

@@ -89,15 +89,17 @@ public:
 
 		// Create  Framebuffer
 		TY_INFO("Create Framebuffer...");
-		uint32_t window_width	= ToyEngine::Application::AccessWindow().GetWidth();
-		uint32_t window_height	= ToyEngine::Application::AccessWindow().GetHeight();
-		m_frame_buffer = ToyEngine::FrameBuffer::Create(window_width, window_height);
+		m_frame_buffer = ToyEngine::FrameBuffer::Create(ToyEngine::FrameBufferProps(
+															ToyEngine::Application::AccessWindow().GetWidth(), 
+															ToyEngine::Application::AccessWindow().GetHeight()));
 
 		m_quad_vertex_array = ToyEngine::VertexArray::Create();
-		ToyEngine::Ref<ToyEngine::VertexBuffer>quad_vertex_buffer = ToyEngine::VertexBuffer::Create(ToyEngine::TextureQuadPrim::m_vertices.data(), sizeof(ToyEngine::TextureQuadPrim::m_vertices));
+		ToyEngine::Ref<ToyEngine::VertexBuffer>quad_vertex_buffer = ToyEngine::VertexBuffer::Create(ToyEngine::TextureQuadPrim::m_vertices.data(), 
+																								sizeof(ToyEngine::TextureQuadPrim::m_vertices));
 		quad_vertex_buffer->SetLayout(ToyEngine::TextureQuadPrim::m_layout);
 		m_quad_vertex_array->AddBuffer(quad_vertex_buffer);
-		ToyEngine::Ref<ToyEngine::IndexBuffer>quad_index_buffer = ToyEngine::IndexBuffer::Create(ToyEngine::TextureQuadPrim::m_indices.data(), ToyEngine::TextureQuadPrim::m_indices.size());
+		ToyEngine::Ref<ToyEngine::IndexBuffer>quad_index_buffer = ToyEngine::IndexBuffer::Create(ToyEngine::TextureQuadPrim::m_indices.data(),
+																							 ToyEngine::TextureQuadPrim::m_indices.size());
 		m_quad_vertex_array->SetIndexBuffer(quad_index_buffer);
 }
 
@@ -168,7 +170,7 @@ public:
 		uint32_t current_height = ToyEngine::Application::AccessWindow().GetHeight();
 
 		if (current_width != m_frame_buffer->GetWidth() || current_height != m_frame_buffer->GetHeight()) {
-			m_frame_buffer = ToyEngine::FrameBuffer::Create(current_width, current_height);
+			m_frame_buffer->Resize(current_width, current_height);
 		}
 
 		// Draw Scene

@@ -6,7 +6,7 @@ namespace ToyEngine
 	class OpenGLFrameBuffer : public FrameBuffer
 	{
 	public:
-		OpenGLFrameBuffer(uint32_t width, uint32_t height_);
+		OpenGLFrameBuffer(const FrameBufferProps& props);
 		~OpenGLFrameBuffer();
 
 		virtual void Bind() override;
@@ -23,6 +23,6 @@ namespace ToyEngine
 		void CreateBuffers(uint32_t width, uint32_t height);
 		void DeleteBuffers();
 		uint32_t id_;
-		uint32_t color_attachment_id_, depth_stencil_attatchment_id_;
+		uint32_t color_attachment_id_, depth_stencil_attachment_id_;
 	};
 }
