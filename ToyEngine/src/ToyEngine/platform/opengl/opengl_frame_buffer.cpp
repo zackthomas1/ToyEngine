@@ -8,7 +8,7 @@ namespace ToyEngine
 		: FrameBuffer(props)
 	{
 		TY_CORE_ASSERT(props.m_width > 0  && props.m_height > 0, "Render buffer width and height must be positive.");
-		TY_CORE_ASSERT(props.m_width <= GL_MAX_RENDERBUFFER_SIZE && props.m_height <= GL_MAX_RENDERBUFFER_SIZE, "Frame buffer size expands OpenGL max render buffer size");
+		TY_CORE_ASSERT(props.m_width <= GL_MAX_RENDERBUFFER_SIZE && props.m_height <= GL_MAX_RENDERBUFFER_SIZE, "Frame buffer size exceeds OpenGL max render buffer size");
 		
 		CreateBuffers(props.m_width, props.m_height);
 	}
