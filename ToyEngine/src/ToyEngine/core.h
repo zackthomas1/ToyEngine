@@ -28,6 +28,9 @@
 //#define TY_BINDFN(fn) std::bind(&fn, this, std::placeholders::_1)
 
 constexpr float TY_EPSILON = 0.001;
+constexpr int TY_DEFAULT_WINDOW_WIDTH = 800;
+constexpr int TY_DEFAULT_WINDOW_HEIGHT = 600;
+
 
 namespace ToyEngine {
 	template <typename T>

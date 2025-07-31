@@ -2,9 +2,6 @@
 #include "ToyEngine/event.h"
 
 namespace ToyEngine {
-	constexpr int TY_DEFAULT_WINDOW_WIDTH = 800;
-	constexpr int TY_DEFAULT_WINDOW_HEIGHT = 600;
-
 	struct WindowProps
 	{
 		std::string title;

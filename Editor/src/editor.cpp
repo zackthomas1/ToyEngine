@@ -89,9 +89,10 @@ public:
 
 		// Create  Framebuffer
 		TY_INFO("Create Framebuffer...");
-		m_frame_buffer = ToyEngine::FrameBuffer::Create(ToyEngine::FrameBufferProps(
-															ToyEngine::Application::AccessWindow().GetWidth(), 
-															ToyEngine::Application::AccessWindow().GetHeight()));
+		ToyEngine::FrameBufferProps fb_props;
+		fb_props.width = ToyEngine::Application::AccessWindow().GetWidth(); 
+		fb_props.height = ToyEngine::Application::AccessWindow().GetHeight();
+		m_frame_buffer = ToyEngine::FrameBuffer::Create(fb_props);
 
 		m_quad_vertex_array = ToyEngine::VertexArray::Create();
 		ToyEngine::Ref<ToyEngine::VertexBuffer>quad_vertex_buffer = ToyEngine::VertexBuffer::Create(ToyEngine::TextureQuadPrim::m_vertices.data(), 

@@ -19,11 +19,11 @@ namespace ToyEngine
 	}
 	FrameBuffer::FrameBuffer(const FrameBufferProps& props)
 	{
-		data_.m_width				= props.m_width;
-		data_.m_height				= props.m_height;
-		data_.m_multisampling		= props.m_multisampling;
-		data_.m_samples				= props.m_samples;
-		data_.m_depth_attachment	= props.m_depth_attachment;
-		data_.m_stencil_attachment	= props.m_stencil_attachment;
+		data_.width				= props.width;
+		data_.height				= props.height;
+		data_.multisampling		= props.multisampling;
+		data_.samples				= props.samples;
+		data_.depth_attachment	= props.depth_attachment;
+		data_.stencil_attachment	= props.stencil_attachment;
 	}
 }
