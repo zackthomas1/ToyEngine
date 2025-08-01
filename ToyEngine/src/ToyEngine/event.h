@@ -62,4 +62,26 @@ namespace ToyEngine
 	private: 
 		unsigned int width_, height_;
 	};
+
+	class EventDispatcher
+	{
+	public:
+		EventDispatcher(Event& e) : event_(e) {}
+		~EventDispatcher() {}
+		
+		template<typename T, typename F>
+		bool Dispatch(const F& func)
+		{
+			if (T* cast_event = dynamic_cast<T*>(&event_))
+			{
+				bool is_handled = func(*cast_event);
+				event_.SetEventHandled(is_handled);
+				return is_handled;
+			}
+			return false;
+		}
+	private:
+		Event& event_;
+	};
+
 }

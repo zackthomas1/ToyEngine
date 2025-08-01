@@ -35,26 +35,28 @@ namespace ToyEngine
 		/// <param name="e">Reference to the event object to be processed.</param>
 		void OnEvent(Event& e);
 		
-        /// <summary>
-        /// Adds a new layer to the application. Layers are used for core engine logic and are updated and rendered in order.
-        /// The layer is inserted below overlays and above previously added layers.
-        /// </summary>
-        /// <param name="layer">Pointer to the Layer to be added.</param>
-        void PushLayer(Layer *layer);
+		/// <summary>
+		/// Adds a new layer to the application. Layers are used for core engine logic and are updated and rendered in order.
+		/// The layer is inserted below overlays and above previously added layers.
+		/// </summary>
+		/// <param name="layer">Pointer to the Layer to be added.</param>
+		void PushLayer(Layer *layer);
 
-        /// <summary>
-        /// Adds a new overlay to the application. Overlays are rendered and updated after all regular layers.
-        /// Typically used for UI or debug panels.
-        /// </summary>
-        /// <param name="layer">Pointer to the Layer to be added as an overlay.</param>
-        void PushOverlay(Layer *layer);
+		/// <summary>
+		/// Adds a new overlay to the application. Overlays are rendered and updated after all regular layers.
+		/// Typically used for UI or debug panels.
+		/// </summary>
+		/// <param name="layer">Pointer to the Layer to be added as an overlay.</param>
+		void PushOverlay(Layer *layer);
+
+		ImGuiLayer* GetImGuiLayer() { return imGuiLayer_; }
 
 		// Accessors return const references to prevent modification
 		inline static Window& AccessWindow() { return *Application::s_instance->window_; }
 		inline static Application& Get() { return *s_instance; }	
 	private:
-		bool OnClose();
-		bool OnResize(uint32_t width, uint32_t height);
+		bool OnClose(EventApplicationClose& e);
+		bool OnResize(EventWindowResize& e);
 	private:
 		Scope<Window> window_;
 		ImGuiLayer *imGuiLayer_;	// imGuiLayer is owned by the layerStack_. Deleted by layerStack_ destructor
