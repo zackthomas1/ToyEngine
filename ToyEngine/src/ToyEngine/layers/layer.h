@@ -39,7 +39,7 @@ namespace ToyEngine
 	class ImGuiLayer : public Layer
 	{
 	public:
-		ImGuiLayer();
+		ImGuiLayer() : blocks_event_(true) {}
 		~ImGuiLayer() {}
 
 		virtual void OnAttach() override;
@@ -47,5 +47,8 @@ namespace ToyEngine
 		void BeginDraw();
 		void EndDraw();
 		virtual void OnEvent(Event& e) override;
+		void BlockEvents(bool blocking) { blocks_event_ = blocking; }
+	private:
+		bool blocks_event_; 
 	};
 }

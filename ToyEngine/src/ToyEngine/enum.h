@@ -22,25 +22,18 @@ namespace ToyEngine
 		kHold		= 2,
 	};
 
-	// defines serveral possible options for camera movement.
-	// Use as an abstraction to stay away from window_system specific input methods
-	enum class eCameraMovement
-	{
-		kForward,
-		kBackward,
-		kLeft,
-		kRight,
-		kUp,
-		kDown,
-		kNone,
-	};
-
 	// define enum as bit flags (powers of two),
 	// Use bitwise operations to check validity.
 	enum class eCameraType : uint32_t {
-		kFlyCamera = 1 << 0,			// 1
-		kOrthographicCamera = 1 << 1,	// 2
+		kPerspective = 1 << 0,			// 1
+		kOrthographic = 1 << 1,	// 2
 		// Add more flags as needed, each one should be a power of two
+	};
+
+	enum class eCameraControllerType : uint32_t {
+		kFly, 
+		kOrbit, 
+		kOrtho,
 	};
 
 	enum class eLightType {

@@ -8,7 +8,7 @@
 #include "ToyEngine/model/model.h"
 #include "ToyEngine/services/locator.h"
 #include "ToyEngine/renderer/light.h"
-#include "ToyEngine/renderer/camera.h"
+#include "ToyEngine/renderer/camera_controller.h"
 #include "ToyEngine/renderer/shader.h"
 #include "ToyEngine/renderer/renderer.h"
 #include "ToyEngine/renderer/vertex_array.h"

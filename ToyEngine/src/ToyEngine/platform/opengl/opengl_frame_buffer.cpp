@@ -20,6 +20,7 @@ namespace ToyEngine
 	void OpenGLFrameBuffer::Bind()
 	{
 		glBindFramebuffer(GL_FRAMEBUFFER, id_);
+		//glViewport(0,0, ctrl_props_.width, ctrl_props_.height);
 	}
 
 	void OpenGLFrameBuffer::Unbind()

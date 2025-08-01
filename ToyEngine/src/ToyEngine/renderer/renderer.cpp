@@ -39,10 +39,9 @@ namespace ToyEngine
 		Ref<UniformBuffer> camera_uniforms = Renderer::GetUniformManager().GetBuffer("ViewProjectMats");
 		camera_uniforms->SetData(0, sizeof(glm::mat4), glm::value_ptr(camera->GetViewMatrix()));
 		camera_uniforms->SetData(sizeof(glm::mat4), sizeof(glm::mat4), glm::value_ptr(camera->GetProjectionMatrix()));
-		camera_uniforms->SetData(2 * sizeof(glm::mat4), sizeof(glm::vec3), glm::value_ptr(camera->position()));
+		camera_uniforms->SetData(2 * sizeof(glm::mat4), sizeof(glm::vec3), glm::value_ptr(camera->GetProps().position));
 		
 		Ref<UniformBuffer> light_uniforms = Renderer::GetUniformManager().GetBuffer("LightBlock");
-		//TY_CORE_ASSERT(sizeof(LightBlock) == 1024, "LightBlock Incorrect size");
 		light_uniforms->SetData(0, sizeof(LightBlock), light_block);
 	}
 
@@ -72,5 +71,8 @@ namespace ToyEngine
 			node->GetEntity()->Render(node->GetWorldTransform());
 	}
 
-	void Renderer::EndScene() {}
+	void Renderer::EndScene() 
+	{
+	
+	}
 }
