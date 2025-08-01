@@ -3,9 +3,22 @@
 
 namespace ToyEngine
 {
+	enum class eMouseCode
+	{
+		kMouseLeft		= 0,
+		kMouseRight		= 1,
+		kMouseMiddle	= 2,
+	};
+
 	// Defines key codes
 	enum class eKeyCode
 	{
+		kKeyLCtrl	= 341,
+		kKeyRCtrl	= 345,
+		kKeyLAlt	= 342,
+		kKeyRAlt	= 346,
+		kKeyLShift	= 340,
+		kKeyRShift	= 344,
 		kKeyEscape	= 256,
 		kKeyW		= 87,
 		kKeyS		= 83,

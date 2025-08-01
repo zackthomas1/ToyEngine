@@ -41,7 +41,7 @@ public:
 	{
 		TY_INFO("Create Camera...");
 		ToyEngine::CameraControllerProps camera_control_props;
-		camera_control_props.type = ToyEngine::eCameraControllerType::kOrtho;
+		camera_control_props.type = ToyEngine::eCameraControllerType::kOrbit;
 		m_camera_controller = ToyEngine::MakeScope<ToyEngine::CameraController>(camera_control_props);
 
 		TY_INFO("Create lights...");

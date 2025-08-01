@@ -8,6 +8,7 @@ namespace ToyEngine {
         
         virtual void Init() = 0;
         virtual eKeyState Key(eKeyCode key) = 0;
+        virtual eKeyState Mouse(eMouseCode button) = 0;
         virtual float MouseVerticalScroll() = 0;
         virtual std::pair<float, float> MousePos() = 0;
     protected: 
@@ -23,6 +24,7 @@ namespace ToyEngine {
             TY_CORE_WARN( "Platform Invalid. Null service provider - Input poll service disabled." );
         }
         virtual eKeyState Key(eKeyCode key) override { return eKeyState::kRelease; }
+        virtual eKeyState Mouse(eMouseCode button) override { return eKeyState::kRelease; }
         virtual float MouseVerticalScroll() override { return 0.0f; }
         virtual std::pair<float, float> MousePos() override { return std::pair<float, float>(0.0f, 0.0f); }
     };
@@ -34,6 +36,7 @@ namespace ToyEngine {
 
         virtual void Init();
         virtual eKeyState Key(eKeyCode key) override;
+        virtual eKeyState Mouse(eMouseCode button) override;
         virtual float MouseVerticalScroll() override;
         virtual std::pair<float, float> MousePos() override;
     };

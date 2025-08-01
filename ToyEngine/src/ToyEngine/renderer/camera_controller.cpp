@@ -42,12 +42,12 @@ namespace ToyEngine
 	bool CameraController::OnEvent(Event& e)
 	{
 		EventDispatcher dispatcher(e); 
-		dispatcher.Dispatch<EventVerticalScroll>([this](EventVerticalScroll& event) {
-			return strategy_->OnMouseScroll(camera_, ctrl_props_, event);
-		});
-		dispatcher.Dispatch<EventCursorPos>([this](EventCursorPos& event){
-			return strategy_->OnMouseMove(camera_, ctrl_props_, event);
-		});
+		// Alternative: using lambda to capture parameters and pass them to function
+		//dispatcher.Dispatch<EventVerticalScroll>([this](EventVerticalScroll& event) {
+		//	return strategy_->OnMouseScroll(camera_, ctrl_props_, event);
+		//});
+		dispatcher.Dispatch<EventVerticalScroll>(TY_BINDFN_ARGS(strategy_->OnMouseScroll, camera_, ctrl_props_));
+		dispatcher.Dispatch<EventCursorPos>(TY_BINDFN_ARGS(strategy_->OnMouseMove, camera_, ctrl_props_));
 		dispatcher.Dispatch<EventWindowResize>(TY_BINDFN(CameraController::OnWindowResize));
 		return true;
 	}
@@ -128,7 +128,88 @@ namespace ToyEngine
 
 	bool OrbitCameraStrategy::OnMouseMove(Camera& camera, const CameraControllerProps& props, EventCursorPos& e)
 	{
-		return false;
+		ToyEngine::InputPoll& input = ToyEngine::Locator::InputPollService();
+
+		if ((input.Key(eKeyCode::kKeyLCtrl) != eKeyState::kRelease) &&
+			(input.Mouse(eMouseCode::kMouseMiddle) != eKeyState::kRelease) ) 
+		{
+			// Push in/out
+			glm::vec3 position = camera.GetProps().position;
+			glm::vec3 view_dir = camera.GetProps().front;
+			float velocity = e.GetXOffset() * props.mouseSensitivity;
+			camera.SetPosition(position + (view_dir * velocity));
+		}
+		else if ((input.Key(eKeyCode::kKeyLShift) != eKeyState::kRelease) &&
+			(input.Mouse(eMouseCode::kMouseMiddle) != eKeyState::kRelease))
+		{
+			// Pan
+			glm::vec3 cam_right = camera.GetProps().right;
+			glm::vec3 cam_up	= camera.GetProps().up;
+
+			camera.SetPosition(camera.GetProps().position + (cam_right * ((float)e.GetXOffset() * props.mouseSensitivity)));
+			camera.SetPosition(camera.GetProps().position - (cam_up * ((float)e.GetYOffset() * props.mouseSensitivity)));
+		}
+		else if ((input.Key(eKeyCode::kKeyLAlt) != eKeyState::kRelease) &&
+			(input.Mouse(eMouseCode::kMouseMiddle) != eKeyState::kRelease))
+		{
+			// rotate snap to orthogonal planes
+			TY_CORE_WARN("TODO:: Implement orbit camera rotation snapping to orthogonal planes.");
+		}
+		else if ((input.Mouse(eMouseCode::kMouseMiddle) != eKeyState::kRelease))
+		{
+			// rotate
+			float x_offset = static_cast<float>(e.GetXOffset()) * props.mouseSensitivity;
+			float y_offset = static_cast<float>(e.GetYOffset()) * props.mouseSensitivity;
+			
+			// Get current camera position and calculate target point
+			glm::vec3 current_pos = camera.GetProps().position;
+			glm::vec3 current_front = camera.GetProps().front;
+
+			// Calculate distance to target (or use a default if not set)
+			static glm::vec3 target_point = glm::vec3(0.0f, 0.0f, 0.0f); // Default target at origin
+			static float orbit_radius = glm::length(current_pos - target_point);
+			
+			//// If radius is too small, set a default
+			//if (orbit_radius < 0.1f) {
+			//	orbit_radius = 5.0f;
+			//}
+
+			// Calculate current spherical coordinates relative to target
+			glm::vec3 relative_pos = current_pos - target_point;
+
+			// Current azimuth (horizontal angle around Y-axis)
+			float current_azimuth = atan2(relative_pos.z, relative_pos.x);
+
+			// Current elevation (vertical angle from XZ plane)
+			float current_elevation = asin(glm::clamp(relative_pos.y / orbit_radius, -1.0f, 1.0f));
+
+			// Apply mouse delta to angles
+			float new_azimuth = current_azimuth + glm::radians(x_offset);
+			float new_elevation = current_elevation - glm::radians(y_offset); // Inverted for natural feel
+
+			// Clamp elevation to prevent gimbal lock
+			const float max_elevation = glm::radians(89.0f);
+			new_elevation = glm::clamp(new_elevation, -max_elevation, max_elevation);
+
+			// Calculate new position using spherical coordinates
+			glm::vec3 new_position;
+			new_position.x = target_point.x + orbit_radius * cos(new_elevation) * cos(new_azimuth);
+			new_position.y = target_point.y + orbit_radius * sin(new_elevation);
+			new_position.z = target_point.z + orbit_radius * cos(new_elevation) * sin(new_azimuth);
+
+			// Calculate new front vector (always pointing toward target)
+			glm::vec3 new_front = glm::normalize(target_point - new_position);
+
+			// Calculate yaw and pitch for the camera's SetOrientation method
+			float yaw = glm::degrees(atan2(new_front.z, new_front.x));
+			float pitch = glm::degrees(asin(-new_front.y));
+
+			// Update camera position and orientation
+			camera.SetPosition(new_position);
+			camera.SetOrientation(yaw, pitch);
+
+		}
+		return true;
 	}
 
 	// Ortho Camera Strategy

@@ -34,7 +34,6 @@ namespace ToyEngine
 		
 		void OnResize(float width, float height);
 
-		Camera& GetCamera() { return camera_; }
 		const Camera& GetCamera() const { return camera_; }
 
 		void SetMovementSpeed(float speed) { ctrl_props_.movementSpeed = speed; }
