@@ -1,5 +1,6 @@
 #pragma once
 #include "ToyEngine/enum.h"
+#include <glm/vec2.hpp>
 
 namespace ToyEngine
 {
@@ -40,11 +41,18 @@ namespace ToyEngine
 	class EventCursorPos : public Event
 	{
 	public:
-		EventCursorPos(double xpos, double ypos) : x_offset_(xpos), y_offset_(ypos) {}
-		double GetXOffset() const { return x_offset_; }
-		double GetYOffset() const { return y_offset_; }
+		EventCursorPos(float x_offset, float y_offset,
+			float x_ndc_coord_prev, float y_ndc_coord_prev,
+			float x_ndc_coord, float y_ndc_coord)
+				: offset_(glm::vec2(x_offset, y_offset)), 
+				ndc_coord_prev(glm::vec2(x_ndc_coord_prev, y_ndc_coord_prev)),
+				ndc_coord_(glm::vec2(x_ndc_coord, y_ndc_coord))
+		{}
+		const glm::vec2& GetOffset() { return offset_; }
+		const glm::vec2& GetNDCCoordPrev() { return ndc_coord_prev; }
+		const glm::vec2& GetNDCCoord() { return ndc_coord_; }
 	private:
-		double x_offset_, y_offset_;
+		glm::vec2 offset_, ndc_coord_prev, ndc_coord_;
 	};
 
 	class EventApplicationClose : public Event 

@@ -101,8 +101,8 @@ namespace ToyEngine
 
 	bool FlyCameraStrategy::OnMouseMove(Camera& camera, const CameraControllerProps& props, EventCursorPos& e)
 	{
-		float x_offset = static_cast<float>(e.GetXOffset()) * props.mouseSensitivity;
-		float y_offset = static_cast<float>(e.GetYOffset()) * props.mouseSensitivity;
+		float x_offset = static_cast<float>(e.GetOffset().x) * props.mouseSensitivity;
+		float y_offset = static_cast<float>(e.GetOffset().y) * props.mouseSensitivity;
 		float yaw = camera.GetProps().yaw + x_offset;
 		float pitch = camera.GetProps().pitch - y_offset;
 
@@ -136,8 +136,8 @@ namespace ToyEngine
 			// Push in/out
 			glm::vec3 position = camera.GetProps().position;
 			glm::vec3 view_dir = camera.GetProps().front;
-			float velocity = e.GetXOffset() * props.mouseSensitivity;
-			camera.SetPosition(position + (view_dir * velocity));
+			float zoom_delta = e.GetOffset().y * props.mouseSensitivity;
+			camera.SetPosition(position + (view_dir * zoom_delta));
 		}
 		else if ((input.Key(eKeyCode::kKeyLShift) != eKeyState::kRelease) &&
 			(input.Mouse(eMouseCode::kMouseMiddle) != eKeyState::kRelease))
@@ -146,8 +146,8 @@ namespace ToyEngine
 			glm::vec3 cam_right = camera.GetProps().right;
 			glm::vec3 cam_up	= camera.GetProps().up;
 
-			camera.SetPosition(camera.GetProps().position + (cam_right * ((float)e.GetXOffset() * props.mouseSensitivity)));
-			camera.SetPosition(camera.GetProps().position - (cam_up * ((float)e.GetYOffset() * props.mouseSensitivity)));
+			camera.SetPosition(camera.GetProps().position + (cam_right * ((float)e.GetOffset().x * props.mouseSensitivity)));
+			camera.SetPosition(camera.GetProps().position - (cam_up * ((float)e.GetOffset().y * props.mouseSensitivity)));
 		}
 		else if ((input.Key(eKeyCode::kKeyLAlt) != eKeyState::kRelease) &&
 			(input.Mouse(eMouseCode::kMouseMiddle) != eKeyState::kRelease))
@@ -157,57 +157,43 @@ namespace ToyEngine
 		}
 		else if ((input.Mouse(eMouseCode::kMouseMiddle) != eKeyState::kRelease))
 		{
-			// rotate
-			float x_offset = static_cast<float>(e.GetXOffset()) * props.mouseSensitivity;
-			float y_offset = static_cast<float>(e.GetYOffset()) * props.mouseSensitivity;
+			glm::vec3 p_ndc			= glm::vec3(e.GetNDCCoordPrev(),0.0);
+			glm::vec3 p_prim_ndc	= glm::vec3(e.GetNDCCoord(),0.0);
+			TY_CORE_INFO("NDC: ({},{})", p_prim_ndc.x, p_prim_ndc.y);
+
+			p_ndc.z			= glm::sqrt(1.0f - glm::min((p_ndc.x * p_ndc.x) + (p_ndc.y * p_ndc.y), 1.0f));
+			p_prim_ndc.z	= glm::sqrt(1.0f - glm::min((p_prim_ndc.x * p_prim_ndc.x) + (p_prim_ndc.y * p_prim_ndc.y), 1.0f));
 			
-			// Get current camera position and calculate target point
-			glm::vec3 current_pos = camera.GetProps().position;
-			glm::vec3 current_front = camera.GetProps().front;
-
-			// Calculate distance to target (or use a default if not set)
-			static glm::vec3 target_point = glm::vec3(0.0f, 0.0f, 0.0f); // Default target at origin
-			static float orbit_radius = glm::length(current_pos - target_point);
+			p_ndc		= glm::normalize(p_ndc);
+			p_prim_ndc	= glm::normalize(p_prim_ndc);
 			
-			//// If radius is too small, set a default
-			//if (orbit_radius < 0.1f) {
-			//	orbit_radius = 5.0f;
-			//}
+			float cos_theta = glm::clamp(glm::dot(p_ndc, p_prim_ndc), -1.0f, 1.0f);
+			float theta		= glm::min(glm::acos(cos_theta), 1.0f);
+			float sin_theta = glm::sin(theta);
+			glm::vec3 u		= glm::normalize(glm::cross(p_ndc, p_prim_ndc));
+			TY_CORE_INFO("theta: {}", theta );
+			TY_CORE_INFO("u: ({},{},{})", u.x, u.y, u.z);
 
-			// Calculate current spherical coordinates relative to target
-			glm::vec3 relative_pos = current_pos - target_point;
+			//glm::mat4 R({
+			//	(u.x * u.x) + (1.0f - (u.x * u.x)) * cos_theta,			(u.x * u.y) * (1.0f - cos_theta) - (u.z * sin_theta),	(u.x * u.z) * (1.0f - cos_theta) + (u.y * sin_theta),	0.0f,
+			//	(u.y * u.x) * (1.0f - cos_theta) + (u.z * sin_theta),	(u.y * u.y) + (1.0f - (u.y * u.y)) * cos_theta,			(u.y * u.z) * (1.0f - cos_theta) - (u.x * sin_theta),	0.0f,
+			//	(u.z * u.x) * (1.0f - cos_theta) - (u.y * sin_theta),	(u.z * u.y) * (1.0f - cos_theta) + (u.x * sin_theta),	(u.z * u.z) + (1.0f - (u.z * u.z)) * cos_theta,			0.0f,
+			//	0.0f,													0.0f,													0.0f,													1.0f,
+			//});
+			glm::quat rotation_quat = glm::angleAxis(theta, u);
+			glm::mat4 R = glm::mat4_cast(rotation_quat);
 
-			// Current azimuth (horizontal angle around Y-axis)
-			float current_azimuth = atan2(relative_pos.z, relative_pos.x);
+			glm::vec3 pos = glm::vec3(R * glm::vec4(camera.GetProps().position, 0.0f));
+			camera.SetPosition(pos);
+			TY_CORE_INFO("pos: ({},{},{})", pos.x, pos.y, pos.z);
 
-			// Current elevation (vertical angle from XZ plane)
-			float current_elevation = asin(glm::clamp(relative_pos.y / orbit_radius, -1.0f, 1.0f));
+			camera.SetOrientation(R);
 
-			// Apply mouse delta to angles
-			float new_azimuth = current_azimuth + glm::radians(x_offset);
-			float new_elevation = current_elevation - glm::radians(y_offset); // Inverted for natural feel
-
-			// Clamp elevation to prevent gimbal lock
-			const float max_elevation = glm::radians(89.0f);
-			new_elevation = glm::clamp(new_elevation, -max_elevation, max_elevation);
-
-			// Calculate new position using spherical coordinates
-			glm::vec3 new_position;
-			new_position.x = target_point.x + orbit_radius * cos(new_elevation) * cos(new_azimuth);
-			new_position.y = target_point.y + orbit_radius * sin(new_elevation);
-			new_position.z = target_point.z + orbit_radius * cos(new_elevation) * sin(new_azimuth);
-
-			// Calculate new front vector (always pointing toward target)
-			glm::vec3 new_front = glm::normalize(target_point - new_position);
-
-			// Calculate yaw and pitch for the camera's SetOrientation method
-			float yaw = glm::degrees(atan2(new_front.z, new_front.x));
-			float pitch = glm::degrees(asin(-new_front.y));
-
-			// Update camera position and orientation
-			camera.SetPosition(new_position);
-			camera.SetOrientation(yaw, pitch);
-
+			//float yaw	= glm::degrees(atan2(-pos.z, -pos.x));
+			//float pitch	= glm::degrees(asin(-pos.y)); 
+			//camera.SetOrientation(yaw, pitch);
+			//TY_CORE_INFO("yaw: {}", yaw);
+			//TY_CORE_INFO("pitch: {}", pitch);
 		}
 		return true;
 	}

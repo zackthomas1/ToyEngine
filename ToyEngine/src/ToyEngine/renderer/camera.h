@@ -67,6 +67,7 @@ namespace ToyEngine
 		void SetAspectRatio(float aspect_ratio) { cam_props_.aspect_ratio = aspect_ratio; };
 		void SetFOV(float fov) { cam_props_.fov = glm::clamp(fov, 1.0f, 179.0f); }
 		void SetPosition(const glm::vec3& position) { cam_props_.position = position; }
+		void SetOrientation(glm::mat4 R);
 		void SetOrientation(float yaw, float pitch);
 
 	protected:

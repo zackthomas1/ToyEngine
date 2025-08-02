@@ -335,10 +335,10 @@ public:
 
 	// Light control parameters
 	ToyEngine::Scope<ToyEngine::LightBlock> m_light_block;
-	glm::vec3 m_directional_light_color = glm::vec3(0.2), m_directional_light_dir = glm::vec3(0.0, 0.0, -1.0);
-	glm::vec3 m_point_light_color_1 = glm::vec3(1.0, 0.0, 0.0), m_point_light_color_2 = glm::vec3(0.0, 1.0, 0.0), m_point_light_color_3 = glm::vec3(0.0, 0.0, 1.0);
+	glm::vec3 m_directional_light_color = glm::vec3(1.0f), m_directional_light_dir = glm::vec3(0.0, 0.0, -1.0);
+	glm::vec3 m_point_light_color_1 = glm::vec3(0.5, 0.0, 0.0), m_point_light_color_2 = glm::vec3(0.0, 0.5, 0.0), m_point_light_color_3 = glm::vec3(0.0, 0.0, 0.5);
 	glm::vec3 m_point_light_position_1 = glm::vec3(1.0, 0.0, 1.0), m_point_light_position_2 = glm::vec3(0.0, 1.0, 1.0), m_point_light_position_3 = glm::vec3(-1.0, 0.0, 1.0);
-	glm::vec3 m_spot_light_color = glm::vec3(1.0, 1.0, 0.0);
+	glm::vec3 m_spot_light_color = glm::vec3(0.5, 0.5, 0.0);
 
 	// viewport variables
 	bool m_viewport_focused, m_viewport_hovered;

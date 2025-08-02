@@ -40,6 +40,11 @@ namespace ToyEngine
 		return glm::mat4(1.0f);
 	}
 
+	void Camera::SetOrientation(glm::mat4 R) {
+		cam_props_.front	= glm::vec3(R * glm::vec4(cam_props_.front, 0.0f));
+		cam_props_.right	= glm::vec3(R * glm::vec4(cam_props_.right, 0.0f));
+		cam_props_.up		= glm::vec3(R * glm::vec4(cam_props_.up, 0.0f));
+	}
 
 	void Camera::SetOrientation(float yaw, float pitch)
 	{
