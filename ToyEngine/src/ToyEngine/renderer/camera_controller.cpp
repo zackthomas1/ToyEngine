@@ -180,7 +180,7 @@ namespace ToyEngine
 			//	(u.z * u.x) * (1.0f - cos_theta) - (u.y * sin_theta),	(u.z * u.y) * (1.0f - cos_theta) + (u.x * sin_theta),	(u.z * u.z) + (1.0f - (u.z * u.z)) * cos_theta,			0.0f,
 			//	0.0f,													0.0f,													0.0f,													1.0f,
 			//});
-			glm::quat rotation_quat = glm::angleAxis(theta, u);
+			glm::quat rotation_quat = glm::angleAxis(2.0f * theta, u);
 			glm::mat4 R = glm::mat4_cast(rotation_quat);
 
 			glm::vec3 pos = glm::vec3(R * glm::vec4(camera.GetProps().position, 0.0f));

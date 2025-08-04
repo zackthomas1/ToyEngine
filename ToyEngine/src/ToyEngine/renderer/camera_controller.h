@@ -18,7 +18,7 @@ namespace ToyEngine
 		
 		CameraControllerProps(
 			eCameraControllerType type = eCameraControllerType::kFly,
-			float movementSpeed = 10.0f, float mouseSensitivity = 0.1f)
+			float movementSpeed = 10.0f, float mouseSensitivity = 0.01f)
 				: type(type), movementSpeed(movementSpeed), mouseSensitivity(mouseSensitivity)
 		{}
 	};
