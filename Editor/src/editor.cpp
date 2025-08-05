@@ -89,11 +89,11 @@ public:
 		}
 
 		// Create  Framebuffer
-		TY_INFO("Create Framebuffer...");
+		TY_INFO("Create Viewport Framebuffer...");
 		ToyEngine::FrameBufferProps fb_props;
 		fb_props.width = ToyEngine::Application::AccessWindow().GetWidth(); 
 		fb_props.height = ToyEngine::Application::AccessWindow().GetHeight();
-		m_frame_buffer = ToyEngine::FrameBuffer::Create(fb_props);
+		m_viewport_framebuffer = ToyEngine::FrameBuffer::Create(fb_props);
 
 		m_quad_vertex_array = ToyEngine::VertexArray::Create();
 		ToyEngine::Ref<ToyEngine::VertexBuffer>quad_vertex_buffer = ToyEngine::VertexBuffer::Create(ToyEngine::TextureQuadPrim::m_vertices.data(), 
@@ -119,7 +119,7 @@ public:
 		m_light_block->m_lights[3].m_position		= glm::vec4(m_point_light_position_3, 0.0f);
 		m_light_block->m_lights[3].m_value			= glm::vec4(m_point_light_color_3, 0.0f);
 
-		if (m_viewport_hovered)
+		if (m_viewport_props.is_hovered)
 			m_camera_controller->Update(time_step);
 
 		// update model material properties
@@ -152,11 +152,11 @@ public:
 				glm::radians(m_rotation_degree), glm::vec3(0.0f, 1.0f, 0.0f)));
 
 		// Draw Scene to frame buffer
-		m_frame_buffer->Bind();
+		m_viewport_framebuffer->Bind();
 		ToyEngine::Renderer::BeginScene(&m_camera_controller->GetCamera(), m_light_block.get());
 		ToyEngine::Renderer::Submit(m_scene_graph.get());
 		ToyEngine::Renderer::EndScene();
-		m_frame_buffer->Unbind();
+		m_viewport_framebuffer->Unbind();
 
 		//// Draw quad with post-processing 
 		//ToyEngine::Ref<ToyEngine::Shader> postfxShader = m_shader_lib->Get("postfx");
@@ -166,7 +166,7 @@ public:
 		//ToyEngine::RenderCommand::GetBooleanv(ToyEngine::eParamType::kDEPTH_TEST, &depth_test);
 		//ToyEngine::RenderCommand::Disable(ToyEngine::eParamType::kDEPTH_TEST);
 		//ToyEngine::RenderCommand::ClearSetBackground();
-		//ToyEngine::RenderCommand::BindTexture(ToyEngine::eSamplerType::kTexture2D, m_frame_buffer->GetColorAttachment());
+		//ToyEngine::RenderCommand::BindTexture(ToyEngine::eSamplerType::kTexture2D, m_viewport_framebuffer->GetColorAttachment());
 		//ToyEngine::Renderer::Submit(m_quad_vertex_array.get());
 		//if (depth_test) ToyEngine::RenderCommand::Enable(ToyEngine::eParamType::kDEPTH_TEST);
 	}
@@ -243,19 +243,24 @@ public:
 				ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ 0,0 });
 				ImGui::Begin("Viewport");
 
-				m_viewport_focused = ImGui::IsWindowFocused();
-				m_viewport_hovered = ImGui::IsWindowHovered();
-				ToyEngine::Application::Get().GetImGuiLayer()->BlockEvents(!m_viewport_focused || !m_viewport_hovered);
+				m_viewport_props.is_focused = ImGui::IsWindowFocused();
+				m_viewport_props.is_hovered = ImGui::IsWindowHovered();
+				ToyEngine::Application::Get().GetImGuiLayer()->BlockEvents(!m_viewport_props.is_focused || !m_viewport_props.is_hovered);
+
+				// viewport properties
+				m_viewport_props.panel_size = ImGui::GetContentRegionAvail();
+				//m_viewport_props.size		= ImVec2 ImGui::GetWindowSize();
+				m_viewport_props.min		= ImGui::GetWindowContentRegionMin();
+				m_viewport_props.window_pos	= ImGui::GetWindowPos();
 
 				// Check if window was resized and recreate framebuffer if needed
-				ImVec2 viewport_panel_size = ImGui::GetContentRegionAvail();
-				if (viewport_panel_size.x != m_frame_buffer->GetWidth() || viewport_panel_size.y != m_frame_buffer->GetHeight()) {
-					m_frame_buffer->Resize((uint32_t)viewport_panel_size.x, (uint32_t)viewport_panel_size.y);
-					m_camera_controller->OnResize(viewport_panel_size.x, viewport_panel_size.y);
+				if (m_viewport_props.panel_size.x != m_viewport_framebuffer->GetWidth() || m_viewport_props.panel_size.y != m_viewport_framebuffer->GetHeight()) {
+					m_viewport_framebuffer->Resize((uint32_t)m_viewport_props.panel_size.x, (uint32_t)m_viewport_props.panel_size.y);
+					m_camera_controller->OnResize(m_viewport_props.panel_size.x, m_viewport_props.panel_size.y);
 				}
 
-				ImGui::Image(m_frame_buffer->GetColorAttachment(),
-					ImVec2(m_frame_buffer->GetWidth(), m_frame_buffer->GetHeight()),
+				ImGui::Image(m_viewport_framebuffer->GetColorAttachment(),
+					ImVec2(m_viewport_framebuffer->GetWidth(), m_viewport_framebuffer->GetHeight()),
 					ImVec2(0, 1), ImVec2(1, 0));
 				ImGui::End();
 				ImGui::PopStyleVar();
@@ -318,19 +323,60 @@ public:
 
 	virtual void OnEvent(ToyEngine::Event& e)
 	{
-		if(m_viewport_hovered)
-			m_camera_controller->OnEvent(e);
+		ToyEngine::EventDispatcher dispatcher(e);
+
+		if (m_viewport_props.is_hovered) {
+			dispatcher.Dispatch<ToyEngine::EventVerticalScroll>(TY_BINDFN(m_camera_controller->OnEvent));
+			dispatcher.Dispatch<ToyEngine::EventCursorPos>(TY_BINDFN(OnMouseMove));
+			//m_camera_controller->OnEvent(e);
+		}
 	}
+
+	bool OnMouseMove(ToyEngine::EventCursorPos& cursor_event) {
+		
+		// Get current viewport information from ImGui
+		ImGuiIO& io = ImGui::GetIO();
+		ImVec2 mouse_pos = io.MousePos;
+		TY_INFO("mouse pos: ({},{})", mouse_pos.x, mouse_pos.y);
+		TY_INFO("viewport window pos: ({},{})", m_viewport_props.window_pos.x, m_viewport_props.window_pos.x);
+
+		// Calculate viewport-relative mouse position
+		glm::vec2 viewport_pos = glm::vec2(
+			mouse_pos.x - (m_viewport_props.window_pos.x + m_viewport_props.min.x),
+			mouse_pos.y - (m_viewport_props.window_pos.y + m_viewport_props.min.y)
+		);
+		TY_INFO("mouse viewport pos: ({},{})", viewport_pos.x, viewport_pos.x);
+
+		// Calculate previous viewport position
+		glm::vec2 viewport_pos_prev = viewport_pos - cursor_event.GetOffset();
+
+		// calculate NDC values
+		float x_ndc_coord_prev = (2.0f * (viewport_pos_prev.x / m_viewport_props.panel_size.x)) - 1.0f;
+		float y_ndc_coord_prev = (2.0f * (viewport_pos_prev.y / m_viewport_props.panel_size.y)) - 1.0f;
+
+		float x_ndc_coord = (2.0f * (viewport_pos.x / m_viewport_props.panel_size.x)) - 1.0f;
+		float y_ndc_coord = (2.0f * (viewport_pos.y / m_viewport_props.panel_size.y)) - 1.0f;
+		TY_INFO("viewport NDC: ({},{})", x_ndc_coord, y_ndc_coord);
+
+		ToyEngine::EventCursorPos viewport_cursorpos(cursor_event.GetOffset().x, cursor_event.GetOffset().y,
+			x_ndc_coord_prev, y_ndc_coord_prev,
+			x_ndc_coord, y_ndc_coord);
+		ToyEngine::EventDispatcher dispatcher(viewport_cursorpos);
+		dispatcher.Dispatch<ToyEngine::EventCursorPos>(TY_BINDFN(m_camera_controller->OnEvent));
+
+		return true; 
+	}
+
 public: 
 	ToyEngine::Scope<ToyEngine::CameraController> m_camera_controller;
 	ToyEngine::Scope<ToyEngine::ShaderLibrary> m_shader_lib;
-	ToyEngine::Ref<ToyEngine::FrameBuffer> m_frame_buffer; 
+	ToyEngine::Ref<ToyEngine::FrameBuffer> m_postfx_framebuffer;
 	ToyEngine::Ref<ToyEngine::VertexArray> m_quad_vertex_array;
 
 	// Model control parameters
 	ToyEngine::Scope<ToyEngine::SceneNode> m_scene_graph;
 	float m_rotation_degree = 0;
-	glm::vec3 m_translate = glm::vec3(0.0f), m_translate_cyborg = glm::vec3(0.0f);
+	glm::vec3 m_translate = glm::vec3(0.0f), m_translate_cyborg = glm::vec3(2.5f, -1.5f, 0.0f);
 	float m_roughness = 32.0f, m_metallic = 0.0f, m_transmission = 0.0f, m_refractive_index = 1.52f;
 
 	// Light control parameters
@@ -341,7 +387,13 @@ public:
 	glm::vec3 m_spot_light_color = glm::vec3(0.5, 0.5, 0.0);
 
 	// viewport variables
-	bool m_viewport_focused, m_viewport_hovered;
+	struct ViewportProps {
+		bool is_focused, is_hovered;
+		ImVec2 panel_size, min, window_pos;
+	}; 
+	ViewportProps m_viewport_props;
+	ToyEngine::Ref<ToyEngine::FrameBuffer> m_viewport_framebuffer;
+
 };
 
 class Editor : public ToyEngine::Application

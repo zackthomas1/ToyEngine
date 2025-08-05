@@ -97,5 +97,4 @@ namespace ToyEngine
 		window_->SetWindowSize(e.GetWidth(), e.GetHeight());
 		return true;
 	}
-
 }

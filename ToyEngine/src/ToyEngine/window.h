@@ -18,8 +18,7 @@ namespace ToyEngine {
 			float y_mouse_pos = TY_DEFAULT_WINDOW_HEIGHT / 2.0f)
 			: title(title), width(width), height(height),
 			is_mouse_active(is_mouse_active), x_mouse_pos(x_mouse_pos), y_mouse_pos(y_mouse_pos)
-		{
-		}
+		{}
 	};
 
 	class Window

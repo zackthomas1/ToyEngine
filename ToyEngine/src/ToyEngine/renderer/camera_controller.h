@@ -55,9 +55,9 @@ namespace ToyEngine
 	protected:
 		ICameraStrategy() {}
 
-		virtual void Update(Camera& camera, const CameraControllerProps& props, const TimeStep& time_step) = 0;
-		virtual bool OnMouseScroll(Camera& camera, const CameraControllerProps& props, EventVerticalScroll& e) = 0;
-		virtual bool OnMouseMove(Camera& camera, const CameraControllerProps& props, EventCursorPos& e) = 0;
+		virtual void Update(Camera& camera, const CameraControllerProps& props, const TimeStep& time_step) {}
+		virtual bool OnMouseScroll(Camera& camera, const CameraControllerProps& props, EventVerticalScroll& e) { return false; }
+		virtual bool OnMouseMove(Camera& camera, const CameraControllerProps& props, EventCursorPos& e) { return false; }
 	};
 
 	class FlyCameraStrategy : public ICameraStrategy
@@ -79,8 +79,6 @@ namespace ToyEngine
 	protected:
 		OrbitCameraStrategy() {}
 
-		virtual void Update(Camera& camera, const CameraControllerProps& props, const TimeStep& time_step)		override;
-		virtual bool OnMouseScroll(Camera& camera, const CameraControllerProps& props, EventVerticalScroll& e)	override;
 		virtual bool OnMouseMove(Camera& camera, const CameraControllerProps& props, EventCursorPos& e)			override;
 	};
 

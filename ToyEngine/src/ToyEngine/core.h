@@ -29,9 +29,8 @@
 #define TY_BINDFN_ARGS(fn, ...) [this](auto&& e) { return fn(__VA_ARGS__, e); }
 
 constexpr float TY_EPSILON = 0.001;
-constexpr int TY_DEFAULT_WINDOW_WIDTH = 1920;
-constexpr int TY_DEFAULT_WINDOW_HEIGHT = 1080;
-
+constexpr int TY_DEFAULT_WINDOW_WIDTH = 1280;
+constexpr int TY_DEFAULT_WINDOW_HEIGHT = 720;
 
 namespace ToyEngine {
 	template <typename T>

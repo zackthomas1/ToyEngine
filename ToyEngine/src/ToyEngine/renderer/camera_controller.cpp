@@ -117,15 +117,6 @@ namespace ToyEngine
 
 	// Orbit Camera Strategy
 	// --------------------
-	void OrbitCameraStrategy::Update(Camera& camera, const CameraControllerProps& props, const TimeStep& time_step)
-	{
-	}
-
-	bool OrbitCameraStrategy::OnMouseScroll(Camera& camera, const CameraControllerProps& props, EventVerticalScroll& e)
-	{
-		return false;
-	}
-
 	bool OrbitCameraStrategy::OnMouseMove(Camera& camera, const CameraControllerProps& props, EventCursorPos& e)
 	{
 		ToyEngine::InputPoll& input = ToyEngine::Locator::InputPollService();
@@ -195,6 +186,7 @@ namespace ToyEngine
 			//TY_CORE_INFO("yaw: {}", yaw);
 			//TY_CORE_INFO("pitch: {}", pitch);
 		}
+
 		return true;
 	}
 
@@ -207,11 +199,13 @@ namespace ToyEngine
 
 	bool OrthoCameraStrategy::OnMouseScroll(Camera& camera, const CameraControllerProps& props, EventVerticalScroll& e)
 	{
+		TY_CORE_WARN("TODO:: Implement  OrthoCameraStrategy::OnMouseScroll");
 		return false;
 	}
 
 	bool OrthoCameraStrategy::OnMouseMove(Camera& camera, const CameraControllerProps& props, EventCursorPos& e)
 	{
+		TY_CORE_WARN("TODO:: Implement  OrthoCameraStrategy::OnMouseMove");
 		return false;
 	}
 
