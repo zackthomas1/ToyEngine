@@ -90,8 +90,6 @@ namespace ToyEngine
 		OrthoCameraStrategy() {}
 
 		virtual void Update(Camera& camera, const CameraControllerProps& props, const TimeStep& time_step)		override;
-		virtual bool OnMouseScroll(Camera& camera, const CameraControllerProps& props, EventVerticalScroll& e)	override;
-		virtual bool OnMouseMove(Camera& camera, const CameraControllerProps& props, EventCursorPos& e)			override;
 	};
 
 }

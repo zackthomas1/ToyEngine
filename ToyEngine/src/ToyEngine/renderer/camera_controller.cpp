@@ -31,7 +31,7 @@ namespace ToyEngine
 			strategy_ = Scope<FlyCameraStrategy>(new FlyCameraStrategy());
 			break;
 		}
-		camera_ = Camera(camera_props);
+		camera_.SetCameraType(camera_props.type);
 	}
 
 	void CameraController::Update(const TimeStep& time_step)
@@ -148,43 +148,42 @@ namespace ToyEngine
 		}
 		else if ((input.Mouse(eMouseCode::kMouseMiddle) != eKeyState::kRelease))
 		{
-			glm::vec3 p_ndc			= glm::vec3(e.GetNDCCoordPrev(),0.0);
-			glm::vec3 p_prim_ndc	= glm::vec3(e.GetNDCCoord(),0.0);
+			glm::vec3 p_ndc, p_prim_ndc;
+			if (e.IsWrapped()) {
+				// Use compensated NDC coordinates to maintain rotation continuity
+
+				p_ndc = glm::vec3(e.GetNDCCoord(), 0.0f);
+				p_prim_ndc = glm::vec3(e.GetCompensatedNDC(), 0.0f);
+
+				TY_CORE_WARN("Wrap");
+			} else {
+				p_ndc = glm::vec3(e.GetNDCCoordPrev(), 0.0);	// start pos
+				p_prim_ndc = glm::vec3(e.GetNDCCoord(), 0.0);		// end pos
+			}
 			TY_CORE_INFO("NDC: ({},{})", p_prim_ndc.x, p_prim_ndc.y);
 
+			// Project 2D NDC to 3D sphere
 			p_ndc.z			= glm::sqrt(1.0f - glm::min((p_ndc.x * p_ndc.x) + (p_ndc.y * p_ndc.y), 1.0f));
 			p_prim_ndc.z	= glm::sqrt(1.0f - glm::min((p_prim_ndc.x * p_prim_ndc.x) + (p_prim_ndc.y * p_prim_ndc.y), 1.0f));
 			
 			p_ndc		= glm::normalize(p_ndc);
 			p_prim_ndc	= glm::normalize(p_prim_ndc);
 			
+			// Calculate rotation
 			float cos_theta = glm::clamp(glm::dot(p_ndc, p_prim_ndc), -1.0f, 1.0f);
 			float theta		= glm::min(glm::acos(cos_theta), 1.0f);
-			float sin_theta = glm::sin(theta);
 			glm::vec3 u		= glm::normalize(glm::cross(p_ndc, p_prim_ndc));
-			TY_CORE_INFO("theta: {}", theta );
-			TY_CORE_INFO("u: ({},{},{})", u.x, u.y, u.z);
+			//TY_CORE_INFO("theta: {} u: ({},{},{})",theta, u.x, u.y, u.z);
 
-			//glm::mat4 R({
-			//	(u.x * u.x) + (1.0f - (u.x * u.x)) * cos_theta,			(u.x * u.y) * (1.0f - cos_theta) - (u.z * sin_theta),	(u.x * u.z) * (1.0f - cos_theta) + (u.y * sin_theta),	0.0f,
-			//	(u.y * u.x) * (1.0f - cos_theta) + (u.z * sin_theta),	(u.y * u.y) + (1.0f - (u.y * u.y)) * cos_theta,			(u.y * u.z) * (1.0f - cos_theta) - (u.x * sin_theta),	0.0f,
-			//	(u.z * u.x) * (1.0f - cos_theta) - (u.y * sin_theta),	(u.z * u.y) * (1.0f - cos_theta) + (u.x * sin_theta),	(u.z * u.z) + (1.0f - (u.z * u.z)) * cos_theta,			0.0f,
-			//	0.0f,													0.0f,													0.0f,													1.0f,
-			//});
+			// quaternion implementation
 			glm::quat rotation_quat = glm::angleAxis(2.0f * theta, u);
 			glm::mat4 R = glm::mat4_cast(rotation_quat);
 
-			glm::vec3 pos = glm::vec3(R * glm::vec4(camera.GetProps().position, 0.0f));
+			// Apply rotation to camera position
+			glm::vec3 pos = glm::vec3(R * glm::vec4(camera.GetProps().position, 1.0f));
 			camera.SetPosition(pos);
-			TY_CORE_INFO("pos: ({},{},{})", pos.x, pos.y, pos.z);
 
 			camera.SetOrientation(R);
-
-			//float yaw	= glm::degrees(atan2(-pos.z, -pos.x));
-			//float pitch	= glm::degrees(asin(-pos.y)); 
-			//camera.SetOrientation(yaw, pitch);
-			//TY_CORE_INFO("yaw: {}", yaw);
-			//TY_CORE_INFO("pitch: {}", pitch);
 		}
 
 		return true;
@@ -192,21 +191,20 @@ namespace ToyEngine
 
 	// Ortho Camera Strategy
 	// --------------------
-
 	void OrthoCameraStrategy::Update(Camera& camera, const CameraControllerProps& props, const TimeStep& time_step)
 	{
-	}
+		float delta_time = time_step.GetTimeDelta();
+		ToyEngine::InputPoll& input = ToyEngine::Locator::InputPollService();
 
-	bool OrthoCameraStrategy::OnMouseScroll(Camera& camera, const CameraControllerProps& props, EventVerticalScroll& e)
-	{
-		TY_CORE_WARN("TODO:: Implement  OrthoCameraStrategy::OnMouseScroll");
-		return false;
-	}
+		float velocity = props.movementSpeed * delta_time;
 
-	bool OrthoCameraStrategy::OnMouseMove(Camera& camera, const CameraControllerProps& props, EventCursorPos& e)
-	{
-		TY_CORE_WARN("TODO:: Implement  OrthoCameraStrategy::OnMouseMove");
-		return false;
+		if (input.Key(eKeyCode::kKeyW) != eKeyState::kRelease) // Up
+			camera.SetPosition(camera.GetProps().position + (velocity * camera.GetProps().up));
+		if (input.Key(eKeyCode::kKeyS) != eKeyState::kRelease) // Down
+			camera.SetPosition(camera.GetProps().position - (velocity * camera.GetProps().up));
+		if (input.Key(eKeyCode::kKeyD) != eKeyState::kRelease) // Right
+			camera.SetPosition(camera.GetProps().position + (velocity * camera.GetProps().right));
+		if (input.Key(eKeyCode::kKeyA) != eKeyState::kRelease) // Left
+			camera.SetPosition(camera.GetProps().position - (velocity * camera.GetProps().right));
 	}
-
 }
