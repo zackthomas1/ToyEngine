@@ -1,4 +1,9 @@
 #include <toy_engine.h>
+//----------- entry point -------------
+#include "ToyEngine/entry_point.h"
+//-------------------------------------
+
+#include "viewport.h"
 
 void DrawSceneNodeTree(ToyEngine::SceneNode* node) {
 	if(!node) return; 
@@ -9,101 +14,6 @@ void DrawSceneNodeTree(ToyEngine::SceneNode* node) {
 		ImGui::TreePop();
 	}
 }
-
-class Viewport
-{
-	// viewport variables
-	struct ViewportProps {
-		bool is_focused, is_hovered;
-		ImVec2 panel_size, min, window_pos;
-		ToyEngine::Ref<ToyEngine::FrameBuffer> framebuffer;
-	};
-
-public:
-	Viewport()
-	{
-		// Create  Framebuffer
-		ToyEngine::FrameBufferProps fb_props;
-		props_.framebuffer	= ToyEngine::FrameBuffer::Create(fb_props);
-	}
-	~Viewport() {}
-
-	void ImGuiRender()
-	{
-		// Viewport
-		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ 0,0 });
-		ImGui::Begin("Viewport");
-
-		props_.is_focused = ImGui::IsWindowFocused();
-		props_.is_hovered = ImGui::IsWindowHovered();
-		ToyEngine::Application::Get().GetImGuiLayer()->BlockEvents(!props_.is_focused || !props_.is_hovered);
-
-		// viewport properties
-		props_.panel_size = ImGui::GetContentRegionAvail();
-		//m_viewport_props.size		= ImVec2 ImGui::GetWindowSize();
-		props_.min = ImGui::GetWindowContentRegionMin();
-		props_.window_pos = ImGui::GetWindowPos();
-
-		// Check if window was resized and recreate framebuffer if needed
-		if (props_.panel_size.x != props_.framebuffer->GetWidth() || props_.panel_size.y != props_.framebuffer->GetHeight()) {
-			props_.framebuffer->Resize((uint32_t)props_.panel_size.x, (uint32_t)props_.panel_size.y);
-			camera_controller_->OnResize(props_.panel_size.x, props_.panel_size.y);
-		}
-
-		ImGui::Image(props_.framebuffer->GetColorAttachment(),
-			ImVec2(props_.panel_size.x, props_.panel_size.y),
-			ImVec2(0, 1), ImVec2(1, 0));
-		ImGui::End();
-		ImGui::PopStyleVar();
-	}
-
-	bool OnMouseMove(ToyEngine::EventCursorPos& cursor_event)
-	{
-		// Get current viewport information from ImGui
-		ImGuiIO& io = ImGui::GetIO();
-		ImVec2 mouse_pos = io.MousePos;
-		TY_INFO("mouse pos: ({},{})", mouse_pos.x, mouse_pos.y);
-		TY_INFO("viewport window pos: ({},{})", props_.window_pos.x, props_.window_pos.y);
-
-		// Calculate viewport-relative mouse position
-		glm::vec2 viewport_pos = glm::vec2(
-			mouse_pos.x - (props_.window_pos.x + props_.min.x),
-			mouse_pos.y - (props_.window_pos.y + props_.min.y)
-		);
-		TY_INFO("mouse viewport pos: ({},{})", viewport_pos.x, viewport_pos.y);
-
-		// Calculate previous viewport position
-		glm::vec2 viewport_pos_prev = viewport_pos - cursor_event.GetOffset();
-
-		// calculate NDC values
-		float x_ndc_coord_prev = (2.0f * (viewport_pos_prev.x / props_.panel_size.x)) - 1.0f;
-		float y_ndc_coord_prev = (2.0f * (viewport_pos_prev.y / props_.panel_size.y)) - 1.0f;
-
-		float x_ndc_coord = (2.0f * (viewport_pos.x / props_.panel_size.x)) - 1.0f;
-		float y_ndc_coord = (2.0f * (viewport_pos.y / props_.panel_size.y)) - 1.0f;
-		TY_INFO("viewport NDC: ({},{})", x_ndc_coord, y_ndc_coord);
-
-		ToyEngine::EventCursorPos viewport_cursorpos(cursor_event.GetOffset().x, cursor_event.GetOffset().y,
-			x_ndc_coord_prev, y_ndc_coord_prev,
-			x_ndc_coord, y_ndc_coord);
-		ToyEngine::EventDispatcher dispatcher(viewport_cursorpos);
-		dispatcher.Dispatch<ToyEngine::EventCursorPos>(TY_BINDFN(camera_controller_->OnEvent));
-
-		return true;
-	}
-	bool OnEvent(ToyEngine::Event& e) {
-		ToyEngine::EventDispatcher dispatcher(e); 
-		dispatcher.Dispatch<ToyEngine::EventVerticalScroll>(TY_BINDFN(camera_controller_->OnEvent));
-		dispatcher.Dispatch<ToyEngine::EventCursorPos>(TY_BINDFN(OnMouseMove));
-
-		return e.GetEventHandled();
-	}
-	const ViewportProps& GetProps() const { return props_; }
-	void SetCameraController(const ToyEngine::Ref <ToyEngine::CameraController> cam) { camera_controller_ = cam; }
-private:
-	ViewportProps props_;
-	ToyEngine::Ref<ToyEngine::CameraController> camera_controller_;
-};
 
 class Scene : public ToyEngine::Layer
 {
@@ -273,7 +183,7 @@ public:
 
 		// Show the big demo window (Most of the sample code is in ImGui::ShowDemoWindow()! 
 		// You can browse its code to learn more about Dear ImGui!).
-		//ImGui::ShowDemoWindow();
+		ImGui::ShowDemoWindow();
 
 		// Main Dockspace
 		{
@@ -381,10 +291,10 @@ public:
 					ImGui::Text("Spot Light");
 					ImGui::ColorEdit3("Color##SpotLightColor", glm::value_ptr(m_spot_light_color), ImGuiColorEditFlags_Float);
 				}
+				// Controls end
 				ImGui::End();
 			}
-
-			//
+			// DockSpace Demo end
 			ImGui::End();
 		}
 	}
@@ -392,13 +302,15 @@ public:
 	virtual void OnEvent(ToyEngine::Event& e)
 	{
 		if (m_viewport.GetProps().is_hovered) {
+			// Dispatch to viewport
 			ToyEngine::EventDispatcher dispatcher(e);
 			dispatcher.Dispatch<ToyEngine::Event>(TY_BINDFN(m_viewport.OnEvent));
 		}
 	}
 
 public:
-	// The scene graph and shader library should be in
+	// The scene graph and shader library should be in ToyEngine::Application 
+	// and refactored as ResourceManager systems
 	ToyEngine::Scope<ToyEngine::SceneNode> m_scene_graph;
 	ToyEngine::Scope<ToyEngine::ShaderLibrary> m_shader_lib;
 	
