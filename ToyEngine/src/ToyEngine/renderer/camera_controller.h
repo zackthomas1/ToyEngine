@@ -72,14 +72,22 @@ namespace ToyEngine
 		virtual bool OnMouseMove(Camera& camera, const CameraControllerProps& props, EventCursorPos& e)			override;
 	};
 
+	constexpr float ORBIT_RADIUS_MIN = 0.5f;
+	constexpr float ORBIT_RADIUS_MAX = 20.0f;
+
 	class OrbitCameraStrategy : public ICameraStrategy
 	{
 	public:
 		friend class CameraController;
 	protected:
-		OrbitCameraStrategy() {}
+		OrbitCameraStrategy(float orbit_radius)
+			: orbit_radius_(orbit_radius), target_point_(glm::vec3(0.0f))
+		{}
 
 		virtual bool OnMouseMove(Camera& camera, const CameraControllerProps& props, EventCursorPos& e)			override;
+	private:
+		float orbit_radius_;
+		glm::vec3 target_point_; 
 	};
 
 	class OrthoCameraStrategy : public ICameraStrategy

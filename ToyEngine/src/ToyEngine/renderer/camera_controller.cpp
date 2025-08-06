@@ -17,7 +17,8 @@ namespace ToyEngine
 		}
 		case eCameraControllerType::kOrbit: {
 			camera_props.type = ToyEngine::eCameraType::kPerspective;
-			strategy_ = Scope<OrbitCameraStrategy>(new OrbitCameraStrategy());
+			float orbit_radius = glm::distance(camera_.GetProps().position, glm::vec3(0.0f));
+			strategy_ = Scope<OrbitCameraStrategy>(new OrbitCameraStrategy(orbit_radius));
 			break;
 		}
 		case eCameraControllerType::kOrtho: {
@@ -124,11 +125,14 @@ namespace ToyEngine
 		if ((input.Key(eKeyCode::kKeyLCtrl) != eKeyState::kRelease) &&
 			(input.Mouse(eMouseCode::kMouseMiddle) != eKeyState::kRelease) ) 
 		{
-			// Push in/out
 			glm::vec3 position = camera.GetProps().position;
 			glm::vec3 view_dir = camera.GetProps().front;
 			float zoom_delta = e.GetOffset().y * props.mouseSensitivity;
-			camera.SetPosition(position + (view_dir * zoom_delta));
+			
+			orbit_radius_ = glm::clamp(orbit_radius_ + zoom_delta, ORBIT_RADIUS_MIN, ORBIT_RADIUS_MAX);
+
+			camera.SetPosition((-view_dir * orbit_radius_) + target_point_);
+			//TY_CORE_INFO("Orbit Radius: {:.2f} Offset Val: {:.2f}", orbit_radius_, e.GetOffset().y);
 		}
 		else if ((input.Key(eKeyCode::kKeyLShift) != eKeyState::kRelease) &&
 			(input.Mouse(eMouseCode::kMouseMiddle) != eKeyState::kRelease))
@@ -136,9 +140,16 @@ namespace ToyEngine
 			// Pan
 			glm::vec3 cam_right = camera.GetProps().right;
 			glm::vec3 cam_up	= camera.GetProps().up;
+				
+			glm::vec2 pan_velocity(e.GetOffset().x * props.mouseSensitivity,
+						e.GetOffset().y * props.mouseSensitivity);
 
-			camera.SetPosition(camera.GetProps().position + (cam_right * ((float)e.GetOffset().x * props.mouseSensitivity)));
-			camera.SetPosition(camera.GetProps().position - (cam_up * ((float)e.GetOffset().y * props.mouseSensitivity)));
+			target_point_ += cam_right * pan_velocity.x;
+			target_point_ -= cam_up * pan_velocity.y;
+			
+			camera.SetPosition(camera.GetProps().position + (cam_right * pan_velocity.x));
+			camera.SetPosition(camera.GetProps().position - (cam_up * pan_velocity.y));
+			//TY_CORE_INFO("Target Point: ({:.2f},{:.2f}, {:.2f}) Offset: ({:.2f},{:.2f})", target_point_.x, target_point_.y, target_point_.z, e.GetOffset().x, e.GetOffset().y);
 		}
 		else if ((input.Key(eKeyCode::kKeyLAlt) != eKeyState::kRelease) &&
 			(input.Mouse(eMouseCode::kMouseMiddle) != eKeyState::kRelease))
@@ -157,26 +168,29 @@ namespace ToyEngine
 			
 			p_ndc		= glm::normalize(p_ndc);
 			p_prim_ndc	= glm::normalize(p_prim_ndc);
-			//TY_CORE_INFO("Prev NDC:({},{},{}) NDC: ({},{},{})", p_ndc.x, p_ndc.y, p_ndc.z, p_prim_ndc.x, p_prim_ndc.y, p_prim_ndc.z);
+			//TY_CORE_INFO("Prev NDC:({:.2f},{:.2f},{:.2f}) NDC: ({:.2f},{:.2f},{:.2f})", p_ndc.x, p_ndc.y, p_ndc.z, p_prim_ndc.x, p_prim_ndc.y, p_prim_ndc.z);
 
 			// Calculate rotation
 			float cos_theta = glm::clamp(glm::dot(p_ndc, p_prim_ndc), -1.0f, 1.0f);
 			float theta		= glm::acos(glm::min(cos_theta, 1.0f));
 			glm::vec3 u		= glm::normalize(glm::cross(p_ndc, p_prim_ndc));
-			//TY_CORE_INFO("theta: {} u: ({},{},{})", theta, u.x, u.y, u.z);
+			//TY_CORE_INFO("theta: {:.2f} u: ({:.2f},{:.2f},{:.2f})", theta, u.x, u.y, u.z);
 
-			// An angle of rotation is greater than 90 degrees on a single frame
-			// indicates that the cursor has wrapped around to the other side of the
-			// viewport. These jumps in cursor position should be ignored by the camera controller.
-			if (theta < 0.0001 || theta > 1.0f) return true;
-			
+			// Rotation angle theta must be greater than zero and less than 180(pi)
+			// rotation equal to zero will cause a division by zero when calculating
+			// rotation quaterion.
+			if (theta < TY_EPSILON || theta > glm::pi<float>()){
+				TY_CORE_WARN("Invalid rotation angle: theta: {:.2f} u: ({:.2f},{:.2f},{:.2f})", theta, u.x, u.y, u.z);
+				return true;
+			}
+
 			// quaternion implementation
 			glm::quat rotation_quat = glm::angleAxis(2.0f * theta, u);
 			glm::mat4 R = glm::mat4_cast(rotation_quat);
 
 			// Apply rotation to camera position
-			glm::vec3 pos = glm::vec3(R * glm::vec4(camera.GetProps().position, 1.0f));
-			camera.SetPosition(pos);
+			glm::vec3 rotated_pos = glm::vec3(R * glm::vec4(camera.GetProps().position - target_point_, 1.0f));
+			camera.SetPosition(rotated_pos + target_point_);
 
 			camera.SetOrientation(R);
 		}

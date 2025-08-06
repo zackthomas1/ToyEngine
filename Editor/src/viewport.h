@@ -6,7 +6,7 @@ class Viewport
 	// viewport variables
 	struct ViewportProps {
 		bool is_focused, is_hovered;
-		ImVec2 panel_size, min, window_pos;
+		ImVec2 panel_size, window_min, window_max, window_pos, window_size;
 		ToyEngine::Ref<ToyEngine::FrameBuffer> framebuffer;
 	};
 
@@ -21,7 +21,7 @@ public:
 	const ViewportProps& GetProps() const { return props_; }
 	void SetCameraController(const ToyEngine::Ref <ToyEngine::CameraController> cam) { camera_controller_ = cam; }
 private:
-	std::pair<bool, glm::vec2&> HandleCursorWrapping(float x_ndc, float y_ndc, const glm::vec2& viewport_pos);
+	std::pair<bool, glm::vec2> HandleCursorWrapping(float x_ndc, float y_ndc, const glm::vec2& viewport_pos);
 private:
 	ViewportProps props_;
 	ToyEngine::Ref<ToyEngine::CameraController> camera_controller_;
