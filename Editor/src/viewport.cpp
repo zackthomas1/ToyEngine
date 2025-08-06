@@ -45,7 +45,7 @@ bool Viewport::OnMouseMove(ToyEngine::EventCursorPos& cursor_event)
 {
 	// Null check for camera controller
 	if (!camera_controller_) {
-		TY_CORE_WARN("Camera controller not set in viewport");
+		TY_CORE_ERROR("Camera controller not set in viewport");
 		return false;
 	}
 	// Get current viewport information from ImGui
@@ -62,18 +62,17 @@ bool Viewport::OnMouseMove(ToyEngine::EventCursorPos& cursor_event)
 	glm::vec2 viewport_pos_prev = viewport_pos - cursor_event.GetOffset();
 
 	// Validate panel size to prevent division by zero
-	if (props_.panel_size.x < TY_EPSILON || props_.panel_size.y < TY_EPSILON) {
-		TY_CORE_WARN("Invalid viewport panel size: ({:.2f}, {:.2f})",
-			props_.panel_size.x, props_.panel_size.y);
-		return false;
-	}
+	TY_ASSERT(props_.panel_size.x > TY_EPSILON && props_.panel_size.y > TY_EPSILON, "Invalid viewport panel size");
 
 	// calculate NDC values
 	float x_ndc_coord_prev = (2.0f * (viewport_pos_prev.x / props_.panel_size.x)) - 1.0f;
 	float y_ndc_coord_prev = (2.0f * (viewport_pos_prev.y / props_.panel_size.y)) - 1.0f;
+	TY_ASSERT(glm::abs(x_ndc_coord_prev) <= 1.0f && glm::abs(y_ndc_coord_prev) <= 1.0f, "Invalid NDC - out of expected range [-1,1]");
 
 	float x_ndc_coord = (2.0f * (viewport_pos.x / props_.panel_size.x)) - 1.0f;
 	float y_ndc_coord = (2.0f * (viewport_pos.y / props_.panel_size.y)) - 1.0f;
+	TY_ASSERT(glm::abs(x_ndc_coord) <= 1.0f && glm::abs(y_ndc_coord) <= 1.0f, "Invalid NDC - out of expected range [-1,1]");
+
 	//TY_INFO("viewport NDC: ({},{})", x_ndc_coord, y_ndc_coord);
 
 	// Only wrap cursor if camera controller is an Orbit camera and the middle mouse botton is pressed

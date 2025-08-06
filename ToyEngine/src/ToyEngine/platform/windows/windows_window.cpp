@@ -117,9 +117,11 @@ namespace ToyEngine
 
 			float x_ndc_coord_prev = (2.0f * (data.x_mouse_pos / data.width)) - 1.0f;
 			float y_ndc_coord_prev = (2.0f * (data.y_mouse_pos / data.height)) - 1.0f;
+			TY_ASSERT(glm::abs(x_ndc_coord_prev) <= 1.0f && glm::abs(y_ndc_coord_prev) <= 1.0f, "Invalid NDC - out of expected range [-1,1]");
 
 			float x_ndc_coord = (2.0f * (x_current_pos / data.width)) - 1.0f;
 			float y_ndc_coord = (2.0f * (y_current_pos / data.height)) - 1.0f;
+			TY_ASSERT(glm::abs(x_ndc_coord) <= 1.0f && glm::abs(y_ndc_coord) <= 1.0f, "Invalid NDC - out of expected range [-1,1]");
 
 			if (!data.is_mouse_active)
 			{
