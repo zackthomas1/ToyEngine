@@ -13,7 +13,9 @@ namespace ToyEngine
 
         virtual void OnUpdate() override;
 
-        virtual void SetCommandCallbackFn(const EventCallbackFn& callback) { data_.event_callback = callback; }
+        virtual void SetCommandCallbackFn(const EventCallbackFn& callback) override{ data_.event_callback = callback; }
+        virtual void SetCursorPos(float xpos, float ypos) override;
+
         GLFWwindow* GetGLFWWindow() const { return window_; } // Mark as const to prevent modification of the class or pointer
 
     private:

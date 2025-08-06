@@ -19,6 +19,14 @@ namespace ToyEngine
 		glfwPollEvents();
 	}
 
+	void WindowsWindow::SetCursorPos(float xpos, float ypos)
+	{	
+		if (window_)
+			glfwSetCursorPos(window_, static_cast<double>(xpos), static_cast<double>(ypos));
+		data_.x_mouse_pos = xpos;
+		data_.y_mouse_pos = ypos;
+	}
+
 	void WindowsWindow::Init()
 	{
 		// GLFW: initialize and configure

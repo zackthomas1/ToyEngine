@@ -22,7 +22,6 @@ public:
 	void SetCameraController(const ToyEngine::Ref <ToyEngine::CameraController> cam) { camera_controller_ = cam; }
 private:
 	std::pair<bool, glm::vec2&> HandleCursorWrapping(float x_ndc, float y_ndc, const glm::vec2& viewport_pos);
-	void UpdateGLFWCursorPosition(float window_x, float window_y);
 private:
 	ViewportProps props_;
 	ToyEngine::Ref<ToyEngine::CameraController> camera_controller_;

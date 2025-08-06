@@ -163,12 +163,12 @@ namespace ToyEngine
 			float cos_theta = glm::clamp(glm::dot(p_ndc, p_prim_ndc), -1.0f, 1.0f);
 			float theta		= glm::acos(glm::min(cos_theta, 1.0f));
 			glm::vec3 u		= glm::normalize(glm::cross(p_ndc, p_prim_ndc));
-			TY_CORE_INFO("theta: {} u: ({},{},{})",theta, u.x, u.y, u.z);
+			//TY_CORE_INFO("theta: {} u: ({},{},{})", theta, u.x, u.y, u.z);
 
 			// An angle of rotation is greater than 90 degrees on a single frame
 			// indicates that the cursor has wrapped around to the other side of the
 			// viewport. These jumps in cursor position should be ignored by the camera controller.
-			if (theta > 1.0f) return true;
+			if (theta < 0.0001 || theta > 1.0f) return true;
 			
 			// quaternion implementation
 			glm::quat rotation_quat = glm::angleAxis(2.0f * theta, u);
