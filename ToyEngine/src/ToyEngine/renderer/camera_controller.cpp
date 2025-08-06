@@ -102,7 +102,6 @@ namespace ToyEngine
 
 	bool FlyCameraStrategy::OnMouseMove(Camera& camera, const CameraControllerProps& props, EventCursorPos& e)
 	{
-		TY_CORE_INFO("OnMouseMove");
 		float x_offset = static_cast<float>(e.GetOffset().x) * props.mouse_sensitivity;
 		float y_offset = static_cast<float>(e.GetOffset().y) * props.mouse_sensitivity;
 		float yaw = camera.GetProps().yaw + x_offset;
@@ -193,7 +192,7 @@ namespace ToyEngine
 			// rotation equal to zero will cause a division by zero when calculating
 			// rotation quaterion.
 			if (theta < TY_EPSILON || theta > glm::pi<float>()){
-				TY_CORE_WARN("Invalid rotation angle: theta: {:.2f} u: ({:.2f},{:.2f},{:.2f})", theta, u.x, u.y, u.z);
+				TY_CORE_WARN("Invalid rotation angle, skipping: theta: {:.2f} u: ({:.2f},{:.2f},{:.2f})", theta, u.x, u.y, u.z);
 				return true;
 			}
 

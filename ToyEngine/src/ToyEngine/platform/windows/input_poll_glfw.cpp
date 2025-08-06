@@ -23,8 +23,8 @@ namespace ToyEngine {
     eKeyState InputPollGLFW::Mouse(eMouseCode button)
     {
         GLFWwindow* window = dynamic_cast<WindowsWindow*>(&Application::AccessWindow())->GetGLFWWindow();
-        eKeyState botton_state = static_cast<eKeyState>(glfwGetMouseButton(window, static_cast<int>(button)));
-        return botton_state;
+        eKeyState button_state = static_cast<eKeyState>(glfwGetMouseButton(window, static_cast<int>(button)));
+        return button_state;
     }
 
     float InputPollGLFW::MouseVerticalScroll()

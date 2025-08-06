@@ -10,8 +10,8 @@ namespace ToyEngine
 		bool depth_attachment;
 		bool stencil_attachment;
 
-		FrameBufferProps(uint32_t width		= TY_DEFAULT_WINDOW_HEIGHT,
-				uint32_t height				= TY_DEFAULT_WINDOW_WIDTH,
+		FrameBufferProps(uint32_t width		= TY_DEFAULT_WINDOW_WIDTH,
+				uint32_t height				= TY_DEFAULT_WINDOW_HEIGHT,
 				bool multisampling			= false,
 				uint32_t samples			= 1,
 				bool depth_attachment		= true,
