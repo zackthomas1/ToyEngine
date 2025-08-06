@@ -117,12 +117,18 @@ namespace ToyEngine
 
 			float x_ndc_coord_prev = (2.0f * (data.x_mouse_pos / data.width)) - 1.0f;
 			float y_ndc_coord_prev = (2.0f * (data.y_mouse_pos / data.height)) - 1.0f;
-			TY_ASSERT(glm::abs(x_ndc_coord_prev) <= 1.0f && glm::abs(y_ndc_coord_prev) <= 1.0f, "Invalid NDC - out of expected range [-1,1]");
-
+			if (glm::abs(x_ndc_coord_prev) > 1.0f || glm::abs(y_ndc_coord_prev) > 1.0f){
+				TY_CORE_WARN("Invalid NDC ({:.3f},{:.3f}) ignored. Out of expected range [-1,1]", x_ndc_coord_prev, y_ndc_coord_prev);
+				return;
+			}
+			
 			float x_ndc_coord = (2.0f * (x_current_pos / data.width)) - 1.0f;
 			float y_ndc_coord = (2.0f * (y_current_pos / data.height)) - 1.0f;
-			TY_ASSERT(glm::abs(x_ndc_coord) <= 1.0f && glm::abs(y_ndc_coord) <= 1.0f, "Invalid NDC - out of expected range [-1,1]");
-
+			if (glm::abs(x_ndc_coord) > 1.0f || glm::abs(y_ndc_coord) > 1.0f) {
+				TY_CORE_WARN("Invalid NDC ({:.3f},{:.3f}) ignored. Out of expected range [-1,1]", x_ndc_coord, y_ndc_coord);
+				return;
+			}
+			
 			if (!data.is_mouse_active)
 			{
 				data.x_mouse_pos = x_current_pos; 
