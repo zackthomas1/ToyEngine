@@ -66,12 +66,8 @@ bool Viewport::OnMouseMove(ToyEngine::EventCursorPos& cursor_event)
 	//TY_INFO("viewport NDC: ({},{})", x_ndc_coord, y_ndc_coord);
 
 	// If cursor was wrapped, HandleCursorWrapping recalculate positions updates x and y ndc values
-	auto [wrapped, npc_wrap_compensated, new_viewport_pos] = HandleCursorWrapping(x_ndc_coord, y_ndc_coord, viewport_pos);
+	auto [wrapped, new_viewport_pos] = HandleCursorWrapping(x_ndc_coord, y_ndc_coord, viewport_pos);
 	if (wrapped) {
-		
-		//x_ndc_coord = npc_wrap_compensated.x;
-		//y_ndc_coord = npc_wrap_compensated.y;
-		
 		// Update mouse position
 		ImGuiIO& io = ImGui::GetIO();
 		io.WantSetMousePos = true;
@@ -104,10 +100,9 @@ bool Viewport::OnEvent(ToyEngine::Event& e) {
 	return e.GetEventHandled();
 }
 
-std::tuple<bool, glm::vec2&, glm::vec2&> Viewport::HandleCursorWrapping(float x_ndc, float y_ndc, const glm::vec2& viewport_pos)
+std::pair<bool, glm::vec2&> Viewport::HandleCursorWrapping(float x_ndc, float y_ndc, const glm::vec2& viewport_pos)
 {
 	bool wrapped = false;
-	glm::vec2 new_ndc = glm::vec2(x_ndc, y_ndc);
 	glm::vec2 new_viewport_pos = viewport_pos;
 
 	const float wrap_threshold = 0.98f; // Wrap when NDC reaches ±0.95 
@@ -116,14 +111,12 @@ std::tuple<bool, glm::vec2&, glm::vec2&> Viewport::HandleCursorWrapping(float x_
 	if (x_ndc > wrap_threshold) {
 		// Cursor hit right edge, wrap to left edge
 		wrapped = true;
-		new_ndc.x = 1.0f;
 		new_viewport_pos.x = props_.panel_size.x * (1.0f - wrap_threshold);
 		TY_INFO("Cursor wrapped: right to left edge");
 	}
 	else if (x_ndc < -wrap_threshold) {
 		// Cursor hit left edge, wrap to right edge  
 		wrapped = true;
-		new_ndc.x = -1.0f;
 		new_viewport_pos.x = props_.panel_size.x * wrap_threshold;
 		TY_INFO("Cursor wrapped: left to right edge");
 	}
@@ -132,18 +125,16 @@ std::tuple<bool, glm::vec2&, glm::vec2&> Viewport::HandleCursorWrapping(float x_
 	if (y_ndc > wrap_threshold) {
 		// Cursor hit bottom edge, wrap to top edge
 		wrapped = true;
-		new_ndc.y = 1.0f;
 		new_viewport_pos.y = props_.panel_size.y * (1.0f - wrap_threshold);
 		TY_INFO("Cursor wrapped: bottom to top edge");
 	}
 	else if (y_ndc < -wrap_threshold) {
 		// Cursor hit top edge, wrap to bottom edge
 		wrapped = true;
-		new_ndc.y = -1.0f;
 		new_viewport_pos.y = props_.panel_size.y * wrap_threshold;
 		TY_INFO("Cursor wrapped: top to bottom edge");
 	}
-	return std::tuple<bool, glm::vec2&, glm::vec2&>(wrapped, new_ndc, new_viewport_pos);
+	return std::pair<bool, glm::vec2&>(wrapped, new_viewport_pos);
 }
 
 void Viewport::UpdateGLFWCursorPosition(float window_x, float window_y)
