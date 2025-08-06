@@ -148,19 +148,8 @@ namespace ToyEngine
 		}
 		else if ((input.Mouse(eMouseCode::kMouseMiddle) != eKeyState::kRelease))
 		{
-			glm::vec3 p_ndc, p_prim_ndc;
-			if (e.IsWrapped()) {
-				// Use compensated NDC coordinates to maintain rotation continuity
-
-				p_ndc = glm::vec3(e.GetNDCCoord(), 0.0f);
-				p_prim_ndc = glm::vec3(e.GetCompensatedNDC(), 0.0f);
-
-				TY_CORE_WARN("Wrap");
-			} else {
-				p_ndc = glm::vec3(e.GetNDCCoordPrev(), 0.0);	// start pos
-				p_prim_ndc = glm::vec3(e.GetNDCCoord(), 0.0);		// end pos
-			}
-			TY_CORE_INFO("NDC: ({},{})", p_prim_ndc.x, p_prim_ndc.y);
+			glm::vec3 p_ndc = glm::vec3(e.GetNDCCoordPrev(), 0.0);	// start pos
+			glm::vec3 p_prim_ndc = glm::vec3(e.GetNDCCoord(), 0.0);	// end pos
 
 			// Project 2D NDC to 3D sphere
 			p_ndc.z			= glm::sqrt(1.0f - glm::min((p_ndc.x * p_ndc.x) + (p_ndc.y * p_ndc.y), 1.0f));
@@ -168,13 +157,19 @@ namespace ToyEngine
 			
 			p_ndc		= glm::normalize(p_ndc);
 			p_prim_ndc	= glm::normalize(p_prim_ndc);
-			
+			//TY_CORE_INFO("Prev NDC:({},{},{}) NDC: ({},{},{})", p_ndc.x, p_ndc.y, p_ndc.z, p_prim_ndc.x, p_prim_ndc.y, p_prim_ndc.z);
+
 			// Calculate rotation
 			float cos_theta = glm::clamp(glm::dot(p_ndc, p_prim_ndc), -1.0f, 1.0f);
-			float theta		= glm::min(glm::acos(cos_theta), 1.0f);
+			float theta		= glm::acos(glm::min(cos_theta, 1.0f));
 			glm::vec3 u		= glm::normalize(glm::cross(p_ndc, p_prim_ndc));
-			//TY_CORE_INFO("theta: {} u: ({},{},{})",theta, u.x, u.y, u.z);
+			TY_CORE_INFO("theta: {} u: ({},{},{})",theta, u.x, u.y, u.z);
 
+			// An angle of rotation is greater than 90 degrees on a single frame
+			// indicates that the cursor has wrapped around to the other side of the
+			// viewport. These jumps in cursor position should be ignored by the camera controller.
+			if (theta > 1.0f) return true;
+			
 			// quaternion implementation
 			glm::quat rotation_quat = glm::angleAxis(2.0f * theta, u);
 			glm::mat4 R = glm::mat4_cast(rotation_quat);

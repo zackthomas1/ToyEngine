@@ -44,24 +44,24 @@ namespace ToyEngine
 		EventCursorPos(float x_offset, float y_offset,
 			float x_ndc_coord_prev, float y_ndc_coord_prev,
 			float x_ndc_coord, float y_ndc_coord,
-			bool is_wrapped = false, glm::vec2 wrap_compensation = glm::vec2(0.0f))
+			bool is_wrapped = false)
 				: offset_(glm::vec2(x_offset, y_offset)), 
 				ndc_coord_prev(glm::vec2(x_ndc_coord_prev, y_ndc_coord_prev)),
 				ndc_coord_(glm::vec2(x_ndc_coord, y_ndc_coord)),
-				is_wrapped_(is_wrapped), wrap_compensation_(wrap_compensation)
+				is_wrapped_(is_wrapped)
 		{}
+
 		const glm::vec2& GetOffset() { return offset_; }
 		const glm::vec2& GetNDCCoordPrev() { return ndc_coord_prev; }
 		const glm::vec2& GetNDCCoord() { return ndc_coord_; }
 		
-		void SetWrapped(bool wrapped, const glm::vec2& compensation = glm::vec2(0.0f)) {is_wrapped_ = wrapped; wrap_compensation_ = compensation;}
+		void SetNDCCoord(glm::vec2& wrap_compensated_ndc) { ndc_coord_ = wrap_compensated_ndc; }
+		void SetWrapped(bool wrapped) { is_wrapped_ = wrapped; }
 		bool IsWrapped() const { return is_wrapped_;}
-		const glm::vec2& GetCompensatedNDC() const { return ndc_coord_ + wrap_compensation_; }
  
 	private:
 		glm::vec2 offset_, ndc_coord_prev, ndc_coord_;
 		bool is_wrapped_;
-		glm::vec2 wrap_compensation_;
 	};
 
 	class EventApplicationClose : public Event 

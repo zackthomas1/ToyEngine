@@ -66,13 +66,28 @@ bool Viewport::OnMouseMove(ToyEngine::EventCursorPos& cursor_event)
 	//TY_INFO("viewport NDC: ({},{})", x_ndc_coord, y_ndc_coord);
 
 	// If cursor was wrapped, HandleCursorWrapping recalculate positions updates x and y ndc values
-	auto [wrapped, wrap_compensation] = HandleCursorWrapping(x_ndc_coord, y_ndc_coord, viewport_pos);
+	auto [wrapped, npc_wrap_compensated, new_viewport_pos] = HandleCursorWrapping(x_ndc_coord, y_ndc_coord, viewport_pos);
+	if (wrapped) {
+		
+		//x_ndc_coord = npc_wrap_compensated.x;
+		//y_ndc_coord = npc_wrap_compensated.y;
+		
+		// Update mouse position
+		ImGuiIO& io = ImGui::GetIO();
+		io.WantSetMousePos = true;
+		io.ConfigNavMoveSetMousePos = true;
+		io.MousePos = ImVec2(new_viewport_pos.x + (props_.window_pos.x + props_.min.x),
+							 new_viewport_pos.y + (props_.window_pos.y + props_.min.y));
+
+		//ToyEngine::Window& window = ToyEngine::Application::AccessWindow();
+		//window.SetCursorPos()
+	}
 
 	// Create new event with viewport-relative NDC coordinates
 	ToyEngine::EventCursorPos viewport_cursorpos(cursor_event.GetOffset().x, cursor_event.GetOffset().y,
 		x_ndc_coord_prev, y_ndc_coord_prev,
 		x_ndc_coord, y_ndc_coord,
-		wrapped, wrap_compensation);
+		wrapped);
 
 	// Dispatch to camera controller
 	ToyEngine::EventDispatcher dispatcher(viewport_cursorpos);
@@ -89,66 +104,46 @@ bool Viewport::OnEvent(ToyEngine::Event& e) {
 	return e.GetEventHandled();
 }
 
-std::pair<bool, glm::vec2> Viewport::HandleCursorWrapping(float& x_ndc, float& y_ndc, const glm::vec2& viewport_pos)
+std::tuple<bool, glm::vec2&, glm::vec2&> Viewport::HandleCursorWrapping(float x_ndc, float y_ndc, const glm::vec2& viewport_pos)
 {
 	bool wrapped = false;
-	glm::vec2 wrap_compensation(0.0f,0.0f);
+	glm::vec2 new_ndc = glm::vec2(x_ndc, y_ndc);
+	glm::vec2 new_viewport_pos = viewport_pos;
 
 	const float wrap_threshold = 0.98f; // Wrap when NDC reaches ±0.95 
-
-	glm::vec2 new_viewport_pos = viewport_pos;
 
 	// Handle horizontal wrapping
 	if (x_ndc > wrap_threshold) {
 		// Cursor hit right edge, wrap to left edge
-		new_viewport_pos.x	= props_.panel_size.x * (1.0f - wrap_threshold);
-		wrap_compensation.x = 2.0f + (x_ndc - wrap_threshold);
 		wrapped = true;
+		new_ndc.x = 1.0f;
+		new_viewport_pos.x = props_.panel_size.x * (1.0f - wrap_threshold);
 		TY_INFO("Cursor wrapped: right to left edge");
 	}
 	else if (x_ndc < -wrap_threshold) {
 		// Cursor hit left edge, wrap to right edge  
-		new_viewport_pos.x	= props_.panel_size.x * wrap_threshold;
-		wrap_compensation.x = -2.0f - (-x_ndc - wrap_threshold);
 		wrapped = true;
+		new_ndc.x = -1.0f;
+		new_viewport_pos.x = props_.panel_size.x * wrap_threshold;
 		TY_INFO("Cursor wrapped: left to right edge");
 	}
 
 	// Handle vertical wrapping
 	if (y_ndc > wrap_threshold) {
 		// Cursor hit bottom edge, wrap to top edge
-		new_viewport_pos.y	= props_.panel_size.y * (1.0f - wrap_threshold);
-		wrap_compensation.y = 2.0f + (y_ndc - wrap_threshold);
 		wrapped = true;
+		new_ndc.y = 1.0f;
+		new_viewport_pos.y = props_.panel_size.y * (1.0f - wrap_threshold);
 		TY_INFO("Cursor wrapped: bottom to top edge");
 	}
 	else if (y_ndc < -wrap_threshold) {
 		// Cursor hit top edge, wrap to bottom edge
-		new_viewport_pos.y	= props_.panel_size.y * wrap_threshold;
-		wrap_compensation.y = -2.0f - (-y_ndc - wrap_threshold);
 		wrapped = true;
+		new_ndc.y = -1.0f;
+		new_viewport_pos.y = props_.panel_size.y * wrap_threshold;
 		TY_INFO("Cursor wrapped: top to bottom edge");
 	}
-
-	if (wrapped) {
-		// Convert new viewport position back to window coordinates
-		float new_mouse_x = new_viewport_pos.x + (props_.window_pos.x + props_.min.x);
-		float new_mouse_y = new_viewport_pos.y + (props_.window_pos.y + props_.min.y);
-
-		// Update ImGui mouse position
-		ImGuiIO& io = ImGui::GetIO();
-		io.WantSetMousePos = true;
-		//io.ConfigNavMoveSetMousePos = true;
-		io.MousePos = ImVec2(new_mouse_x, new_mouse_y);
-
-		// Also update the GLFW cursor position for consistency
-		UpdateGLFWCursorPosition(new_viewport_pos.x + props_.min.x, new_viewport_pos.y + props_.min.y);
-
-		// Recalculate NDC coordinates
-		x_ndc = (2.0f * (new_viewport_pos.x / props_.panel_size.x)) - 1.0f;
-		y_ndc = (2.0f * (new_viewport_pos.y / props_.panel_size.y)) - 1.0f;
-	}
-	return std::pair<bool, glm::vec2>(wrapped, wrap_compensation);
+	return std::tuple<bool, glm::vec2&, glm::vec2&>(wrapped, new_ndc, new_viewport_pos);
 }
 
 void Viewport::UpdateGLFWCursorPosition(float window_x, float window_y)

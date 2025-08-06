@@ -44,6 +44,12 @@ namespace ToyEngine
 		cam_props_.front	= glm::vec3(R * glm::vec4(cam_props_.front, 0.0f));
 		cam_props_.right	= glm::vec3(R * glm::vec4(cam_props_.right, 0.0f));
 		cam_props_.up		= glm::vec3(R * glm::vec4(cam_props_.up, 0.0f));
+
+		/*Update yaw and pitch based on updated orientation
+		cam_props_.yaw		= glm::degrees(atan2(-pos.z, -pos.x));
+		cam_props_.pitch	= glm::degrees(asin(-pos.y));
+		TY_INFO("yaw: {} pitch: {}", yaw, pitch);
+		*/
 	}
 
 	void Camera::SetOrientation(float yaw, float pitch)
