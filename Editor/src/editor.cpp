@@ -93,7 +93,7 @@ public:
 			mesh->m_material->SetEnvironmentMap(sky_texture);
 		}
 
-		TY_INFO("Create Viewport Framebuffer...");
+		TY_INFO("Create Viewport...");
 		m_viewport.SetCameraController(m_camera_controller);
 
 		TY_INFO("Create Postfx Framebuffer...");

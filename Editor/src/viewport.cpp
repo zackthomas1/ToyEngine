@@ -40,11 +40,11 @@ void Viewport::ImGuiRender()
 
 bool Viewport::OnMouseMove(ToyEngine::EventCursorPos& cursor_event)
 {
-	// check that middle mouse button is pressed
-	ToyEngine::InputPoll& input = ToyEngine::Locator::InputPollService();
-	if ((input.Mouse(ToyEngine::eMouseCode::kMouseMiddle) == ToyEngine::eKeyState::kRelease))
-		return true;
-	
+	// Null check for camera controller
+	if (!camera_controller_) {
+		TY_CORE_WARN("Camera controller not set in viewport");
+		return false;
+	}
 	// Get current viewport information from ImGui
 	ImGuiIO& io = ImGui::GetIO();
 	ImVec2 mouse_pos = io.MousePos;
@@ -66,9 +66,11 @@ bool Viewport::OnMouseMove(ToyEngine::EventCursorPos& cursor_event)
 	float y_ndc_coord = (2.0f * (viewport_pos.y / props_.panel_size.y)) - 1.0f;
 	//TY_INFO("viewport NDC: ({},{})", x_ndc_coord, y_ndc_coord);
 
-	// If cursor was wrapped, HandleCursorWrapping recalculate positions updates x and y ndc values
 	auto [wrapped, new_viewport_pos] = HandleCursorWrapping(x_ndc_coord, y_ndc_coord, viewport_pos);
-	if (wrapped) {
+	
+	// Only wrap cursor if camera controller is an Orbit camera and the middle mouse botton is pressed
+	if (wrapped && camera_controller_->GetProps().type == ToyEngine::eCameraControllerType::kOrbit &&
+		(ToyEngine::Locator::InputPollService().Mouse(ToyEngine::eMouseCode::kMouseMiddle) != ToyEngine::eKeyState::kRelease)) {
 
 		// Update mouse position
 		ImGuiIO& io = ImGui::GetIO();
@@ -86,7 +88,9 @@ bool Viewport::OnMouseMove(ToyEngine::EventCursorPos& cursor_event)
 		window.SetCursorPos(client_relative_x, client_relative_y);
 	}
 
-	if (glm::distance(glm::vec2(x_ndc_coord_prev, y_ndc_coord_prev), glm::vec2(x_ndc_coord, y_ndc_coord)) > 1.0f) {
+	// Error handling for large/unexpected jumps in the cursor position, 
+	// likely caused by wrapping SetCursorPos logic
+	if (glm::distance(glm::vec2(x_ndc_coord_prev, y_ndc_coord_prev), glm::vec2(x_ndc_coord, y_ndc_coord)) > EXTREME_MOVEMENT_THRESHOLD) {
 		TY_CORE_WARN("Ignoring extreme cursor movement - Cursor NDC offset distance: {:.2f}", 
 			glm::distance(glm::vec2(x_ndc_coord_prev, y_ndc_coord_prev), glm::vec2(x_ndc_coord, y_ndc_coord)));
 		return true;
@@ -118,33 +122,31 @@ std::pair<bool, glm::vec2> Viewport::HandleCursorWrapping(float x_ndc, float y_n
 	bool wrapped = false;
 	glm::vec2 new_viewport_pos = viewport_pos;
 
-	const float wrap_threshold = 0.96f; // Wrap when NDC reaches �0.95 
-
 	// Handle horizontal wrapping
-	if (x_ndc > wrap_threshold) {
+	if (x_ndc > CURSOR_WRAP_THRESHOLD) {
 		// Cursor hit right edge, wrap to left edge
 		wrapped = true;
-		new_viewport_pos.x = props_.panel_size.x * (1.0f - wrap_threshold);
+		new_viewport_pos.x = props_.panel_size.x * (1.0f - CURSOR_WRAP_THRESHOLD);
 		TY_INFO("Cursor wrapped: right to left edge");
 	}
-	else if (x_ndc < -wrap_threshold) {
+	else if (x_ndc < -CURSOR_WRAP_THRESHOLD) {
 		// Cursor hit left edge, wrap to right edge
 		wrapped = true;
-		new_viewport_pos.x = props_.panel_size.x * wrap_threshold;
+		new_viewport_pos.x = props_.panel_size.x * CURSOR_WRAP_THRESHOLD;
 		TY_INFO("Cursor wrapped: left to right edge");
 	}
 
 	// Handle vertical wrapping
-	if (y_ndc > wrap_threshold) {
+	if (y_ndc > CURSOR_WRAP_THRESHOLD) {
 		// Cursor hit bottom edge, wrap to top edge
 		wrapped = true;
-		new_viewport_pos.y = props_.panel_size.y * (1.0f - wrap_threshold);
+		new_viewport_pos.y = props_.panel_size.y * (1.0f - CURSOR_WRAP_THRESHOLD);
 		TY_INFO("Cursor wrapped: bottom to top edge");
 	}
-	else if (y_ndc < -wrap_threshold) {
+	else if (y_ndc < -CURSOR_WRAP_THRESHOLD) {
 		// Cursor hit top edge, wrap to bottom edge
 		wrapped = true;
-		new_viewport_pos.y = props_.panel_size.y * wrap_threshold;
+		new_viewport_pos.y = props_.panel_size.y * CURSOR_WRAP_THRESHOLD;
 		TY_INFO("Cursor wrapped: top to bottom edge");
 	}
 	return std::make_pair(wrapped, new_viewport_pos);

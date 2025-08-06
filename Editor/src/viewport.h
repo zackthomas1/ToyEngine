@@ -23,6 +23,8 @@ public:
 private:
 	std::pair<bool, glm::vec2> HandleCursorWrapping(float x_ndc, float y_ndc, const glm::vec2& viewport_pos);
 private:
+	static constexpr float CURSOR_WRAP_THRESHOLD = 0.96f;
+	static constexpr float EXTREME_MOVEMENT_THRESHOLD = 1.0f;
 	ViewportProps props_;
 	ToyEngine::Ref<ToyEngine::CameraController> camera_controller_;
 };

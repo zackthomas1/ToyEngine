@@ -39,6 +39,7 @@ namespace ToyEngine
 		void OnResize(float width, float height);
 
 		const Camera& GetCamera() const { return camera_; }
+		const CameraControllerProps& GetProps() const { return ctrl_props_; }
 
 		void SetMovementSpeed(float speed) { ctrl_props_.movement_speed = speed; }
 		void SetMouseSensitivity(float sensitivity) { ctrl_props_.mouse_sensitivity = sensitivity; }

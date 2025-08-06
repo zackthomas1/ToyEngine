@@ -102,6 +102,7 @@ namespace ToyEngine
 
 	bool FlyCameraStrategy::OnMouseMove(Camera& camera, const CameraControllerProps& props, EventCursorPos& e)
 	{
+		TY_CORE_INFO("OnMouseMove");
 		float x_offset = static_cast<float>(e.GetOffset().x) * props.mouse_sensitivity;
 		float y_offset = static_cast<float>(e.GetOffset().y) * props.mouse_sensitivity;
 		float yaw = camera.GetProps().yaw + x_offset;
