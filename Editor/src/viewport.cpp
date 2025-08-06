@@ -1,5 +1,4 @@
 #include "viewport.h"
-#include "ToyEngine/platform/windows/windows_window.h" // TODO - Remove platform include from viewport 
 
 Viewport::Viewport()
 {
@@ -28,7 +27,11 @@ void Viewport::ImGuiRender()
 	// Check if window was resized and recreate framebuffer if needed
 	if (props_.panel_size.x != props_.framebuffer->GetWidth() || props_.panel_size.y != props_.framebuffer->GetHeight()) {
 		props_.framebuffer->Resize((uint32_t)props_.panel_size.x, (uint32_t)props_.panel_size.y);
-		camera_controller_->OnResize(props_.panel_size.x, props_.panel_size.y);
+		
+		// Null check before calling OnResize
+		if (camera_controller_) {
+			camera_controller_->OnResize(props_.panel_size.x, props_.panel_size.y);
+		}
 	}
 
 	ImGui::Image(props_.framebuffer->GetColorAttachment(),
@@ -57,6 +60,13 @@ bool Viewport::OnMouseMove(ToyEngine::EventCursorPos& cursor_event)
 
 	// Calculate previous viewport position
 	glm::vec2 viewport_pos_prev = viewport_pos - cursor_event.GetOffset();
+
+	// Validate panel size to prevent division by zero
+	if (props_.panel_size.x < TY_EPSILON || props_.panel_size.y < TY_EPSILON) {
+		TY_CORE_WARN("Invalid viewport panel size: ({:.2f}, {:.2f})",
+			props_.panel_size.x, props_.panel_size.y);
+		return false;
+	}
 
 	// calculate NDC values
 	float x_ndc_coord_prev = (2.0f * (viewport_pos_prev.x / props_.panel_size.x)) - 1.0f;

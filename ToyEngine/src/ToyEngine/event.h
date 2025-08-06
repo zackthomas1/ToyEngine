@@ -83,6 +83,9 @@ namespace ToyEngine
 		template<typename T, typename F>
 		bool Dispatch(const F& func)
 		{
+			if (bool handled = event_.GetEventHandled()) 
+				return handled;
+
 			if (T* cast_event = dynamic_cast<T*>(&event_))
 			{
 				bool is_handled = func(*cast_event);
