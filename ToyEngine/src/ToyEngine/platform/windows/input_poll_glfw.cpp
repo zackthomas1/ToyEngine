@@ -12,7 +12,7 @@ namespace ToyEngine {
         TY_CORE_INFO("GLFW input poll provider");
     }
 
-    eKeyState ToyEngine::InputPollGLFW::Key(eKeyCode key)
+    eKeyState InputPollGLFW::Key(eKeyCode key)
     {
         GLFWwindow* window = dynamic_cast<WindowsWindow*>(&Application::AccessWindow())->GetGLFWWindow();
         TY_CORE_ASSERT(window, "GLFWwindow is Null. Initialize windowing before calling input polling service provider.");
@@ -20,12 +20,19 @@ namespace ToyEngine {
         return key_state;
     }
 
-    float ToyEngine::InputPollGLFW::MouseVerticalScroll()
+    eKeyState InputPollGLFW::Mouse(eMouseCode button)
+    {
+        GLFWwindow* window = dynamic_cast<WindowsWindow*>(&Application::AccessWindow())->GetGLFWWindow();
+        eKeyState button_state = static_cast<eKeyState>(glfwGetMouseButton(window, static_cast<int>(button)));
+        return button_state;
+    }
+
+    float InputPollGLFW::MouseVerticalScroll()
     {
         return 0.0f;
     }
 
-    std::pair<float, float> ToyEngine::InputPollGLFW::MousePos()
+    std::pair<float, float> InputPollGLFW::MousePos()
     {
         GLFWwindow* window = dynamic_cast<WindowsWindow*>(&Application::AccessWindow())->GetGLFWWindow();
         TY_CORE_ASSERT(window, "GLFWwindow is Null. Initialize windowing before calling input polling service provider.");

@@ -8,11 +8,6 @@
 
 namespace ToyEngine
 {
-	ImGuiLayer::ImGuiLayer()
-	{
-
-	}
-
 	void ImGuiLayer::OnAttach()
 	{
 		TY_CORE_ASSERT(ImGui::GetCurrentContext() == nullptr, "ImGui - Already been initialized context.");
@@ -31,6 +26,7 @@ namespace ToyEngine
 
 		// Setup Dear ImGui style 
 		ImGui::StyleColorsDark();
+		//ImGui::StyleColorsClassic();
 
 		ImGuiStyle& style = ImGui::GetStyle();
 		if (io_.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
@@ -82,12 +78,15 @@ namespace ToyEngine
 
 	void ImGuiLayer::OnEvent(Event& e)
 	{
-		// You can read the io.WantCaptureMouse, io.WantCaptureKeyboard flags to tell if dear imgui wants to use your inputs.
-		// Generally you may always pass all inputs to dear imgui, and hide them from your application based on those two flags.
-		ImGuiIO& io_ = ImGui::GetIO(); (void)io_;
-		if (io_.WantCaptureMouse == true || io_.WantCaptureKeyboard == true)
+		if (blocks_event_)
 		{
-			e.SetEventHandled(true);
+			// You can read the io.WantCaptureMouse, io.WantCaptureKeyboard flags to tell if dear imgui wants to use your inputs.
+			// Generally you may always pass all inputs to dear imgui, and hide them from your application based on those two flags.
+			ImGuiIO& io_ = ImGui::GetIO(); (void)io_;
+			if (io_.WantCaptureMouse == true || io_.WantCaptureKeyboard == true)
+			{
+				e.SetEventHandled(true);
+			}
 		}
 	}
 }

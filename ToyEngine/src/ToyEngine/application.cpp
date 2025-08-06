@@ -64,20 +64,18 @@ namespace ToyEngine
 
 	void Application::OnEvent(Event& e)
 	{
-		if (EventApplicationClose* event = dynamic_cast<EventApplicationClose*>(&e)) {
-			e.SetEventHandled(OnClose());
-		}
-		if (EventWindowResize* event = dynamic_cast<EventWindowResize*>(&e)) {
-			e.SetEventHandled(OnResize(event->GetWidth(), event->GetHeight()));
-		}
-		
+		EventDispatcher dispatcher(e); 
+		dispatcher.Dispatch<EventApplicationClose>(TY_BINDFN(Application::OnClose));
+		dispatcher.Dispatch<EventWindowResize>(TY_BINDFN(Application::OnResize));
+
 		// Events are propagated from the topmost (foreground) layer to the bottom (background) layer.
 		// This allows layers in the foreground to handle or consume events before they reach background layers.
 		for (auto it = layerStack_.end(); it != layerStack_.begin(); ) {
+			if (e.GetEventHandled()) { break; }
 			(*--it)->OnEvent(e);
-			if(e.GetEventHandled()) { break; }
 		}
 	}
+	
 	void Application::PushLayer(Layer *layer)
 	{
 		layerStack_.PushLayer(layer);
@@ -88,16 +86,15 @@ namespace ToyEngine
 		layerStack_.PushOverlay(layer);
 	}
 
-	bool Application::OnClose() 
+	bool Application::OnClose(EventApplicationClose& e)
 	{
 		isRunning_ = false;
 		return !isRunning_;
 	}
 
-	bool Application::OnResize(uint32_t width, uint32_t height) 
+	bool Application::OnResize(EventWindowResize& e)
 	{
-		window_->SetWindowSize(width, height);
+		window_->SetWindowSize(e.GetWidth(), e.GetHeight());
 		return true;
 	}
-
 }

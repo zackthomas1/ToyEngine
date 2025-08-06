@@ -7,10 +7,10 @@ namespace ToyEngine
 	OpenGLFrameBuffer::OpenGLFrameBuffer(const FrameBufferProps& props)
 		: FrameBuffer(props)
 	{
-		TY_CORE_ASSERT(props.m_width > 0  && props.m_height > 0, "Render buffer width and height must be positive.");
-		TY_CORE_ASSERT(props.m_width <= GL_MAX_RENDERBUFFER_SIZE && props.m_height <= GL_MAX_RENDERBUFFER_SIZE, "Frame buffer size exceeds OpenGL max render buffer size");
+		TY_CORE_ASSERT(props.width > 0  && props.height > 0, "Render buffer width and height must be positive.");
+		TY_CORE_ASSERT(props.width <= GL_MAX_RENDERBUFFER_SIZE && props.height <= GL_MAX_RENDERBUFFER_SIZE, "Frame buffer size exceeds OpenGL max render buffer size");
 		
-		CreateBuffers(props.m_width, props.m_height);
+		CreateBuffers(props.width, props.height);
 	}
 
 	OpenGLFrameBuffer::~OpenGLFrameBuffer()
@@ -20,6 +20,7 @@ namespace ToyEngine
 	void OpenGLFrameBuffer::Bind()
 	{
 		glBindFramebuffer(GL_FRAMEBUFFER, id_);
+		glViewport(0,0, data_.width, data_.height);
 	}
 
 	void OpenGLFrameBuffer::Unbind()
@@ -35,8 +36,8 @@ namespace ToyEngine
 					"Framebuffer size exceeds OpenGL limits");
 		
 		// Update base class dimensions
-		data_.m_width = width;
-		data_.m_height = height;
+		data_.width = width;
+		data_.height = height;
 
 		DeleteBuffers(); 
 		CreateBuffers(width, height);
@@ -78,7 +79,7 @@ namespace ToyEngine
 			return;
 		}
 
-		if (data_.m_depth_attachment || data_.m_stencil_attachment) {
+		if (data_.depth_attachment || data_.stencil_attachment) {
 			// create render buffer object:  can not be directly read from.
 			// store all render data directly in buffer without conversions to texture-specificc formats
 			// faster as writeable storage, but can not directly read from them
@@ -86,14 +87,14 @@ namespace ToyEngine
 			glGenRenderbuffers(1, &depth_stencil_attachment_id_);
 			glBindRenderbuffer(GL_RENDERBUFFER, depth_stencil_attachment_id_);
 
-			if (data_.m_depth_attachment && data_.m_stencil_attachment) {
+			if (data_.depth_attachment && data_.stencil_attachment) {
 				glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, width, height);
 				//attach render buffer object to framebuffer
 				glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, depth_stencil_attachment_id_);
-			} else if (data_.m_depth_attachment) {
+			} else if (data_.depth_attachment) {
 				glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, width, height);
 				glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, depth_stencil_attachment_id_);
-			} else if (data_.m_stencil_attachment) {
+			} else if (data_.stencil_attachment) {
 				glRenderbufferStorage(GL_RENDERBUFFER, GL_STENCIL_INDEX8, width, height);
 				glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT, GL_RENDERBUFFER, depth_stencil_attachment_id_);
 			}

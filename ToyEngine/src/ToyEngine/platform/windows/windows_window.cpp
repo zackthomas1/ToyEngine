@@ -19,6 +19,14 @@ namespace ToyEngine
 		glfwPollEvents();
 	}
 
+	void WindowsWindow::SetCursorPos(float xpos, float ypos)
+	{	
+		if (window_)
+			glfwSetCursorPos(window_, static_cast<double>(xpos), static_cast<double>(ypos));
+		data_.x_mouse_pos = xpos;
+		data_.y_mouse_pos = ypos;
+	}
+
 	void WindowsWindow::Init()
 	{
 		// GLFW: initialize and configure
@@ -107,6 +115,14 @@ namespace ToyEngine
 			float x_current_pos = static_cast<float>(xpos);
 			float y_current_pos = static_cast<float>(ypos);
 
+			float x_ndc_coord_prev = (2.0f * (data.x_mouse_pos / data.width)) - 1.0f;
+			float y_ndc_coord_prev = (2.0f * (data.y_mouse_pos / data.height)) - 1.0f;
+			TY_ASSERT(glm::abs(x_ndc_coord_prev) <= 1.0f && glm::abs(y_ndc_coord_prev) <= 1.0f, "Invalid NDC - out of expected range [-1,1]");
+
+			float x_ndc_coord = (2.0f * (x_current_pos / data.width)) - 1.0f;
+			float y_ndc_coord = (2.0f * (y_current_pos / data.height)) - 1.0f;
+			TY_ASSERT(glm::abs(x_ndc_coord) <= 1.0f && glm::abs(y_ndc_coord) <= 1.0f, "Invalid NDC - out of expected range [-1,1]");
+
 			if (!data.is_mouse_active)
 			{
 				data.x_mouse_pos = x_current_pos; 
@@ -118,8 +134,8 @@ namespace ToyEngine
 			
 			data.x_mouse_pos = x_current_pos;
 			data.y_mouse_pos = y_current_pos;
-
-			EventCursorPos cursor_pos(x_offset, y_offset);
+			
+			EventCursorPos cursor_pos(x_offset, y_offset, x_ndc_coord_prev, y_ndc_coord_prev, x_ndc_coord, y_ndc_coord);
 			data.event_callback(cursor_pos);
 		});
 	}

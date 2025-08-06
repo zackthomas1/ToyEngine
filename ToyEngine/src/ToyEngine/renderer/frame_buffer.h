@@ -3,35 +3,34 @@ namespace ToyEngine
 {
 	struct FrameBufferProps 
 	{
-		uint32_t m_width			= 800;
-		uint32_t m_height			= 600;
-		bool m_multisampling		= false;
-		uint32_t m_samples			= 1; 
-		bool m_depth_attachment		= true;
-		bool m_stencil_attachment	= true;
+		uint32_t width;
+		uint32_t height;
+		bool multisampling;
+		uint32_t samples;
+		bool depth_attachment;
+		bool stencil_attachment;
 
-		FrameBufferProps(uint32_t width		= 800,
-				uint32_t height				= 600,
+		FrameBufferProps(uint32_t width		= TY_DEFAULT_WINDOW_WIDTH,
+				uint32_t height				= TY_DEFAULT_WINDOW_HEIGHT,
 				bool multisampling			= false,
 				uint32_t samples			= 1,
 				bool depth_attachment		= true,
 				bool stencil_attachment		= true)
-			: m_width(width),
-			m_height(height),
-			m_multisampling(multisampling),
-			m_samples(samples),
-			m_depth_attachment(depth_attachment),
-			m_stencil_attachment(stencil_attachment) 
+			: width(width),
+			height(height),
+			multisampling(multisampling),
+			samples(samples),
+			depth_attachment(depth_attachment),
+			stencil_attachment(stencil_attachment) 
 		{}
 
 		// Validation method
 		bool IsValid() const {
-			return m_width > 0 && m_height > 0 && 
-					(!m_multisampling || m_samples > 1) &&
-					m_samples <= 16; // reasonable limit
+			return width > 0 && height > 0 && 
+					(!multisampling || samples > 1) &&
+					samples <= 16; // reasonable limit
 		}
 	};
-
 	
 	class FrameBuffer
 	{
@@ -47,19 +46,13 @@ namespace ToyEngine
 		virtual void Status() const = 0;
 
 		virtual uint32_t GetColorAttachment() const = 0;
-		uint32_t GetWidth() const { return data_.m_width; }
-		uint32_t GetHeight() const { return data_.m_height; }
+		uint32_t GetWidth() const { return data_.width; }
+		uint32_t GetHeight() const { return data_.height; }
 
 		static Ref<FrameBuffer> Create(const FrameBufferProps& props = FrameBufferProps());
 	protected:
 		FrameBuffer(const FrameBufferProps& props);
 		
-		struct FrameBufferData {
-			uint32_t m_width, m_height;
-			bool m_multisampling;
-			uint32_t m_samples;
-			bool m_depth_attachment, m_stencil_attachment;
-		};
-		FrameBufferData data_;
+		FrameBufferProps data_;
 	};
 }

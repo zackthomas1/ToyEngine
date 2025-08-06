@@ -2,9 +2,6 @@
 #include "ToyEngine/event.h"
 
 namespace ToyEngine {
-	constexpr int TY_DEFAULT_WINDOW_WIDTH = 800;
-	constexpr int TY_DEFAULT_WINDOW_HEIGHT = 600;
-
 	struct WindowProps
 	{
 		std::string title;
@@ -21,8 +18,7 @@ namespace ToyEngine {
 			float y_mouse_pos = TY_DEFAULT_WINDOW_HEIGHT / 2.0f)
 			: title(title), width(width), height(height),
 			is_mouse_active(is_mouse_active), x_mouse_pos(x_mouse_pos), y_mouse_pos(y_mouse_pos)
-		{
-		}
+		{}
 	};
 
 	class Window
@@ -43,6 +39,8 @@ namespace ToyEngine {
 		/// </summary>
 		/// <param name="callback"></param>
 		virtual void SetCommandCallbackFn(const EventCallbackFn& callback) = 0;
+		virtual void SetCursorPos(float xpos, float ypos) = 0;
+
 		int GetWidth() const { return data_.width; }
 		int GetHeight() const { return data_.height; }
 		float GetAspectRatio() const { return static_cast<float>(data_.width) / static_cast<float>(data_.height); }

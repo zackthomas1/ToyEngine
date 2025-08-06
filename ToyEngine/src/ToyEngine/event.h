@@ -1,5 +1,6 @@
 #pragma once
 #include "ToyEngine/enum.h"
+#include <glm/vec2.hpp>
 
 namespace ToyEngine
 {
@@ -40,11 +41,21 @@ namespace ToyEngine
 	class EventCursorPos : public Event
 	{
 	public:
-		EventCursorPos(double xpos, double ypos) : x_offset_(xpos), y_offset_(ypos) {}
-		double GetXOffset() const { return x_offset_; }
-		double GetYOffset() const { return y_offset_; }
+		EventCursorPos(float x_offset, float y_offset,
+			float x_ndc_coord_prev, float y_ndc_coord_prev,
+			float x_ndc_coord, float y_ndc_coord)
+				: offset_(glm::vec2(x_offset, y_offset)), 
+				ndc_coord_prev(glm::vec2(x_ndc_coord_prev, y_ndc_coord_prev)),
+				ndc_coord_(glm::vec2(x_ndc_coord, y_ndc_coord))
+		{}
+
+		const glm::vec2& GetOffset() { return offset_; }
+		const glm::vec2& GetNDCCoordPrev() { return ndc_coord_prev; }
+		const glm::vec2& GetNDCCoord() { return ndc_coord_; }
+		
+		void SetNDCCoord(glm::vec2& wrap_compensated_ndc) { ndc_coord_ = wrap_compensated_ndc; }
 	private:
-		double x_offset_, y_offset_;
+		glm::vec2 offset_, ndc_coord_prev, ndc_coord_;
 	};
 
 	class EventApplicationClose : public Event 
@@ -61,5 +72,29 @@ namespace ToyEngine
 		unsigned int GetHeight() const { return height_; }
 	private: 
 		unsigned int width_, height_;
+	};
+
+	class EventDispatcher
+	{
+	public:
+		EventDispatcher(Event& e) : event_(e) {}
+		~EventDispatcher() {}
+		
+		template<typename T, typename F>
+		bool Dispatch(const F& func)
+		{
+			if (bool handled = event_.GetEventHandled()) 
+				return handled;
+
+			if (T* cast_event = dynamic_cast<T*>(&event_))
+			{
+				bool is_handled = func(*cast_event);
+				event_.SetEventHandled(is_handled);
+				return is_handled;
+			}
+			return false;
+		}
+	private:
+		Event& event_;
 	};
 }
