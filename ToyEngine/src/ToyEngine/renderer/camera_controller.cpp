@@ -71,7 +71,7 @@ namespace ToyEngine
 		float delta_time = time_step.GetTimeDelta();
 		ToyEngine::InputPoll& input = ToyEngine::Locator::InputPollService();
 
-		float velocity = props.movementSpeed * delta_time;
+		float velocity = props.movement_speed * delta_time;
 
 		if (input.Key(eKeyCode::kKeyW) != eKeyState::kRelease) // Forward
 			camera.SetPosition(camera.GetProps().position + (velocity * camera.GetProps().front));
@@ -102,8 +102,8 @@ namespace ToyEngine
 
 	bool FlyCameraStrategy::OnMouseMove(Camera& camera, const CameraControllerProps& props, EventCursorPos& e)
 	{
-		float x_offset = static_cast<float>(e.GetOffset().x) * props.mouseSensitivity;
-		float y_offset = static_cast<float>(e.GetOffset().y) * props.mouseSensitivity;
+		float x_offset = static_cast<float>(e.GetOffset().x) * props.mouse_sensitivity;
+		float y_offset = static_cast<float>(e.GetOffset().y) * props.mouse_sensitivity;
 		float yaw = camera.GetProps().yaw + x_offset;
 		float pitch = camera.GetProps().pitch - y_offset;
 
@@ -118,6 +118,18 @@ namespace ToyEngine
 
 	// Orbit Camera Strategy
 	// --------------------
+	bool OrbitCameraStrategy::OnMouseScroll(Camera& camera, const CameraControllerProps& props, EventVerticalScroll& e)
+	{
+		glm::vec3 position = camera.GetProps().position;
+		glm::vec3 view_dir = camera.GetProps().front;
+		float zoom_delta = e.GetYOffset() * props.scroll_sensitivity;
+
+		orbit_radius_ = glm::clamp(orbit_radius_ + zoom_delta, ORBIT_RADIUS_MIN, ORBIT_RADIUS_MAX);
+
+		camera.SetPosition((-view_dir * orbit_radius_) + target_point_);
+		return true;
+	}
+
 	bool OrbitCameraStrategy::OnMouseMove(Camera& camera, const CameraControllerProps& props, EventCursorPos& e)
 	{
 		ToyEngine::InputPoll& input = ToyEngine::Locator::InputPollService();
@@ -127,7 +139,7 @@ namespace ToyEngine
 		{
 			glm::vec3 position = camera.GetProps().position;
 			glm::vec3 view_dir = camera.GetProps().front;
-			float zoom_delta = e.GetOffset().y * props.mouseSensitivity;
+			float zoom_delta = e.GetOffset().y * props.mouse_sensitivity;
 			
 			orbit_radius_ = glm::clamp(orbit_radius_ + zoom_delta, ORBIT_RADIUS_MIN, ORBIT_RADIUS_MAX);
 
@@ -141,8 +153,8 @@ namespace ToyEngine
 			glm::vec3 cam_right = camera.GetProps().right;
 			glm::vec3 cam_up	= camera.GetProps().up;
 				
-			glm::vec2 pan_velocity(e.GetOffset().x * props.mouseSensitivity,
-						e.GetOffset().y * props.mouseSensitivity);
+			glm::vec2 pan_velocity(e.GetOffset().x * props.mouse_sensitivity,
+						e.GetOffset().y * props.mouse_sensitivity);
 
 			target_point_ += cam_right * pan_velocity.x;
 			target_point_ -= cam_up * pan_velocity.y;
@@ -205,7 +217,7 @@ namespace ToyEngine
 		float delta_time = time_step.GetTimeDelta();
 		ToyEngine::InputPoll& input = ToyEngine::Locator::InputPollService();
 
-		float velocity = props.movementSpeed * delta_time;
+		float velocity = props.movement_speed * delta_time;
 
 		if (input.Key(eKeyCode::kKeyW) != eKeyState::kRelease) // Up
 			camera.SetPosition(camera.GetProps().position + (velocity * camera.GetProps().up));
