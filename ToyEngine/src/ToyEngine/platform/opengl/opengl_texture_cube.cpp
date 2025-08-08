@@ -4,15 +4,16 @@
 #include "stb_image.h"
 
 namespace ToyEngine {
-	OpenGLTextureCube::OpenGLTextureCube(Array<std::string, CUBE_SIDES>& files) :
-		width_(0), height_(0), nrChannels_(0)
+	OpenGLTextureCube::OpenGLTextureCube(const std::initializer_list<std::string>& files)
+		: width_(0), height_(0), nrChannels_(0)
 	{
 		glGenTextures(1, &id_);
 		glBindTexture(GL_TEXTURE_CUBE_MAP, id_);
 
 		int first_width = 0, first_height = 0, first_channels = 0;
 		for (uint32_t i = 0; i < files.size(); i++) {
-			unsigned char* data = stbi_load(files[i].c_str(), &width_, &height_, &nrChannels_, 0);
+			const char* file_name = (files.begin() + i)->c_str();
+			unsigned char* data = stbi_load(file_name, &width_, &height_, &nrChannels_, 0);
 			
 			if (data) {
 				// Store dimensions from the first face
@@ -46,7 +47,7 @@ namespace ToyEngine {
 				}
 			}
 			else {
-				TY_CORE_ERROR("Cubemap tex failed to load at path {}", files[i]);
+				TY_CORE_ERROR("Cubemap tex failed to load at path {}", file_name);
 			}
 			stbi_image_free(data);
 		}

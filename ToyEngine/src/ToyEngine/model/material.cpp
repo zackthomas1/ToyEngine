@@ -17,15 +17,14 @@ namespace ToyEngine
 				"OpenGL still validates that the sampler has a bound texture during a draw call"
 			);
 
-			ToyEngine::Array<std::string, 6> files = {
+			s_default_environment_map = ToyEngine::TextureCube::Create({
 				"../assets/cubemaps/starfield/nx.png",	// +X (right)
 				"../assets/cubemaps/starfield/ny.png",	// -X (left)
 				"../assets/cubemaps/starfield/nz.png",	// +Y (top)
 				"../assets/cubemaps/starfield/px.png",	// -Y (bottom)
 				"../assets/cubemaps/starfield/py.png",	// +Z (front)
 				"../assets/cubemaps/starfield/pz.png",	// -Z (back)
-			};
-			s_default_environment_map = ToyEngine::TextureCube::Create(files);
+				});
 		}
 		return s_default_environment_map;
 	}

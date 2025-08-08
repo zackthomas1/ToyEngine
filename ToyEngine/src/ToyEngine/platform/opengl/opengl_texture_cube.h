@@ -6,7 +6,7 @@ namespace ToyEngine {
 	class OpenGLTextureCube : public TextureCube
 	{
 	public:
-		OpenGLTextureCube(Array<std::string, CUBE_SIDES>& files); 
+		OpenGLTextureCube(const std::initializer_list<std::string>& files);
 		~OpenGLTextureCube() {};
 
 		virtual void Bind(uint32_t slot = 0) const override; 

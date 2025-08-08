@@ -67,25 +67,24 @@ public:
 		m_scene_graph = ToyEngine::MakeScope<ToyEngine::SceneNode>("root");
 
 		ToyEngine::Ref<ToyEngine::Model> backpack		= (ToyEngine::Model::Create("../assets/models/backpack/backpack.obj", true));
-		ToyEngine::Ref<ToyEngine::Model> cyborg			= (ToyEngine::Model::Create("../assets/models/cyborg/cyborg.obj", false));
+		ToyEngine::Ref<ToyEngine::Model> cyborg			= (ToyEngine::Model::Create("../assets/models/DamagedHelmet/DamagedHelmet.gltf", true));
 		ToyEngine::Ref<ToyEngine::Shader> phongShader	= m_shader_lib->Get("phong");
 		backpack->m_shader = phongShader;
 		cyborg->m_shader = phongShader;
 		m_scene_graph->AddChild(ToyEngine::MakeScope<ToyEngine::SceneNode>("backepack_model", backpack));
 		m_scene_graph->AddChild(ToyEngine::MakeScope<ToyEngine::SceneNode>("cyborg_model", cyborg));
 	
-		ToyEngine::Array<std::string, 6> skybox_files = {
+		TY_INFO("Create Environment Map...");
+		ToyEngine::Ref<ToyEngine::TextureCube> sky_texture = ToyEngine::TextureCube::Create({
 			"../assets/cubemaps/skybox/right.jpg",	// +X (right)
 			"../assets/cubemaps/skybox/left.jpg",	// -X (left)
 			"../assets/cubemaps/skybox/top.jpg",	// +Y (top)
 			"../assets/cubemaps/skybox/bottom.jpg",	// -Y (bottom)
 			"../assets/cubemaps/skybox/front.jpg",	// +Z (front)
 			"../assets/cubemaps/skybox/back.jpg",	// -Z (back)
-		};
-		ToyEngine::Ref<ToyEngine::TextureCube> sky_texture = ToyEngine::TextureCube::Create(skybox_files);
+			});
 		ToyEngine::Ref<ToyEngine::Skybox> skybox = ToyEngine::MakeRef<ToyEngine::Skybox>(sky_texture, m_shader_lib->Get("skybox"));
 		m_scene_graph->AddChild(ToyEngine::MakeScope<ToyEngine::SceneNode>("skybox", skybox));
-
 		for (auto& mesh : backpack->m_meshes) {
 			mesh->m_material->SetEnvironmentMap(sky_texture);
 		}

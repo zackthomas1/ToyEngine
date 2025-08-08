@@ -3,8 +3,6 @@
 
 namespace ToyEngine 
 {
-	const int CUBE_SIDES = 6;
-
 	class TextureCube 
 	{
 	public:
@@ -16,10 +14,11 @@ namespace ToyEngine
 		uint32_t id() const { return id_; }
 		int GetMaxMipLevel() const { return max_mip_level_; }
 
-		static Ref<TextureCube> Create(Array<std::string, CUBE_SIDES>& files);
+		static Ref<TextureCube> Create(const std::initializer_list<std::string>& files);
 	protected:
 		TextureCube() : id_(0) {};
 		uint32_t id_ = 0;
 		int max_mip_level_ = 0;
+		static constexpr int CUBE_SIDES = 6;
 	};
 }

@@ -61,6 +61,7 @@ namespace ToyEngine
 			TY_CORE_ERROR("Failed to load texture");
 		}
 		// Free the image data loaded by stb_image from CPU memory.
+		stbi_set_flip_vertically_on_load(false);
 		stbi_image_free(data);
 	}
 
