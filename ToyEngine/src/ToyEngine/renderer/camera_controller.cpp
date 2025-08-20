@@ -7,10 +7,9 @@
 namespace ToyEngine
 {
 	// Camera controller
-	CameraController::CameraController(ServiceContainer& services, const CameraControllerProps& props)
-		: services_(services), ctrl_props_(props), input_(services.Get<InputPoll>())
+	CameraController::CameraController(const InputPoll& input, const CameraControllerProps& props)
+		:ctrl_props_(props), input_(input)
 	{
-
 		ToyEngine::CameraProps camera_props;
 		switch (props.type)
 		{
@@ -39,9 +38,9 @@ namespace ToyEngine
 		camera_.SetCameraType(camera_props.type);
 	}
 
-	void CameraController::Update(const TimeStep& time_step, const InputPoll& input)
+	void CameraController::Update(const TimeStep& time_step)
 	{
-		strategy_->Update(camera_, ctrl_props_, time_step, input);
+		strategy_->Update(camera_, ctrl_props_, time_step, input_);
 	}
 
 	bool CameraController::OnEvent(Event& e)

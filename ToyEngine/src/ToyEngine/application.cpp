@@ -45,7 +45,7 @@ namespace ToyEngine
 			// Advance the game simulation one step (update)
 			// Update layers
 			for (Layer *layer : layerStack_)
-				layer->Update(services_.Get<TimeStep>(), services_.Get<InputPoll>());
+				layer->Update(services_.Get<TimeStep>());
 
 			// Draw GUI
 			imGuiLayer_->BeginDraw();

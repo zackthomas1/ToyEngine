@@ -47,7 +47,7 @@ public:
 		TY_INFO("Create Camera...");
 		ToyEngine::CameraControllerProps camera_control_props;
 		camera_control_props.type = ToyEngine::eCameraControllerType::kOrbit;
-		m_camera_controller = ToyEngine::MakeRef<ToyEngine::CameraController>(ToyEngine::Application::GetServices(), camera_control_props);
+		m_camera_controller = ToyEngine::MakeRef<ToyEngine::CameraController>(ToyEngine::Application::GetServices().Get<ToyEngine::InputPoll>(), camera_control_props);
 
 		TY_INFO("Create lights...");
 		m_light_block = ToyEngine::MakeScope<ToyEngine::LightBlock>();
@@ -110,7 +110,7 @@ public:
 
 	virtual void OnDetach() {}
 
-	virtual void Update(const ToyEngine::TimeStep& time_step, const ToyEngine::InputPoll& input)
+	virtual void Update(const ToyEngine::TimeStep& time_step)
 	{
 		// Update lights
 		m_light_block->m_lights[0].m_direction		= glm::vec4(m_directional_light_dir,0.0f);
@@ -123,7 +123,7 @@ public:
 		m_light_block->m_lights[3].m_value			= glm::vec4(m_point_light_color_3, 0.0f);
 
 		if (m_viewport.GetProps().is_hovered)
-			m_camera_controller->Update(time_step, input);
+			m_camera_controller->Update(time_step);
 
 		// update model material properties
 		if (m_scene_graph->GetChildren().size() >= 2) {

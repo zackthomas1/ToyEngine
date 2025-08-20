@@ -44,9 +44,9 @@ namespace ToyEngine
 	class CameraController
 	{
 	public:
-		CameraController(ServiceContainer& services, const CameraControllerProps& props = CameraControllerProps());
+		CameraController(const InputPoll& input, const CameraControllerProps& props = CameraControllerProps());
 
-		void Update(const TimeStep& time_step, const InputPoll& input);
+		void Update(const TimeStep& time_step);
 		bool OnEvent(Event& e);
 		
 		void OnResize(float width, float height);
@@ -62,8 +62,7 @@ namespace ToyEngine
 	private:
 		CameraControllerProps ctrl_props_;
 		Scope<ICameraStrategy> strategy_;
-		ServiceContainer& services_;
-		InputPoll& input_;
+		const InputPoll& input_;
 		Camera camera_;
 	};
 
