@@ -54,12 +54,13 @@ namespace ToyEngine
 
 		// Accessors return const references to prevent modification
 		inline static Window& AccessWindow() { return *Application::s_instance->window_; }
-		inline static ServiceContainer& GetServices() {return Application::s_instance->services_; }
 		inline static Application& Get() { return *s_instance; }	
+	protected: 
+		inline static ServiceContainer& GetServices() { return Application::s_instance->services_; }
 	private:
 		bool OnClose(EventApplicationClose& e);
 		bool OnResize(EventWindowResize& e);
-	private:
+
 		Scope<Window> window_;
 		
 		ServiceContainer services_;

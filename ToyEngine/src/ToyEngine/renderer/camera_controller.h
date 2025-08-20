@@ -6,8 +6,6 @@
 namespace ToyEngine
 {
 	// forward declare
-	class ServiceContainer;
-	class TimeStep;
 	class InputPoll;
 
 	struct CameraControllerProps
@@ -36,7 +34,7 @@ namespace ToyEngine
 	protected:
 		ICameraStrategy() {}
 
-		virtual void Update(Camera& camera, const CameraControllerProps& props, const TimeStep& time_step, const InputPoll& input) {}
+		virtual void Update(Camera& camera, const CameraControllerProps& props, const InputPoll& input, float time_delta) {}
 		virtual bool OnMouseScroll(Camera& camera, const CameraControllerProps& props, const InputPoll& input, EventVerticalScroll& e) { return false; }
 		virtual bool OnMouseMove(Camera& camera, const CameraControllerProps& props, const InputPoll& input, EventCursorPos& e) { return false; }
 	};
@@ -46,7 +44,7 @@ namespace ToyEngine
 	public:
 		CameraController(const InputPoll& input, const CameraControllerProps& props = CameraControllerProps());
 
-		void Update(const TimeStep& time_step);
+		void Update(float time_delta);
 		bool OnEvent(Event& e);
 		
 		void OnResize(float width, float height);
@@ -73,7 +71,7 @@ namespace ToyEngine
 	protected:
 		FlyCameraStrategy() {}
 
-		virtual void Update(Camera& camera, const CameraControllerProps& props, const TimeStep& time_step, const InputPoll& input)		override;
+		virtual void Update(Camera& camera, const CameraControllerProps& props, const InputPoll& input, float time_delta)		override;
 		virtual bool OnMouseScroll(Camera& camera, const CameraControllerProps& props, const InputPoll& input, EventVerticalScroll& e)	override;
 		virtual bool OnMouseMove(Camera& camera, const CameraControllerProps& props, const InputPoll& input, EventCursorPos& e)			override;
 	};
@@ -103,7 +101,7 @@ namespace ToyEngine
 	protected:
 		OrthoCameraStrategy() {}
 
-		virtual void Update(Camera& camera, const CameraControllerProps& props, const TimeStep& time_step, const InputPoll& input)		override;
+		virtual void Update(Camera& camera, const CameraControllerProps& props, const InputPoll& input, float time_delta)		override;
 	};
 
 }

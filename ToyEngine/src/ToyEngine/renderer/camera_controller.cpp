@@ -1,7 +1,5 @@
 #include "pch.h"
 #include "camera_controller.h"
-#include "ToyEngine/services/service_container.h"
-#include "ToyEngine/services/time_step.h"
 #include "ToyEngine/services/input_poll.h"
 
 namespace ToyEngine
@@ -38,9 +36,9 @@ namespace ToyEngine
 		camera_.SetCameraType(camera_props.type);
 	}
 
-	void CameraController::Update(const TimeStep& time_step)
+	void ToyEngine::CameraController::Update(float time_delta)
 	{
-		strategy_->Update(camera_, ctrl_props_, time_step, input_);
+		strategy_->Update(camera_, ctrl_props_, input_, time_delta);
 	}
 
 	bool CameraController::OnEvent(Event& e)
@@ -70,9 +68,9 @@ namespace ToyEngine
 
 	// Fly Camera Strategy
 	// --------------------
-	void FlyCameraStrategy::Update(Camera& camera, const CameraControllerProps& props, const TimeStep& time_step, const InputPoll& input)
+	void ToyEngine::FlyCameraStrategy::Update(Camera& camera, const CameraControllerProps& props, const InputPoll& input, float time_delta)
 	{
-		float velocity = props.movement_speed * time_step.GetTimeDelta();;
+		float velocity = props.movement_speed * time_delta;
 
 		if (input.Key(eKeyCode::kKeyW) != eKeyState::kRelease) // Forward
 			camera.SetPosition(camera.GetProps().position + (velocity * camera.GetProps().front));
@@ -215,9 +213,9 @@ namespace ToyEngine
 
 	// Ortho Camera Strategy
 	// --------------------
-	void OrthoCameraStrategy::Update(Camera& camera, const CameraControllerProps& props, const TimeStep& time_step, const InputPoll& input)
+	void ToyEngine::OrthoCameraStrategy::Update(Camera& camera, const CameraControllerProps& props, const InputPoll& input, float time_delta)
 	{
-		float velocity = props.movement_speed * time_step.GetTimeDelta();
+		float velocity = props.movement_speed * time_delta;
 
 		if (input.Key(eKeyCode::kKeyW) != eKeyState::kRelease) // Up
 			camera.SetPosition(camera.GetProps().position + (velocity * camera.GetProps().up));

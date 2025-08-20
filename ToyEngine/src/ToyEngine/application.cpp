@@ -37,15 +37,16 @@ namespace ToyEngine
 
 	void Application::Run()
 	{
+		TimeStep& time_step = services_.Get<TimeStep>();
 		while (isRunning_)
 		{
 			// Update variable time step
-			services_.Get<TimeStep>().Update();
+			time_step.Update();
 
 			// Advance the game simulation one step (update)
 			// Update layers
 			for (Layer *layer : layerStack_)
-				layer->Update(services_.Get<TimeStep>());
+				layer->Update(time_step.GetTimeDelta());
 
 			// Draw GUI
 			imGuiLayer_->BeginDraw();
