@@ -2,6 +2,7 @@
 #include "core.h"
 #include "ToyEngine/event.h"
 #include "ToyEngine/window.h"
+#include "ToyEngine/services/service_container.h"
 #include "ToyEngine/layers/layer_stack.h"
 
 namespace ToyEngine
@@ -53,12 +54,16 @@ namespace ToyEngine
 
 		// Accessors return const references to prevent modification
 		inline static Window& AccessWindow() { return *Application::s_instance->window_; }
+		inline static ServiceContainer& GetServices() {return Application::s_instance->services_; }
 		inline static Application& Get() { return *s_instance; }	
 	private:
 		bool OnClose(EventApplicationClose& e);
 		bool OnResize(EventWindowResize& e);
 	private:
 		Scope<Window> window_;
+		
+		ServiceContainer services_;
+
 		ImGuiLayer *imGuiLayer_;	// imGuiLayer is owned by the layerStack_. Deleted by layerStack_ destructor
 		LayerStack layerStack_;
 		bool isRunning_ = true;

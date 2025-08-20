@@ -2,7 +2,6 @@
 #include "ToyEngine/application.h"
 #include "ToyEngine/renderer/renderer.h"
 #include "ToyEngine/layers/layer.h"
-#include "ToyEngine/services/locator.h"
 
 namespace ToyEngine
 {
@@ -17,11 +16,14 @@ namespace ToyEngine
 		window_ = Window::Create();
 		window_->SetCommandCallbackFn(TY_BINDFN(Application::OnEvent));
 
-		// Initialize time step and input polling services
-		TY_CORE_INFO("Initialize time step service");
-		Locator::TimeStepService().Init();
-		TY_CORE_INFO("Initialize input poll service");
-		Locator::InputPollService().Init();
+		//// Initialize time step and input polling services
+#ifdef TY_PLATFORM_WINDOWS
+		services_.Register<TimeStep, TimeStepGLFW>();
+		services_.Register<InputPoll, InputPollGLFW>(window_.get());
+#else
+		services_.Register<TimeStep, NullTimeStep>();
+		services_.Register<InputPoll, NullInputPoll>();
+#endif TY_PLATFORM_WINDOWS
 
 		// Initalize imgui layer
 		imGuiLayer_ = new ImGuiLayer();
@@ -31,31 +33,25 @@ namespace ToyEngine
 		Renderer::Init();
 	}
 
-	Application::~Application()
-	{
-		Locator::DestroyServiceProviders();
-	}
+	Application::~Application() { }
 
 	void Application::Run()
 	{
 		while (isRunning_)
 		{
 			// Update variable time step
-			Locator::TimeStepService().Update();
+			services_.Get<TimeStep>().Update();
 
 			// Advance the game simulation one step (update)
 			// Update layers
 			for (Layer *layer : layerStack_)
-			{
-				layer->Update(Locator::TimeStepService());
-			}
+				layer->Update(services_.Get<TimeStep>(), services_.Get<InputPoll>());
 
 			// Draw GUI
 			imGuiLayer_->BeginDraw();
 			for(Layer *layer: layerStack_)
-			{
 				layer->OnImGuiRender();
-			}
+
 			imGuiLayer_->EndDraw();
 
 			window_->OnUpdate();

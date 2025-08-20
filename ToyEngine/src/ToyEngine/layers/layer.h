@@ -1,6 +1,8 @@
 #pragma once
 #include "ToyEngine/event.h"
 #include "ToyEngine/services/time_step.h"
+#include "ToyEngine/services/input_poll.h"
+
 // imgui
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
@@ -20,7 +22,7 @@ namespace ToyEngine
 		/// Each frame, the engine updates every layer in m_layerStack
 		/// </summary>
 		/// <param name="time_delta"></param>
-		virtual void Update(const TimeStep& time_step) {};
+		virtual void Update(const TimeStep& time_step, const InputPoll& input) {};
 		/// <summary>
 		/// Called in Application::Run after scene draw call.
 		/// GUI defined in client application project. 

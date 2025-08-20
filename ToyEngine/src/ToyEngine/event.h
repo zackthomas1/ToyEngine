@@ -1,5 +1,6 @@
 #pragma once
 #include "ToyEngine/enum.h"
+
 #include <glm/vec2.hpp>
 
 namespace ToyEngine
@@ -25,7 +26,7 @@ namespace ToyEngine
 		eKeyState GetKeyState() const { return state_; }
 
 	private: 
-		eKeyCode key_; 
+		eKeyCode key_;
 		eKeyState state_;
 	};
 
@@ -33,7 +34,7 @@ namespace ToyEngine
 	{
 	public:
 		EventVerticalScroll(float y_offset) : y_offset_(y_offset) {}
-		float GetYOffset() { return y_offset_; }
+		float GetYOffset() const { return y_offset_; }
 	private:
 		float y_offset_;
 	};
@@ -43,19 +44,24 @@ namespace ToyEngine
 	public:
 		EventCursorPos(float x_offset, float y_offset,
 			float x_ndc_coord_prev, float y_ndc_coord_prev,
-			float x_ndc_coord, float y_ndc_coord)
-				: offset_(glm::vec2(x_offset, y_offset)), 
+			float x_ndc_coord, float y_ndc_coord,
+			bool is_mouse_middle_released)
+				: offset_(glm::vec2(x_offset, y_offset)),
 				ndc_coord_prev(glm::vec2(x_ndc_coord_prev, y_ndc_coord_prev)),
-				ndc_coord_(glm::vec2(x_ndc_coord, y_ndc_coord))
+				ndc_coord_(glm::vec2(x_ndc_coord, y_ndc_coord)),
+				is_mouse_middle_released_(is_mouse_middle_released)
 		{}
 
-		const glm::vec2& GetOffset() { return offset_; }
-		const glm::vec2& GetNDCCoordPrev() { return ndc_coord_prev; }
-		const glm::vec2& GetNDCCoord() { return ndc_coord_; }
-		
-		void SetNDCCoord(glm::vec2& wrap_compensated_ndc) { ndc_coord_ = wrap_compensated_ndc; }
+		const glm::vec2& GetOffset() const { return offset_; }
+		const glm::vec2& GetNDCCoordPrev() const { return ndc_coord_prev; }
+		const glm::vec2& GetNDCCoord() const { return ndc_coord_; }
+		bool IsMouseMiddleReleased() const { return is_mouse_middle_released_; }
+
+		void SetNDCCoordPrev(glm::vec2& updated_ndc_prev) { ndc_coord_prev = updated_ndc_prev; }
+		void SetNDCCoord(glm::vec2& updated_ndc) { ndc_coord_ = updated_ndc; }
 	private:
 		glm::vec2 offset_, ndc_coord_prev, ndc_coord_;
+		bool is_mouse_middle_released_;
 	};
 
 	class EventApplicationClose : public Event 

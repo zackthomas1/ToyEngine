@@ -140,8 +140,10 @@ namespace ToyEngine
 			
 			data.x_mouse_pos = x_current_pos;
 			data.y_mouse_pos = y_current_pos;
+
+			bool is_released = static_cast<eKeyState>(glfwGetMouseButton(window, static_cast<int>(eMouseCode::kMouseMiddle))) == eKeyState::kRelease;
 			
-			EventCursorPos cursor_pos(x_offset, y_offset, x_ndc_coord_prev, y_ndc_coord_prev, x_ndc_coord, y_ndc_coord);
+			EventCursorPos cursor_pos(x_offset, y_offset, x_ndc_coord_prev, y_ndc_coord_prev, x_ndc_coord, y_ndc_coord, is_released);
 			data.event_callback(cursor_pos);
 		});
 	}

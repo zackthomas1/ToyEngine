@@ -82,8 +82,7 @@ bool Viewport::OnMouseMove(ToyEngine::EventCursorPos& cursor_event)
 	//TY_INFO("viewport NDC: ({},{})", x_ndc_coord, y_ndc_coord);
 
 	// Only wrap cursor if camera controller is an Orbit camera and the middle mouse botton is pressed
-	if (camera_controller_->GetProps().type == ToyEngine::eCameraControllerType::kOrbit &&
-		(ToyEngine::Locator::InputPollService().Mouse(ToyEngine::eMouseCode::kMouseMiddle) != ToyEngine::eKeyState::kRelease))
+	if (camera_controller_->GetProps().type == ToyEngine::eCameraControllerType::kOrbit && !cursor_event.IsMouseMiddleReleased())
 	{
 		auto [is_wrapped, new_viewport_pos] = HandleCursorWrapping(x_ndc_coord, y_ndc_coord, viewport_pos);
 
@@ -118,16 +117,14 @@ bool Viewport::OnMouseMove(ToyEngine::EventCursorPos& cursor_event)
 		return true;
 	}
 
-	// Create new event with viewport-relative NDC coordinates
-	ToyEngine::EventCursorPos viewport_cursorpos(cursor_event.GetOffset().x, cursor_event.GetOffset().y,
-		x_ndc_coord_prev, y_ndc_coord_prev,
-		x_ndc_coord, y_ndc_coord);
+	cursor_event.SetNDCCoordPrev(glm::vec2(x_ndc_coord_prev, y_ndc_coord_prev));
+	cursor_event.SetNDCCoord(glm::vec2(x_ndc_coord, y_ndc_coord)); 
 
 	// Dispatch to camera controller
-	ToyEngine::EventDispatcher dispatcher(viewport_cursorpos);
+	ToyEngine::EventDispatcher dispatcher(cursor_event);
 	dispatcher.Dispatch<ToyEngine::EventCursorPos>(TY_BINDFN(camera_controller_->OnEvent));
 
-	return true;
+	return cursor_event.GetEventHandled();
 }
 
 bool Viewport::OnEvent(ToyEngine::Event& e) {

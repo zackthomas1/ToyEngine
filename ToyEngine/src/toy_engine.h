@@ -6,7 +6,6 @@
 #include "ToyEngine/layers/layer.h"
 #include "ToyEngine/model/primatives.h"
 #include "ToyEngine/model/model.h"
-#include "ToyEngine/services/locator.h"
 #include "ToyEngine/renderer/light.h"
 #include "ToyEngine/renderer/camera_controller.h"
 #include "ToyEngine/renderer/shader.h"

@@ -28,7 +28,7 @@
 //#define TY_BINDFN(fn) std::bind(&fn, this, std::placeholders::_1)
 #define TY_BINDFN_ARGS(fn, ...) [this](auto&& e) { return fn(__VA_ARGS__, e); }
 
-constexpr float TY_EPSILON = 0.001;
+constexpr float TY_EPSILON = 0.001f;
 constexpr int TY_DEFAULT_WINDOW_WIDTH = 1280;
 constexpr int TY_DEFAULT_WINDOW_HEIGHT = 720;
 
