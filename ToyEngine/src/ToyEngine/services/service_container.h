@@ -17,7 +17,13 @@ namespace ToyEngine
 		void Register(Args&&... args)
 		{
 			static_assert(std::is_base_of_v<TInterface, TImpl> || std::is_same_v<TInterface, TImpl>, "TImpl must be derived from TInterface");
+			
+			if (Has<TInterface>()) {
+				TY_CORE_WARN("Service {} already registered, replacing", typeid(TInterface).name());
+			}
+			
 			services_[std::type_index(typeid(TInterface))] = MakeScope<ServiceHolder<TImpl>>(std::forward<Args>(args)...);
+			TY_CORE_INFO("Registered service: {}", typeid(TInterface).name());
 		}
 
 		template<typename TInterface>
