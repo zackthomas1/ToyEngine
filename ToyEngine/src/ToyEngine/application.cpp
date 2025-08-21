@@ -18,7 +18,7 @@ namespace ToyEngine
 		window.SetCommandCallbackFn(TY_BINDFN(Application::OnEvent));
 
 		services_.Register<TimeStep, TimeStepGLFW>();
-		services_.Register<InputPoll, InputPollGLFW>(window);
+		services_.Register<InputPoll, InputPollGLFW>(*dynamic_cast<WindowsWindow*>(&window));
 #else
 		services_.Register<Window, NullWindow>();
 		services_.Register<TimeStep, NullTimeStep>();

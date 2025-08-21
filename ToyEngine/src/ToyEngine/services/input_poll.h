@@ -4,7 +4,6 @@
 struct GLFWwindow;
 
 namespace ToyEngine {
-	class Window;
 
 	class InputPoll {
 	public:
@@ -33,9 +32,11 @@ namespace ToyEngine {
 		virtual std::pair<float, float> MousePos() const override { return std::pair<float, float>(0.0f, 0.0f); }
 	};
 
+	class WindowsWindow;
+
 	class InputPollGLFW : public InputPoll {
 	public:
-		InputPollGLFW(Window& window);
+		InputPollGLFW(WindowsWindow& window);
 		~InputPollGLFW() {}
 
 		virtual void Init();

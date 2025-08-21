@@ -6,9 +6,9 @@
 #include <GLFW/glfw3.h>
 
 namespace ToyEngine {
-	ToyEngine::InputPollGLFW::InputPollGLFW(Window& window)
+	InputPollGLFW::InputPollGLFW(WindowsWindow& window)
 	{
-		window_ = dynamic_cast<WindowsWindow*>(&window)->GetGLFWWindow();
+		window_ = window.GetGLFWWindow();
 		TY_CORE_ASSERT(window_, "Failed cast to WindowsWindow. Unable to get GLFWwindow pointer. ");
 	}
 
