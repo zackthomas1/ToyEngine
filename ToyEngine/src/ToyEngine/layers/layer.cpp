@@ -87,7 +87,7 @@ namespace ToyEngine
 		return MakeScope<ImGuiImplGLFW>(dynamic_cast<WindowsWindow*>(window)->GetGLFWWindow());
 #else
 		TY_CORE_ERROR("Platform not supported")
-		return nullptr
+		return nullptr;
 #endif //  TY_PLATFORM_WINDOWS
 	}
 

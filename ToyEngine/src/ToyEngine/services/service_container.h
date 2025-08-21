@@ -29,7 +29,7 @@ namespace ToyEngine
 		TInterface& Get()
 		{
 			auto it = services_.find(std::type_index(typeid(TInterface))); 
-			TY_CORE_ASSERT(it != services_.end(), "Requestd service not registered")
+			TY_CORE_ASSERT(it != services_.end(), "Requested service not registered")
 			return *static_cast<TInterface*>(it->second->GetRaw());
 		}
 	private:
