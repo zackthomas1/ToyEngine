@@ -34,7 +34,7 @@ namespace ToyEngine {
 
 	class InputPollGLFW : public InputPoll {
 	public:
-		InputPollGLFW(Window* window);
+		InputPollGLFW(Window& window);
 		~InputPollGLFW() {}
 
 		virtual void Init();

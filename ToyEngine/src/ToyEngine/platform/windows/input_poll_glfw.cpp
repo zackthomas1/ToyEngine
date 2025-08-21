@@ -1,15 +1,14 @@
 #include "pch.h"
-#include "ToyEngine/application.h"
 #include "ToyEngine/services/input_poll.h"
-#include "ToyEngine/platform/windows/windows_window.h"
+#include "ToyEngine/services/window.h"
 
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
 namespace ToyEngine {
-	InputPollGLFW::InputPollGLFW(Window* window)
+	ToyEngine::InputPollGLFW::InputPollGLFW(Window& window)
 	{
-		window_ = dynamic_cast<WindowsWindow*>(window);
+		window_ = dynamic_cast<WindowsWindow*>(&window);
 		TY_CORE_ASSERT(window_, "Failed cast to WindowsWindow");
 	}
 

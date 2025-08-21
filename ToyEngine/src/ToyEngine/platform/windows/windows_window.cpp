@@ -1,9 +1,13 @@
 #include "pch.h"
-#include "windows_window.h"
+#include "ToyEngine/services/window.h"
+
+#include <glad/glad.h>
+#include <GLFW/glfw3.h>
 
 namespace ToyEngine
 {
-	WindowsWindow::WindowsWindow(const WindowProps& props) : Window(props)
+	WindowsWindow::WindowsWindow(const WindowProps& props)
+		: Window(props)
 	{
 		Init();
 	}
@@ -105,7 +109,7 @@ namespace ToyEngine
 		glfwSetScrollCallback(window_, [](GLFWwindow* window, double x_offset, double y_offset) {
 			WindowData& data = *(WindowData*)glfwGetWindowUserPointer(window);
 			
-			EventVerticalScroll scroll(y_offset); 
+			EventVerticalScroll scroll(static_cast<float>(y_offset));
 			data.event_callback(scroll);
 		});
 

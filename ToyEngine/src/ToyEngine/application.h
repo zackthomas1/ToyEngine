@@ -1,9 +1,7 @@
 #pragma once
 #include "core.h"
 #include "ToyEngine/event.h"
-#include "ToyEngine/window.h"
 #include "ToyEngine/layers/layer_stack.h"
-
 #include "ToyEngine/services/service_container.h"
 
 namespace ToyEngine
@@ -60,10 +58,7 @@ namespace ToyEngine
 		bool OnClose(EventApplicationClose& e);
 		bool OnResize(EventWindowResize& e);
 
-		Scope<Window> window_;
-		
 		ServiceContainer services_;
-
 		ImGuiLayer *imGuiLayer_;	// imGuiLayer is owned by the layerStack_. Deleted by layerStack_ destructor
 		LayerStack layerStack_;
 		bool isRunning_ = true;

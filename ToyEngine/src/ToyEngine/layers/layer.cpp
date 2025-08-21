@@ -1,6 +1,6 @@
 #include "pch.h"
 #include "layer.h"
-#include "ToyEngine/platform/windows/windows_window.h"
+#include "ToyEngine/services/window.h"
 
 // imgui
 #include "backends/imgui_impl_glfw.h"
@@ -8,7 +8,7 @@
 
 namespace ToyEngine
 {
-	ImGuiLayer::ImGuiLayer(Window* window)
+	ImGuiLayer::ImGuiLayer(Window& window)
 		: blocks_event_(true)
 	{
 		impl_ = IImGuiImpl::Create(window);
@@ -81,14 +81,14 @@ namespace ToyEngine
 		}
 	}
 
-	Scope<IImGuiImpl> IImGuiImpl::Create(Window* window)
+	Scope<IImGuiImpl> ToyEngine::IImGuiImpl::Create(Window& window)
 	{
 #ifdef  TY_PLATFORM_WINDOWS
-		return MakeScope<ImGuiImplGLFW>(dynamic_cast<WindowsWindow*>(window)->GetGLFWWindow());
+		return MakeScope<ImGuiImplGLFW>(dynamic_cast<WindowsWindow*>(&window)->GetGLFWWindow());
 #else
 		TY_CORE_ERROR("Platform not supported")
 		return nullptr;
-#endif //  TY_PLATFORM_WINDOWS
+#endif
 	}
 
 	void ImGuiImplGLFW::Init()

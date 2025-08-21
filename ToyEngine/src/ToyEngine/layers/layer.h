@@ -47,13 +47,13 @@ namespace ToyEngine
 		virtual void NewFrame() = 0;
 		virtual void EndFrame() = 0;
 		virtual void Shutdown() = 0;
-		static Scope<IImGuiImpl> Create(Window* window);
+		static Scope<IImGuiImpl> Create(Window& window);
 	};
 
 	class ImGuiLayer : public Layer
 	{
 	public:
-		ImGuiLayer(Window* window);
+		ImGuiLayer(Window& window);
 		virtual void OnAttach() override;
 		virtual void OnDetatch() override;
 		void BeginDraw();

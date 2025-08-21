@@ -11,21 +11,22 @@ namespace ToyEngine
 		TY_CORE_ASSERT(!s_instance, "Application already exist!")
 		s_instance = this;
 
-		// Initialize window
-		window_ = Window::Create();
-		window_->SetCommandCallbackFn(TY_BINDFN(Application::OnEvent));
-
-		// Initialize time step and input polling services
+		// Initialize services - window, time step, and input polling
 #ifdef TY_PLATFORM_WINDOWS
+		services_.Register<Window, WindowsWindow>();
+		Window& window = services_.Get<Window>();
+		window.SetCommandCallbackFn(TY_BINDFN(Application::OnEvent));
+
 		services_.Register<TimeStep, TimeStepGLFW>();
-		services_.Register<InputPoll, InputPollGLFW>(window_.get());
+		services_.Register<InputPoll, InputPollGLFW>(window);
 #else
+		services_.Register<Window, NullWindow>();
 		services_.Register<TimeStep, NullTimeStep>();
 		services_.Register<InputPoll, NullInputPoll>();
 #endif TY_PLATFORM_WINDOWS
 
 		// Initalize imgui layer
-		imGuiLayer_ = new ImGuiLayer(window_.get());
+		imGuiLayer_ = new ImGuiLayer(services_.Get<Window>());
 		layerStack_.PushLayer(imGuiLayer_);
 
 		// Initialize renderer
@@ -35,6 +36,8 @@ namespace ToyEngine
 	void Application::Run()
 	{
 		TimeStep& time_step = services_.Get<TimeStep>();
+		Window& window = services_.Get<Window>();
+
 		while (isRunning_)
 		{
 			// Update variable time step
@@ -52,7 +55,7 @@ namespace ToyEngine
 
 			imGuiLayer_->EndDraw();
 
-			window_->OnUpdate();
+			window.OnUpdate();
 		}
 	}
 
@@ -88,7 +91,7 @@ namespace ToyEngine
 
 	bool Application::OnResize(EventWindowResize& e)
 	{
-		window_->SetWindowSize(e.GetWidth(), e.GetHeight());
+		services_.Get<Window>().SetWindowSize(e.GetWidth(), e.GetHeight());
 		return true;
 	}
 }

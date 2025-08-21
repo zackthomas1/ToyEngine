@@ -1,6 +1,8 @@
 #pragma once
 #include "ToyEngine/event.h"
 
+struct GLFWwindow;
+
 namespace ToyEngine {
 	struct WindowProps
 	{
@@ -16,8 +18,9 @@ namespace ToyEngine {
 			bool is_mouse_active = false,
 			float x_mouse_pos = TY_DEFAULT_WINDOW_WIDTH / 2.0f,
 			float y_mouse_pos = TY_DEFAULT_WINDOW_HEIGHT / 2.0f)
-			: title(title), width(width), height(height),
-			is_mouse_active(is_mouse_active), x_mouse_pos(x_mouse_pos), y_mouse_pos(y_mouse_pos)
+				: title(title), is_mouse_active(is_mouse_active),
+				width(width), height(height),
+				x_mouse_pos(x_mouse_pos), y_mouse_pos(y_mouse_pos)
 		{}
 	};
 
@@ -58,5 +61,35 @@ namespace ToyEngine {
 			float x_mouse_pos, y_mouse_pos;
 		};
 		WindowData data_;
+	};
+
+	class NullWindow : public Window
+	{
+		virtual void OnUpdate() override {}
+
+		virtual void SetCommandCallbackFn(const EventCallbackFn& callback) override { data_.event_callback = callback; }
+		virtual void SetCursorPos(float xpos, float ypos) override {}
+	};
+
+	class WindowsWindow : public Window
+	{
+	public:
+		WindowsWindow(const WindowProps& props = WindowProps());
+		~WindowsWindow();
+
+		virtual void OnUpdate() override;
+
+		virtual void SetCommandCallbackFn(const EventCallbackFn& callback) override { data_.event_callback = callback; }
+		virtual void SetCursorPos(float xpos, float ypos) override;
+
+		GLFWwindow* GetGLFWWindow() const { return window_; } // Mark as const to prevent modification of the class or pointer
+
+	private:
+		void Init();
+		void SetCallbackFns();
+		void Shutdown();
+
+	private:
+		GLFWwindow* window_;
 	};
 }
