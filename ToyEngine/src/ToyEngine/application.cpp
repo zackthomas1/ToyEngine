@@ -19,9 +19,9 @@ namespace ToyEngine
 
 		services_.Register<TimeStep, TimeStepGLFW>();
 
-		WindowsWindow&  winWindow = *dynamic_cast<WindowsWindow*>(&window);
+		WindowsWindow* winWindow = dynamic_cast<WindowsWindow*>(&window);
 		TY_CORE_ASSERT(winWindow, "Failed to cast Window to WindowsWindow. InputPollGLFW requires a WindowsWindow instance.");
-		services_.Register<InputPoll, InputPollGLFW>(winWindow);
+		services_.Register<InputPoll, InputPollGLFW>(*winWindow);
 #else
 		services_.Register<Window, NullWindow>();
 		services_.Register<TimeStep, NullTimeStep>();
