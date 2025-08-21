@@ -41,9 +41,7 @@ namespace ToyEngine
 	class ImGuiLayer : public Layer
 	{
 	public:
-		ImGuiLayer() : blocks_event_(true) {}
-		~ImGuiLayer() {}
-
+		ImGuiLayer(Window* window);
 		virtual void OnAttach() override;
 		virtual void OnDetatch() override;
 		void BeginDraw();
@@ -51,6 +49,7 @@ namespace ToyEngine
 		virtual void OnEvent(Event& e) override;
 		void BlockEvents(bool blocking) { blocks_event_ = blocking; }
 	private:
-		bool blocks_event_; 
+		bool blocks_event_;
+		WindowsWindow* window_;
 	};
 }

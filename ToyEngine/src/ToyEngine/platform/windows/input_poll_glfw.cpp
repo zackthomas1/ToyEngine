@@ -9,7 +9,7 @@
 namespace ToyEngine {
 	InputPollGLFW::InputPollGLFW(Window* window)
 	{
-		TY_CORE_ASSERT(window_ = dynamic_cast<WindowsWindow*>(window), "Failed cast to WindowsWindow/");
+		TY_CORE_ASSERT(window_ = dynamic_cast<WindowsWindow*>(window), "Failed cast to WindowsWindow");
 	}
 
 	void InputPollGLFW::Init()

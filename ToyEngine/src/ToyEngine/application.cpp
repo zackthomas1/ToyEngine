@@ -26,7 +26,7 @@ namespace ToyEngine
 #endif TY_PLATFORM_WINDOWS
 
 		// Initalize imgui layer
-		imGuiLayer_ = new ImGuiLayer();
+		imGuiLayer_ = new ImGuiLayer(window_.get());
 		layerStack_.PushLayer(imGuiLayer_);
 
 		// initialize renderer

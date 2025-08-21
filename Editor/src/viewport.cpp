@@ -15,7 +15,7 @@ void Viewport::ImGuiRender()
 
 	props_.is_focused = ImGui::IsWindowFocused();
 	props_.is_hovered = ImGui::IsWindowHovered();
-	ToyEngine::Application::Get().GetImGuiLayer()->BlockEvents(!props_.is_focused || !props_.is_hovered);
+	//ToyEngine::Application::Get().GetImGuiLayer()->BlockEvents(!props_.is_focused || !props_.is_hovered);
 
 	// viewport properties
 	props_.panel_size	= ImGui::GetContentRegionAvail();
@@ -43,11 +43,14 @@ void Viewport::ImGuiRender()
 
 bool Viewport::OnMouseMove(ToyEngine::EventCursorPos& cursor_event)
 {
+	if (cursor_event.IsMouseMiddleReleased()) return false;
+
 	// Null check for camera controller
 	if (!camera_controller_) {
 		TY_CORE_ERROR("Camera controller not set in viewport");
 		return false;
 	}
+
 	// Get current viewport information from ImGui
 	ImGuiIO& io = ImGui::GetIO();
 	ImVec2 mouse_pos = io.MousePos;
@@ -82,7 +85,7 @@ bool Viewport::OnMouseMove(ToyEngine::EventCursorPos& cursor_event)
 	//TY_INFO("viewport NDC: ({},{})", x_ndc_coord, y_ndc_coord);
 
 	// Only wrap cursor if camera controller is an Orbit camera and the middle mouse botton is pressed
-	if (camera_controller_->GetProps().type == ToyEngine::eCameraControllerType::kOrbit && !cursor_event.IsMouseMiddleReleased())
+	if (camera_controller_->GetProps().type == ToyEngine::eCameraControllerType::kOrbit)
 	{
 		auto [is_wrapped, new_viewport_pos] = HandleCursorWrapping(x_ndc_coord, y_ndc_coord, viewport_pos);
 
@@ -100,8 +103,8 @@ bool Viewport::OnMouseMove(ToyEngine::EventCursorPos& cursor_event)
 			float client_relative_x = (props_.window_pos.x - main_viewport->Pos.x) + props_.window_min.x + new_viewport_pos.x;
 			float client_relative_y = (props_.window_pos.y - main_viewport->Pos.y) + props_.window_min.y + new_viewport_pos.y;
 
-			ToyEngine::Window& window = ToyEngine::Application::AccessWindow();
-			window.SetCursorPos(client_relative_x, client_relative_y);
+			//ToyEngine::Window& window = ToyEngine::Application::AccessWindow();
+			//window.SetCursorPos(client_relative_x, client_relative_y);
 
 			// update ndc values
 			float x_ndc_coord = (2.0f * (new_viewport_pos.x / props_.panel_size.x)) - 1.0f;

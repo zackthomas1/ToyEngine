@@ -8,12 +8,15 @@
 
 namespace ToyEngine
 {
+	ImGuiLayer::ImGuiLayer(Window* window)
+		: blocks_event_(true)
+	{
+		TY_CORE_ASSERT(window_ = dynamic_cast<WindowsWindow*>(window), "Failed cast to WindowsWindow");
+	}
 	void ImGuiLayer::OnAttach()
 	{
 		TY_CORE_ASSERT(ImGui::GetCurrentContext() == nullptr, "ImGui - Already been initialized context.");
 		
-		GLFWwindow* window = dynamic_cast<WindowsWindow*>(&Application::AccessWindow())->GetGLFWWindow();
-
 		// Setup Dear ImGui context
 		// -------------------------
 		IMGUI_CHECKVERSION();
@@ -37,7 +40,7 @@ namespace ToyEngine
 
 		// Setup Platform/Renderer backends 
 		TY_CORE_ASSERT(io_.BackendPlatformUserData == nullptr, "ImGui - Already initialized a platform backend.");
-		ImGui_ImplGlfw_InitForOpenGL(window, true);
+		ImGui_ImplGlfw_InitForOpenGL(window_->GetGLFWWindow(), true);
 		ImGui_ImplOpenGL3_Init("#version 330 core");
 		// -------------------------
 	}

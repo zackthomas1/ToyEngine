@@ -50,11 +50,9 @@ namespace ToyEngine
 		/// <param name="layer">Pointer to the Layer to be added as an overlay.</param>
 		void PushOverlay(Layer *layer);
 
-		ImGuiLayer* GetImGuiLayer() { return imGuiLayer_; }
-
 		// Accessors return const references to prevent modification
-		inline static Window& AccessWindow() { return *Application::s_instance->window_; }
-		inline static Application& Get() { return *s_instance; }	
+		//inline static Application& Get() { return *s_instance; }
+
 	protected: 
 		inline static ServiceContainer& GetServices() { return Application::s_instance->services_; }
 	private:
@@ -72,8 +70,6 @@ namespace ToyEngine
 		static Application *s_instance;
 	};
 
-	/// <summary>
-	/// This function is defined in the client application
-	/// </summary>
+	// Function defined in the client application
 	Application* CreateApplication();
 }
