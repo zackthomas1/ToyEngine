@@ -16,7 +16,7 @@ namespace ToyEngine
 		template<typename TInterface, typename TImpl = TInterface, typename... Args>
 		void Register(Args&&... args)
 		{
-			static_assert(std::is_base_of_v<TInterface, TImpl> || std::is_same_v<TInterface, TImpl>, "TImpl must be derived from TInterface");
+			static_assert(std::is_base_of_v<TInterface, TImpl> || std::is_same_v<TInterface, TImpl>, "TImpl must be derived from or be the same as TInterface");
 			
 			if (Has<TInterface>()) {
 				TY_CORE_WARN("Service {} already registered, replacing", typeid(TInterface).name());

@@ -9,7 +9,7 @@ namespace ToyEngine {
 	InputPollGLFW::InputPollGLFW(WindowsWindow& window)
 	{
 		window_ = window.GetGLFWWindow();
-		TY_CORE_ASSERT(window_, "Failed cast to WindowsWindow. Unable to get GLFWwindow pointer. ");
+		TY_CORE_ASSERT(window_, "GLFWwindow pointer is null or invalid");
 	}
 
 	void InputPollGLFW::Init()

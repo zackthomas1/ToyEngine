@@ -14,8 +14,8 @@ namespace ToyEngine {
 
 		WindowProps(const std::string& title = "Editor",
 			unsigned int width = TY_DEFAULT_WINDOW_WIDTH,
-			unsigned int height = TY_DEFAULT_WINDOW_HEIGHT,
 			bool is_mouse_active = false,
+			unsigned int height = TY_DEFAULT_WINDOW_HEIGHT,
 			float x_mouse_pos = TY_DEFAULT_WINDOW_WIDTH / 2.0f,
 			float y_mouse_pos = TY_DEFAULT_WINDOW_HEIGHT / 2.0f)
 				: title(title), is_mouse_active(is_mouse_active),
