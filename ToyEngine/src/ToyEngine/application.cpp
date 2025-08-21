@@ -1,7 +1,6 @@
 #include "pch.h"
 #include "ToyEngine/application.h"
 #include "ToyEngine/renderer/renderer.h"
-#include "ToyEngine/layers/layer.h"
 
 namespace ToyEngine
 {
@@ -16,7 +15,7 @@ namespace ToyEngine
 		window_ = Window::Create();
 		window_->SetCommandCallbackFn(TY_BINDFN(Application::OnEvent));
 
-		//// Initialize time step and input polling services
+		// Initialize time step and input polling services
 #ifdef TY_PLATFORM_WINDOWS
 		services_.Register<TimeStep, TimeStepGLFW>();
 		services_.Register<InputPoll, InputPollGLFW>(window_.get());
@@ -29,11 +28,9 @@ namespace ToyEngine
 		imGuiLayer_ = new ImGuiLayer(window_.get());
 		layerStack_.PushLayer(imGuiLayer_);
 
-		// initialize renderer
+		// Initialize renderer
 		Renderer::Init();
 	}
-
-	Application::~Application() { }
 
 	void Application::Run()
 	{

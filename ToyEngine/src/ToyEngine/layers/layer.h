@@ -1,7 +1,5 @@
 #pragma once
 #include "ToyEngine/event.h"
-#include "ToyEngine/services/time_step.h"
-#include "ToyEngine/services/input_poll.h"
 
 // imgui
 #include <glad/glad.h>
@@ -9,7 +7,9 @@
 #include "imgui.h"
 
 namespace ToyEngine
-{
+{	
+	class Window;
+
 	class Layer
 	{
 	public:
@@ -37,6 +37,18 @@ namespace ToyEngine
 	protected:
 		Layer() {}
 	};
+	
+	class IImGuiImpl
+	{
+	public:
+		IImGuiImpl() {}
+		virtual ~IImGuiImpl() {}
+		virtual void Init() = 0;
+		virtual void NewFrame() = 0;
+		virtual void EndFrame() = 0;
+		virtual void Shutdown() = 0;
+		static Scope<IImGuiImpl> Create(Window* window);
+	};
 
 	class ImGuiLayer : public Layer
 	{
@@ -50,6 +62,18 @@ namespace ToyEngine
 		void BlockEvents(bool blocking) { blocks_event_ = blocking; }
 	private:
 		bool blocks_event_;
-		WindowsWindow* window_;
+		Scope<IImGuiImpl> impl_;
+	};
+
+	class ImGuiImplGLFW : public IImGuiImpl
+	{
+	public:
+		ImGuiImplGLFW(GLFWwindow* window) : window_(window) { }
+		virtual void Init() override;
+		virtual void NewFrame() override;
+		virtual void EndFrame() override;
+		virtual void Shutdown() override;
+	private:
+		GLFWwindow* window_;
 	};
 }

@@ -2,8 +2,9 @@
 #include "core.h"
 #include "ToyEngine/event.h"
 #include "ToyEngine/window.h"
-#include "ToyEngine/services/service_container.h"
 #include "ToyEngine/layers/layer_stack.h"
+
+#include "ToyEngine/services/service_container.h"
 
 namespace ToyEngine
 {
@@ -11,7 +12,7 @@ namespace ToyEngine
 	{
 	public:
 		Application();
-		virtual ~Application();
+		virtual ~Application() {}
 
 		// Delete copy/move to prevent reassignment
 		// Enforce Singleton pattern
