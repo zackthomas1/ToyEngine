@@ -8,8 +8,8 @@
 namespace ToyEngine {
 	ToyEngine::InputPollGLFW::InputPollGLFW(Window& window)
 	{
-		window_ = dynamic_cast<WindowsWindow*>(&window);
-		TY_CORE_ASSERT(window_, "Failed cast to WindowsWindow");
+		window_ = dynamic_cast<WindowsWindow*>(&window)->GetGLFWWindow();
+		TY_CORE_ASSERT(window_, "Failed cast to WindowsWindow. Unable to get GLFWwindow pointer. ");
 	}
 
 	void InputPollGLFW::Init()
@@ -19,16 +19,13 @@ namespace ToyEngine {
 
 	eKeyState InputPollGLFW::Key(eKeyCode key) const
 	{
-		GLFWwindow* window = window_->GetGLFWWindow();
-		TY_CORE_ASSERT(window, "GLFWwindow is Null. Initialize windowing before calling input polling service provider.");
-		eKeyState key_state = static_cast<eKeyState>(glfwGetKey(window, static_cast<int>(key)));
+		eKeyState key_state = static_cast<eKeyState>(glfwGetKey(window_, static_cast<int>(key)));
 		return key_state;
 	}
 
 	eKeyState InputPollGLFW::Mouse(eMouseCode button) const
 	{
-		GLFWwindow* window = window_->GetGLFWWindow();
-		eKeyState button_state = static_cast<eKeyState>(glfwGetMouseButton(window, static_cast<int>(button)));
+		eKeyState button_state = static_cast<eKeyState>(glfwGetMouseButton(window_, static_cast<int>(button)));
 		return button_state;
 	}
 
@@ -39,11 +36,8 @@ namespace ToyEngine {
 
 	std::pair<float, float> InputPollGLFW::MousePos() const
 	{
-		GLFWwindow* window = window_->GetGLFWWindow();
-		TY_CORE_ASSERT(window, "GLFWwindow is Null. Initialize windowing before calling input polling service provider.");
-
 		double xpos, ypos;
-		glfwGetCursorPos(window, &xpos, &ypos);
+		glfwGetCursorPos(window_, &xpos, &ypos);
 		return std::pair<float, float>(static_cast<float>(xpos), static_cast<float>(ypos));
 	}
 }

@@ -1,7 +1,11 @@
 #pragma once
 #include "ToyEngine/enum.h"
 
+struct GLFWwindow;
+
 namespace ToyEngine {
+	class Window;
+
 	class InputPoll {
 	public:
 		virtual ~InputPoll() {}
@@ -29,9 +33,6 @@ namespace ToyEngine {
 		virtual std::pair<float, float> MousePos() const override { return std::pair<float, float>(0.0f, 0.0f); }
 	};
 
-	class Window;
-	class WindowsWindow;
-
 	class InputPollGLFW : public InputPoll {
 	public:
 		InputPollGLFW(Window& window);
@@ -43,6 +44,6 @@ namespace ToyEngine {
 		virtual float MouseVerticalScroll()        const override;
 		virtual std::pair<float, float> MousePos() const override;
 	private:
-		WindowsWindow* window_;
+		GLFWwindow* window_;
 	};
 }
