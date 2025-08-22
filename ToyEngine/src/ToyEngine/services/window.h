@@ -1,23 +1,25 @@
 #pragma once
 #include "ToyEngine/event.h"
 
+struct GLFWwindow;
+
 namespace ToyEngine {
 	struct WindowProps
 	{
 		std::string title;
-		unsigned int width;
-		unsigned int height;
 		bool is_mouse_active;
+		unsigned int width, height;
 		float x_mouse_pos, y_mouse_pos;
 
 		WindowProps(const std::string& title = "Editor",
+			bool is_mouse_active = false,
 			unsigned int width = TY_DEFAULT_WINDOW_WIDTH,
 			unsigned int height = TY_DEFAULT_WINDOW_HEIGHT,
-			bool is_mouse_active = false,
 			float x_mouse_pos = TY_DEFAULT_WINDOW_WIDTH / 2.0f,
 			float y_mouse_pos = TY_DEFAULT_WINDOW_HEIGHT / 2.0f)
-			: title(title), width(width), height(height),
-			is_mouse_active(is_mouse_active), x_mouse_pos(x_mouse_pos), y_mouse_pos(y_mouse_pos)
+				: title(title), is_mouse_active(is_mouse_active),
+				width(width), height(height),
+				x_mouse_pos(x_mouse_pos), y_mouse_pos(y_mouse_pos)
 		{}
 	};
 
@@ -30,11 +32,11 @@ namespace ToyEngine {
 		static Scope<Window> Create(const WindowProps& props = WindowProps());
 
 		virtual void OnUpdate() = 0;
-		
+		virtual void* GetNativeWindow() const = 0;
 		/// <summary>
-		/// Sets the callback function that will be invoked when an event occurs in the window.
-		/// The callback receives a reference to an Event object, allowing custom event handling logic.
-		/// This method must be implemented by derived classes to connect the window's event system
+		/// sets the callback function that will be invoked when an event occurs in the window.
+		/// the callback receives a reference to an event object, allowing custom event handling logic.
+		/// this method must be implemented by derived classes to connect the window's event system
 		/// with the application's event processing code.
 		/// </summary>
 		/// <param name="callback"></param>
@@ -58,5 +60,33 @@ namespace ToyEngine {
 			float x_mouse_pos, y_mouse_pos;
 		};
 		WindowData data_;
+	};
+
+	class NullWindow : public Window
+	{
+		virtual void OnUpdate() override {}
+		virtual void* GetNativeWindow() const override { return nullptr; }
+		virtual void SetCommandCallbackFn(const EventCallbackFn& callback) override { data_.event_callback = callback; }
+		virtual void SetCursorPos(float xpos, float ypos) override {}
+	};
+
+	class WindowsWindow : public Window
+	{
+	public:
+		WindowsWindow(const WindowProps& props = WindowProps());
+		~WindowsWindow();
+
+		virtual void OnUpdate() override;
+		virtual void* GetNativeWindow() const override { return window_; }
+		virtual void SetCommandCallbackFn(const EventCallbackFn& callback) override { data_.event_callback = callback; }
+		virtual void SetCursorPos(float xpos, float ypos) override;
+
+	private:
+		void Init();
+		void SetCallbackFns();
+		void Shutdown();
+
+	private:
+		GLFWwindow* window_;
 	};
 }

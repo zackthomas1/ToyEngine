@@ -1,9 +1,13 @@
 #include "pch.h"
-#include "windows_window.h"
+#include "ToyEngine/services/window.h"
+
+#include <glad/glad.h>
+#include <GLFW/glfw3.h>
 
 namespace ToyEngine
 {
-	WindowsWindow::WindowsWindow(const WindowProps& props) : Window(props)
+	WindowsWindow::WindowsWindow(const WindowProps& props)
+		: Window(props)
 	{
 		Init();
 	}
@@ -105,7 +109,7 @@ namespace ToyEngine
 		glfwSetScrollCallback(window_, [](GLFWwindow* window, double x_offset, double y_offset) {
 			WindowData& data = *(WindowData*)glfwGetWindowUserPointer(window);
 			
-			EventVerticalScroll scroll(y_offset); 
+			EventVerticalScroll scroll(static_cast<float>(y_offset));
 			data.event_callback(scroll);
 		});
 
@@ -140,8 +144,10 @@ namespace ToyEngine
 			
 			data.x_mouse_pos = x_current_pos;
 			data.y_mouse_pos = y_current_pos;
+
+			bool is_released = static_cast<eKeyState>(glfwGetMouseButton(window, static_cast<int>(eMouseCode::kMouseMiddle))) == eKeyState::kRelease;
 			
-			EventCursorPos cursor_pos(x_offset, y_offset, x_ndc_coord_prev, y_ndc_coord_prev, x_ndc_coord, y_ndc_coord);
+			EventCursorPos cursor_pos(x_offset, y_offset, x_ndc_coord_prev, y_ndc_coord_prev, x_ndc_coord, y_ndc_coord, is_released);
 			data.event_callback(cursor_pos);
 		});
 	}

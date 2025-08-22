@@ -1,11 +1,12 @@
 #include "pch.h"
 #include "camera_controller.h"
+#include "ToyEngine/services/input_poll.h"
 
 namespace ToyEngine
 {
 	// Camera controller
-	CameraController::CameraController(const CameraControllerProps& props)
-		: ctrl_props_(props)
+	CameraController::CameraController(const InputPoll& input, const CameraControllerProps& props)
+		:ctrl_props_(props), input_(input)
 	{
 		ToyEngine::CameraProps camera_props;
 		switch (props.type)
@@ -35,9 +36,9 @@ namespace ToyEngine
 		camera_.SetCameraType(camera_props.type);
 	}
 
-	void CameraController::Update(const TimeStep& time_step)
+	void ToyEngine::CameraController::Update(float time_delta)
 	{
-		strategy_->Update(camera_, ctrl_props_, time_step);
+		strategy_->Update(camera_, ctrl_props_, input_, time_delta);
 	}
 
 	bool CameraController::OnEvent(Event& e)
@@ -47,8 +48,9 @@ namespace ToyEngine
 		//dispatcher.Dispatch<EventVerticalScroll>([this](EventVerticalScroll& event) {
 		//	return strategy_->OnMouseScroll(camera_, ctrl_props_, event);
 		//});
-		dispatcher.Dispatch<EventVerticalScroll>(TY_BINDFN_ARGS(strategy_->OnMouseScroll, camera_, ctrl_props_));
-		dispatcher.Dispatch<EventCursorPos>(TY_BINDFN_ARGS(strategy_->OnMouseMove, camera_, ctrl_props_));
+
+		dispatcher.Dispatch<EventVerticalScroll>(TY_BINDFN_ARGS(strategy_->OnMouseScroll, camera_, ctrl_props_, input_));
+		dispatcher.Dispatch<EventCursorPos>(TY_BINDFN_ARGS(strategy_->OnMouseMove, camera_, ctrl_props_, input_));
 		dispatcher.Dispatch<EventWindowResize>(TY_BINDFN(CameraController::OnWindowResize));
 		return true;
 	}
@@ -66,12 +68,9 @@ namespace ToyEngine
 
 	// Fly Camera Strategy
 	// --------------------
-	void FlyCameraStrategy::Update(Camera& camera, const CameraControllerProps& props, const TimeStep& time_step)
+	void ToyEngine::FlyCameraStrategy::Update(Camera& camera, const CameraControllerProps& props, const InputPoll& input, float time_delta)
 	{
-		float delta_time = time_step.GetTimeDelta();
-		ToyEngine::InputPoll& input = ToyEngine::Locator::InputPollService();
-
-		float velocity = props.movement_speed * delta_time;
+		float velocity = props.movement_speed * time_delta;
 
 		if (input.Key(eKeyCode::kKeyW) != eKeyState::kRelease) // Forward
 			camera.SetPosition(camera.GetProps().position + (velocity * camera.GetProps().front));
@@ -87,7 +86,7 @@ namespace ToyEngine
 			camera.SetPosition(camera.GetProps().position - (velocity * camera.GetProps().up));
 	}
 
-	bool FlyCameraStrategy::OnMouseScroll(Camera& camera, const CameraControllerProps& props, EventVerticalScroll& e)
+	bool FlyCameraStrategy::OnMouseScroll(Camera& camera, const CameraControllerProps& props, const InputPoll& input, EventVerticalScroll& e)
 	{
 		float fov = camera.GetProps().fov - e.GetYOffset();
 
@@ -100,7 +99,7 @@ namespace ToyEngine
 		return true;
 	}
 
-	bool FlyCameraStrategy::OnMouseMove(Camera& camera, const CameraControllerProps& props, EventCursorPos& e)
+	bool FlyCameraStrategy::OnMouseMove(Camera& camera, const CameraControllerProps& props, const InputPoll& input, EventCursorPos& e)
 	{
 		float x_offset = static_cast<float>(e.GetOffset().x) * props.mouse_sensitivity;
 		float y_offset = static_cast<float>(e.GetOffset().y) * props.mouse_sensitivity;
@@ -118,7 +117,7 @@ namespace ToyEngine
 
 	// Orbit Camera Strategy
 	// --------------------
-	bool OrbitCameraStrategy::OnMouseScroll(Camera& camera, const CameraControllerProps& props, EventVerticalScroll& e)
+	bool OrbitCameraStrategy::OnMouseScroll(Camera& camera, const CameraControllerProps& props, const InputPoll& input, EventVerticalScroll& e)
 	{
 		glm::vec3 position = camera.GetProps().position;
 		glm::vec3 view_dir = camera.GetProps().front;
@@ -130,13 +129,13 @@ namespace ToyEngine
 		return true;
 	}
 
-	bool OrbitCameraStrategy::OnMouseMove(Camera& camera, const CameraControllerProps& props, EventCursorPos& e)
+	bool OrbitCameraStrategy::OnMouseMove(Camera& camera, const CameraControllerProps& props, const InputPoll& input, EventCursorPos& e)
 	{
-		ToyEngine::InputPoll& input = ToyEngine::Locator::InputPollService();
-
 		if ((input.Key(eKeyCode::kKeyLCtrl) != eKeyState::kRelease) &&
 			(input.Mouse(eMouseCode::kMouseMiddle) != eKeyState::kRelease) ) 
 		{
+			// Zoom
+			// -----
 			glm::vec3 position = camera.GetProps().position;
 			glm::vec3 view_dir = camera.GetProps().front;
 			float zoom_delta = e.GetOffset().y * props.mouse_sensitivity;
@@ -150,6 +149,7 @@ namespace ToyEngine
 			(input.Mouse(eMouseCode::kMouseMiddle) != eKeyState::kRelease))
 		{
 			// Pan
+			// -----
 			glm::vec3 cam_right = camera.GetProps().right;
 			glm::vec3 cam_up	= camera.GetProps().up;
 				
@@ -171,6 +171,8 @@ namespace ToyEngine
 		}
 		else if ((input.Mouse(eMouseCode::kMouseMiddle) != eKeyState::kRelease))
 		{
+			// Rotate
+			// -----
 			glm::vec3 p_ndc = glm::vec3(e.GetNDCCoordPrev(), 0.0);	// start pos
 			glm::vec3 p_prim_ndc = glm::vec3(e.GetNDCCoord(), 0.0);	// end pos
 
@@ -206,18 +208,14 @@ namespace ToyEngine
 
 			camera.SetOrientation(R);
 		}
-
 		return true;
 	}
 
 	// Ortho Camera Strategy
 	// --------------------
-	void OrthoCameraStrategy::Update(Camera& camera, const CameraControllerProps& props, const TimeStep& time_step)
+	void ToyEngine::OrthoCameraStrategy::Update(Camera& camera, const CameraControllerProps& props, const InputPoll& input, float time_delta)
 	{
-		float delta_time = time_step.GetTimeDelta();
-		ToyEngine::InputPoll& input = ToyEngine::Locator::InputPollService();
-
-		float velocity = props.movement_speed * delta_time;
+		float velocity = props.movement_speed * time_delta;
 
 		if (input.Key(eKeyCode::kKeyW) != eKeyState::kRelease) // Up
 			camera.SetPosition(camera.GetProps().position + (velocity * camera.GetProps().up));

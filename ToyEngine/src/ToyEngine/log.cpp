@@ -8,9 +8,8 @@ namespace ToyEngine
 
 	void Log::Init()
 	{
-		// Set the general pattern of logging statements 
-		// Pattern - '[{Time}] [{File name}]:{line of logging statement}] {logger}: {logging statement}'
-		spdlog::set_pattern("%^[%T] [%s:%#]\t %n: %v%$");
+		// Pattern - '[{logger}] [{Time}] [{File name}]:{line of logging statement}] {logging statement}'
+		spdlog::set_pattern("%^[%T] [%n] [%s:%#] %v%$");
 
 		s_CoreLogger = spdlog::stdout_color_mt("ToyEngine");
 		s_CoreLogger->set_level(spdlog::level::trace);

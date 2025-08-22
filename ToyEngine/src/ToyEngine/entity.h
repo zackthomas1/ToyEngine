@@ -1,5 +1,5 @@
 #pragma once
-#include "ToyEngine/services/locator.h"
+#include "ToyEngine/services/time_step.h"
 #include <glm/mat4x4.hpp>
 
 namespace ToyEngine {

@@ -15,7 +15,7 @@ void Viewport::ImGuiRender()
 
 	props_.is_focused = ImGui::IsWindowFocused();
 	props_.is_hovered = ImGui::IsWindowHovered();
-	ToyEngine::Application::Get().GetImGuiLayer()->BlockEvents(!props_.is_focused || !props_.is_hovered);
+	//ToyEngine::Application::Get().GetImGuiLayer()->BlockEvents(!props_.is_focused || !props_.is_hovered);
 
 	// viewport properties
 	props_.panel_size	= ImGui::GetContentRegionAvail();
@@ -48,6 +48,7 @@ bool Viewport::OnMouseMove(ToyEngine::EventCursorPos& cursor_event)
 		TY_CORE_ERROR("Camera controller not set in viewport");
 		return false;
 	}
+
 	// Get current viewport information from ImGui
 	ImGuiIO& io = ImGui::GetIO();
 	ImVec2 mouse_pos = io.MousePos;
@@ -82,8 +83,7 @@ bool Viewport::OnMouseMove(ToyEngine::EventCursorPos& cursor_event)
 	//TY_INFO("viewport NDC: ({},{})", x_ndc_coord, y_ndc_coord);
 
 	// Only wrap cursor if camera controller is an Orbit camera and the middle mouse botton is pressed
-	if (camera_controller_->GetProps().type == ToyEngine::eCameraControllerType::kOrbit &&
-		(ToyEngine::Locator::InputPollService().Mouse(ToyEngine::eMouseCode::kMouseMiddle) != ToyEngine::eKeyState::kRelease))
+	if (camera_controller_->GetProps().type == ToyEngine::eCameraControllerType::kOrbit && !cursor_event.IsMouseMiddleReleased())
 	{
 		auto [is_wrapped, new_viewport_pos] = HandleCursorWrapping(x_ndc_coord, y_ndc_coord, viewport_pos);
 
@@ -101,8 +101,8 @@ bool Viewport::OnMouseMove(ToyEngine::EventCursorPos& cursor_event)
 			float client_relative_x = (props_.window_pos.x - main_viewport->Pos.x) + props_.window_min.x + new_viewport_pos.x;
 			float client_relative_y = (props_.window_pos.y - main_viewport->Pos.y) + props_.window_min.y + new_viewport_pos.y;
 
-			ToyEngine::Window& window = ToyEngine::Application::AccessWindow();
-			window.SetCursorPos(client_relative_x, client_relative_y);
+			//ToyEngine::Window& window = ToyEngine::Application::AccessWindow();
+			//window.SetCursorPos(client_relative_x, client_relative_y);
 
 			// update ndc values
 			float x_ndc_coord = (2.0f * (new_viewport_pos.x / props_.panel_size.x)) - 1.0f;
@@ -118,16 +118,14 @@ bool Viewport::OnMouseMove(ToyEngine::EventCursorPos& cursor_event)
 		return true;
 	}
 
-	// Create new event with viewport-relative NDC coordinates
-	ToyEngine::EventCursorPos viewport_cursorpos(cursor_event.GetOffset().x, cursor_event.GetOffset().y,
-		x_ndc_coord_prev, y_ndc_coord_prev,
-		x_ndc_coord, y_ndc_coord);
+	cursor_event.SetNDCCoordPrev(glm::vec2(x_ndc_coord_prev, y_ndc_coord_prev));
+	cursor_event.SetNDCCoord(glm::vec2(x_ndc_coord, y_ndc_coord)); 
 
 	// Dispatch to camera controller
-	ToyEngine::EventDispatcher dispatcher(viewport_cursorpos);
+	ToyEngine::EventDispatcher dispatcher(cursor_event);
 	dispatcher.Dispatch<ToyEngine::EventCursorPos>(TY_BINDFN(camera_controller_->OnEvent));
 
-	return true;
+	return cursor_event.GetEventHandled();
 }
 
 bool Viewport::OnEvent(ToyEngine::Event& e) {

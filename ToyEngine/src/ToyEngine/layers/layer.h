@@ -1,13 +1,15 @@
 #pragma once
 #include "ToyEngine/event.h"
-#include "ToyEngine/services/time_step.h"
+
 // imgui
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include "imgui.h"
 
 namespace ToyEngine
-{
+{	
+	class Window;
+
 	class Layer
 	{
 	public:
@@ -20,7 +22,7 @@ namespace ToyEngine
 		/// Each frame, the engine updates every layer in m_layerStack
 		/// </summary>
 		/// <param name="time_delta"></param>
-		virtual void Update(const TimeStep& time_step) {};
+		virtual void Update(float time_delta) {};
 		/// <summary>
 		/// Called in Application::Run after scene draw call.
 		/// GUI defined in client application project. 
@@ -35,13 +37,23 @@ namespace ToyEngine
 	protected:
 		Layer() {}
 	};
+	
+	class IImGuiImpl
+	{
+	public:
+		IImGuiImpl() {}
+		virtual ~IImGuiImpl() {}
+		virtual void Init() = 0;
+		virtual void NewFrame() = 0;
+		virtual void EndFrame() = 0;
+		virtual void Shutdown() = 0;
+		static Scope<IImGuiImpl> Create(Window& window);
+	};
 
 	class ImGuiLayer : public Layer
 	{
 	public:
-		ImGuiLayer() : blocks_event_(true) {}
-		~ImGuiLayer() {}
-
+		ImGuiLayer(Window& window);
 		virtual void OnAttach() override;
 		virtual void OnDetatch() override;
 		void BeginDraw();
@@ -49,6 +61,19 @@ namespace ToyEngine
 		virtual void OnEvent(Event& e) override;
 		void BlockEvents(bool blocking) { blocks_event_ = blocking; }
 	private:
-		bool blocks_event_; 
+		bool blocks_event_;
+		Scope<IImGuiImpl> impl_;
+	};
+
+	class ImGuiImplGLFW : public IImGuiImpl
+	{
+	public:
+		ImGuiImplGLFW(GLFWwindow* window) : window_(window) { }
+		virtual void Init() override;
+		virtual void NewFrame() override;
+		virtual void EndFrame() override;
+		virtual void Shutdown() override;
+	private:
+		GLFWwindow* window_;
 	};
 }

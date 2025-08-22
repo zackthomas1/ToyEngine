@@ -18,7 +18,7 @@ void DrawSceneNodeTree(ToyEngine::SceneNode* node) {
 class Scene : public ToyEngine::Layer
 {
 public:
-	Scene()
+	Scene(const ToyEngine::InputPoll& input)
 	{
 		TY_INFO("Compiling shaders...");
 		m_shader_lib = ToyEngine::MakeScope<ToyEngine::ShaderLibrary>();
@@ -40,15 +40,15 @@ public:
 		ToyEngine::Renderer::GetUniformManager().BindUniformBlockToShader(skyboxShader, "ViewProjectMats");
 
 		ToyEngine::Renderer::GetUniformManager().BindUniformBlockToShader(phongShader, "LightBlock");
+
+		TY_INFO("Create Camera...");
+		ToyEngine::CameraControllerProps camera_control_props;
+		camera_control_props.type = ToyEngine::eCameraControllerType::kOrbit;
+		m_camera_controller = ToyEngine::MakeRef<ToyEngine::CameraController>(input, camera_control_props);
 	}
 
 	virtual void OnAttach()
 	{
-		TY_INFO("Create Camera...");
-		ToyEngine::CameraControllerProps camera_control_props;
-		camera_control_props.type = ToyEngine::eCameraControllerType::kOrbit;
-		m_camera_controller = ToyEngine::MakeRef<ToyEngine::CameraController>(camera_control_props);
-
 		TY_INFO("Create lights...");
 		m_light_block = ToyEngine::MakeScope<ToyEngine::LightBlock>();
 		m_light_block->m_num_lights = 5;
@@ -110,8 +110,12 @@ public:
 
 	virtual void OnDetach() {}
 
-	virtual void Update(const ToyEngine::TimeStep& time_step)
+	virtual void Update(float time_delta)
 	{
+		// Update camera
+		if (m_viewport.GetProps().is_hovered)
+			m_camera_controller->Update(time_delta);
+
 		// Update lights
 		m_light_block->m_lights[0].m_direction		= glm::vec4(m_directional_light_dir,0.0f);
 		m_light_block->m_lights[0].m_value			= glm::vec4(m_directional_light_color, 0.0f);
@@ -121,9 +125,6 @@ public:
 		m_light_block->m_lights[2].m_value			= glm::vec4(m_point_light_color_2, 0.0f);
 		m_light_block->m_lights[3].m_position		= glm::vec4(m_point_light_position_3, 0.0f);
 		m_light_block->m_lights[3].m_value			= glm::vec4(m_point_light_color_3, 0.0f);
-
-		if (m_viewport.GetProps().is_hovered)
-			m_camera_controller->Update(time_step);
 
 		// update model material properties
 		if (m_scene_graph->GetChildren().size() >= 2) {
@@ -339,7 +340,7 @@ public:
 	Editor()
 	{
 		TY_INFO("Initialize application");
-		PushLayer(new Scene());
+		PushLayer(new Scene(Application::GetServices().Get<ToyEngine::InputPoll>()));
 	}
 	~Editor() { }
 };

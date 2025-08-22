@@ -1,8 +1,6 @@
 #include "pch.h"
 #include "ToyEngine/application.h"
 #include "ToyEngine/renderer/renderer.h"
-#include "ToyEngine/layers/layer.h"
-#include "ToyEngine/services/locator.h"
 
 namespace ToyEngine
 {
@@ -13,52 +11,51 @@ namespace ToyEngine
 		TY_CORE_ASSERT(!s_instance, "Application already exist!")
 		s_instance = this;
 
-		// Initialize window
-		window_ = Window::Create();
-		window_->SetCommandCallbackFn(TY_BINDFN(Application::OnEvent));
+		// Initialize services - window, time step, and input polling
+#ifdef TY_PLATFORM_WINDOWS
+		services_.Register<Window, WindowsWindow>();
+		Window& window = services_.Get<Window>();
+		window.SetCommandCallbackFn(TY_BINDFN(Application::OnEvent));
 
-		// Initialize time step and input polling services
-		TY_CORE_INFO("Initialize time step service");
-		Locator::TimeStepService().Init();
-		TY_CORE_INFO("Initialize input poll service");
-		Locator::InputPollService().Init();
+		services_.Register<TimeStep, TimeStepGLFW>();
+		services_.Register<InputPoll, InputPollGLFW>(window);
+#else
+		services_.Register<Window, NullWindow>();
+		services_.Register<TimeStep, NullTimeStep>();
+		services_.Register<InputPoll, NullInputPoll>();
+#endif TY_PLATFORM_WINDOWS
 
 		// Initalize imgui layer
-		imGuiLayer_ = new ImGuiLayer();
+		imGuiLayer_ = new ImGuiLayer(services_.Get<Window>());
 		layerStack_.PushLayer(imGuiLayer_);
 
-		// initialize renderer
+		// Initialize renderer
 		Renderer::Init();
-	}
-
-	Application::~Application()
-	{
-		Locator::DestroyServiceProviders();
 	}
 
 	void Application::Run()
 	{
+		TimeStep& time_step = services_.Get<TimeStep>();
+		Window& window = services_.Get<Window>();
+
 		while (isRunning_)
 		{
 			// Update variable time step
-			Locator::TimeStepService().Update();
+			time_step.Update();
 
 			// Advance the game simulation one step (update)
 			// Update layers
 			for (Layer *layer : layerStack_)
-			{
-				layer->Update(Locator::TimeStepService());
-			}
+				layer->Update(time_step.GetTimeDelta());
 
 			// Draw GUI
 			imGuiLayer_->BeginDraw();
 			for(Layer *layer: layerStack_)
-			{
 				layer->OnImGuiRender();
-			}
+
 			imGuiLayer_->EndDraw();
 
-			window_->OnUpdate();
+			window.OnUpdate();
 		}
 	}
 
@@ -94,7 +91,7 @@ namespace ToyEngine
 
 	bool Application::OnResize(EventWindowResize& e)
 	{
-		window_->SetWindowSize(e.GetWidth(), e.GetHeight());
+		services_.Get<Window>().SetWindowSize(e.GetWidth(), e.GetHeight());
 		return true;
 	}
 }
