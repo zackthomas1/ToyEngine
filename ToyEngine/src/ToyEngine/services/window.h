@@ -33,14 +33,11 @@ namespace ToyEngine {
 		static Scope<Window> Create(const WindowProps& props = WindowProps());
 
 		virtual void OnUpdate() = 0;
-		
-		/// <summary>
-		/// Sets the callback function that will be invoked when an event occurs in the window.
-		/// The callback receives a reference to an Event object, allowing custom event handling logic.
-		/// This method must be implemented by derived classes to connect the window's event system
-		/// with the application's event processing code.
-		/// </summary>
-		/// <param name="callback"></param>
+		virtual void* GetNativeWindow() const = 0;
+		//sets the callback function that will be invoked when an event occurs in the window.
+		//the callback receives a reference to an event object, allowing custom event handling logic.
+		//this method must be implemented by derived classes to connect the window's event system
+		//with the application's event processing code.
 		virtual void SetCommandCallbackFn(const EventCallbackFn& callback) = 0;
 		virtual void SetCursorPos(float xpos, float ypos) = 0;
 
@@ -66,7 +63,7 @@ namespace ToyEngine {
 	class NullWindow : public Window
 	{
 		virtual void OnUpdate() override {}
-
+		virtual void* GetNativeWindow() const override { return nullptr; }
 		virtual void SetCommandCallbackFn(const EventCallbackFn& callback) override { data_.event_callback = callback; }
 		virtual void SetCursorPos(float xpos, float ypos) override {}
 	};
@@ -78,11 +75,9 @@ namespace ToyEngine {
 		~WindowsWindow();
 
 		virtual void OnUpdate() override;
-
+		virtual void* GetNativeWindow() const override { return window_; }
 		virtual void SetCommandCallbackFn(const EventCallbackFn& callback) override { data_.event_callback = callback; }
 		virtual void SetCursorPos(float xpos, float ypos) override;
-
-		GLFWwindow* GetGLFWWindow() const { return window_; } // Mark as const to prevent modification of the class or pointer
 
 	private:
 		void Init();

@@ -6,10 +6,10 @@
 #include <GLFW/glfw3.h>
 
 namespace ToyEngine {
-	InputPollGLFW::InputPollGLFW(WindowsWindow& window)
+	InputPollGLFW::InputPollGLFW(Window& window)
 	{
-		window_ = window.GetGLFWWindow();
-		TY_CORE_ASSERT(window_, "GLFWwindow pointer is null or invalid");
+		window_ = static_cast<GLFWwindow*>(window.GetNativeWindow());
+		TY_CORE_ASSERT(window_ != nullptr, "GLFWwindow pointer is null or invalid");
 	}
 
 	void InputPollGLFW::Init()

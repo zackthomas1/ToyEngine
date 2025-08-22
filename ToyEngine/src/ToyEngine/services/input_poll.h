@@ -32,11 +32,11 @@ namespace ToyEngine {
 		virtual std::pair<float, float> MousePos() const override { return std::pair<float, float>(0.0f, 0.0f); }
 	};
 
-	class WindowsWindow;
+	class Window;
 
 	class InputPollGLFW : public InputPoll {
 	public:
-		InputPollGLFW(WindowsWindow& window);
+		InputPollGLFW(Window& window);
 		~InputPollGLFW() {}
 
 		virtual void Init();
@@ -45,6 +45,6 @@ namespace ToyEngine {
 		virtual float MouseVerticalScroll()        const override;
 		virtual std::pair<float, float> MousePos() const override;
 	private:
-		GLFWwindow* window_;
+		GLFWwindow* window_ = nullptr;
 	};
 }

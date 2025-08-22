@@ -84,7 +84,7 @@ namespace ToyEngine
 	Scope<IImGuiImpl> ToyEngine::IImGuiImpl::Create(Window& window)
 	{
 #ifdef  TY_PLATFORM_WINDOWS
-		return MakeScope<ImGuiImplGLFW>(dynamic_cast<WindowsWindow*>(&window)->GetGLFWWindow());
+		return MakeScope<ImGuiImplGLFW>(static_cast<GLFWwindow*>(window.GetNativeWindow()));
 #else
 		TY_CORE_ERROR("Platform not supported")
 		return nullptr;
