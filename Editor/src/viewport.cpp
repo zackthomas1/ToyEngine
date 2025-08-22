@@ -43,8 +43,6 @@ void Viewport::ImGuiRender()
 
 bool Viewport::OnMouseMove(ToyEngine::EventCursorPos& cursor_event)
 {
-	if (cursor_event.IsMouseMiddleReleased()) return false;
-
 	// Null check for camera controller
 	if (!camera_controller_) {
 		TY_CORE_ERROR("Camera controller not set in viewport");
@@ -85,7 +83,7 @@ bool Viewport::OnMouseMove(ToyEngine::EventCursorPos& cursor_event)
 	//TY_INFO("viewport NDC: ({},{})", x_ndc_coord, y_ndc_coord);
 
 	// Only wrap cursor if camera controller is an Orbit camera and the middle mouse botton is pressed
-	if (camera_controller_->GetProps().type == ToyEngine::eCameraControllerType::kOrbit)
+	if (camera_controller_->GetProps().type == ToyEngine::eCameraControllerType::kOrbit && !cursor_event.IsMouseMiddleReleased())
 	{
 		auto [is_wrapped, new_viewport_pos] = HandleCursorWrapping(x_ndc_coord, y_ndc_coord, viewport_pos);
 
