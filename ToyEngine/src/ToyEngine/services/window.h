@@ -7,14 +7,13 @@ namespace ToyEngine {
 	struct WindowProps
 	{
 		std::string title;
-		unsigned int width;
-		unsigned int height;
 		bool is_mouse_active;
+		unsigned int width, height;
 		float x_mouse_pos, y_mouse_pos;
 
 		WindowProps(const std::string& title = "Editor",
-			unsigned int width = TY_DEFAULT_WINDOW_WIDTH,
 			bool is_mouse_active = false,
+			unsigned int width = TY_DEFAULT_WINDOW_WIDTH,
 			unsigned int height = TY_DEFAULT_WINDOW_HEIGHT,
 			float x_mouse_pos = TY_DEFAULT_WINDOW_WIDTH / 2.0f,
 			float y_mouse_pos = TY_DEFAULT_WINDOW_HEIGHT / 2.0f)
@@ -34,10 +33,13 @@ namespace ToyEngine {
 
 		virtual void OnUpdate() = 0;
 		virtual void* GetNativeWindow() const = 0;
-		//sets the callback function that will be invoked when an event occurs in the window.
-		//the callback receives a reference to an event object, allowing custom event handling logic.
-		//this method must be implemented by derived classes to connect the window's event system
-		//with the application's event processing code.
+		/// <summary>
+		/// sets the callback function that will be invoked when an event occurs in the window.
+		/// the callback receives a reference to an event object, allowing custom event handling logic.
+		/// this method must be implemented by derived classes to connect the window's event system
+		/// with the application's event processing code.
+		/// </summary>
+		/// <param name="callback"></param>
 		virtual void SetCommandCallbackFn(const EventCallbackFn& callback) = 0;
 		virtual void SetCursorPos(float xpos, float ypos) = 0;
 
