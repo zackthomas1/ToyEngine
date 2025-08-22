@@ -29,7 +29,7 @@ namespace ToyEngine
 		
 		virtual void Init() override
 		{
-			TY_CORE_WARN( "Platform Invalid. Null service provider - Time step service disabled." );
+			TY_CORE_WARN( "Null service provider - Time step service disabled." );
 		}
 		virtual void Update() override {}
 		virtual float GetTimeDelta() const override { return 0.0f; }

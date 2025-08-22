@@ -9,7 +9,6 @@ namespace ToyEngine {
 	public:
 		virtual ~InputPoll() {}
 		
-		virtual void Init() = 0;
 		virtual eKeyState Key(eKeyCode key)         const = 0;
 		virtual eKeyState Mouse(eMouseCode button)  const = 0;
 		virtual float MouseVerticalScroll()         const = 0;
@@ -22,10 +21,6 @@ namespace ToyEngine {
 	public:
 		 NullInputPoll() {}
 
-		virtual void Init() override
-		{
-			TY_CORE_WARN( "Platform Invalid. Null service provider - Input poll service disabled." );
-		}
 		virtual eKeyState Key(eKeyCode key)        const override { return eKeyState::kRelease; }
 		virtual eKeyState Mouse(eMouseCode button) const override { return eKeyState::kRelease; }
 		virtual float MouseVerticalScroll()        const override { return 0.0f; }
@@ -39,7 +34,6 @@ namespace ToyEngine {
 		InputPollGLFW(Window& window);
 		~InputPollGLFW() {}
 
-		virtual void Init();
 		virtual eKeyState Key(eKeyCode key)        const override;
 		virtual eKeyState Mouse(eMouseCode button) const override;
 		virtual float MouseVerticalScroll()        const override;

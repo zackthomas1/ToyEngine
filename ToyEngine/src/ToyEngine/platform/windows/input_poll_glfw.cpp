@@ -12,11 +12,6 @@ namespace ToyEngine {
 		TY_CORE_ASSERT(window_ != nullptr, "GLFWwindow pointer is null or invalid");
 	}
 
-	void InputPollGLFW::Init()
-	{
-		TY_CORE_INFO("GLFW input poll provider");
-	}
-
 	eKeyState InputPollGLFW::Key(eKeyCode key) const
 	{
 		eKeyState key_state = static_cast<eKeyState>(glfwGetKey(window_, static_cast<int>(key)));

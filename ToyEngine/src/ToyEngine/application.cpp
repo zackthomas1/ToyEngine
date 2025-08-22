@@ -36,6 +36,8 @@ namespace ToyEngine
 	void Application::Run()
 	{
 		TimeStep& time_step = services_.Get<TimeStep>();
+		time_step.Init(); 
+
 		Window& window = services_.Get<Window>();
 
 		while (isRunning_)
