@@ -31,7 +31,7 @@ project "assimp"
         buildcommands {
             "cmake -S " .. assimpdir ..
             " -B " .. assimpbuilddir ..
-            " -G \"Visual Studio 16 2019\" -A x64" ..
+            " -G \"Visual Studio 17 2022\" -A x64" ..
             " " .. flagsString
         }
 
