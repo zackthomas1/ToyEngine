@@ -67,7 +67,7 @@ public:
 		m_scene_graph = ToyEngine::MakeScope<ToyEngine::SceneNode>("root");
 
 		ToyEngine::Ref<ToyEngine::Model> backpack		= (ToyEngine::Model::Create("../assets/models/backpack/backpack.obj", true));
-		ToyEngine::Ref<ToyEngine::Model> cyborg			= (ToyEngine::Model::Create("../assets/models/DamagedHelmet/DamagedHelmet.gltf", true));
+		ToyEngine::Ref<ToyEngine::Model> cyborg			= (ToyEngine::Model::Create("../assets/models/cyborg/cyborg.obj", false));
 		ToyEngine::Ref<ToyEngine::Shader> phongShader	= m_shader_lib->Get("phong");
 		backpack->m_shader = phongShader;
 		cyborg->m_shader = phongShader;
