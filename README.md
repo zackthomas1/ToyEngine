@@ -111,13 +111,7 @@ After building, run the Editor application to see the engine in action:
 - **[Premake5](https://premake.github.io/)** - Build configuration system (included in `vendor/premake/`)
 
 ## Documentation
-
 For detailed documentation, architecture diagrams, and development guides, visit our [Wiki](docs/README.md).
 
-## Contributing
-
-We welcome contributions! Please see our [Contributing Guide](docs/CONTRIBUTING.md) for details on how to get started.
-
 ## License
-
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
