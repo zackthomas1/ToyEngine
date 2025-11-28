@@ -1,13 +1,13 @@
 # ToyEngine
 
-A modern, cross-platform 3D game engine written in C++ with OpenGL rendering, designed for learning and experimentation with game engine architecture.
+A 3D game engine written in C++ with OpenGL rendering for learning and experimentation with game engine architecture.
 
 ## Overview
 
-ToyEngine is a comprehensive 3D game engine that provides essential systems for modern game development including rendering, input handling, scene management, and asset loading. The engine features a modular architecture with well-defined interfaces between systems.
+ToyEngine is a 3D game engine that provides essential systems for modern game development including rendering, input handling, scene management, and asset loading. The engine features a modular architecture with well-defined interfaces between systems.
 
 ### Purpose 
-ToyEngine serves as both a learning platform for game engine development and a foundation for creating 3D applications. It demonstrates modern C++ practices, OpenGL rendering techniques, and game engine architecture patterns.
+ToyEngine serves as a foundation for creating 3D applications.
 
 ### Key Features
 - **Modern OpenGL Rendering**: PBR-based lighting with support for multiple light types
