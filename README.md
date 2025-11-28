@@ -21,7 +21,7 @@ ToyEngine serves as both a learning platform for game engine development and a f
 
 ### Target Hardware
 - **Operating System**: Windows 10/11 (Linux support planned)
-- **Graphics**: OpenGL 4.3+ compatible GPU
+- **Graphics**: OpenGL 3.3+ compatible GPU
 - **Memory**: 4GB RAM minimum, 8GB recommended
 - **Storage**: 500MB for engine + assets
 
