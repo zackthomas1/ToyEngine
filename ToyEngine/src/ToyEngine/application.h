@@ -6,66 +6,66 @@
 
 namespace ToyEngine
 {
-	class Application
-	{
-	public:
-		Application();
-		virtual ~Application() {}
+  class Application
+  {
+  public:
+    Application();
+    virtual ~Application() {}
 
-		// Delete copy/move to prevent reassignment
-		// Enforce Singleton pattern
-		Application(const Application&) = delete;
-		Application& operator=(const Application&) = delete;
-		Application(Application&&) = delete;
-		Application& operator=(Application&&) = delete;
-		
-		/// <summary>
-		/// Starts and manages the main application loop.
-		/// Continuously updates the window, processes events, and updates all layers
-		/// until the application is closed.
-		/// </summary>
-		void Run();
-		
-		/// <summary>
-		/// Handles incoming events and dispatches them to the appropriate layers.
-		/// This function is called whenever an event occurs (e.g., input, window events).
-		/// It propagates the event through the layer stack in reverse order (from topmost to bottom),
-		/// allowing each layer to handle or consume the event as needed.
-		/// </summary>
-		/// <param name="e">Reference to the event object to be processed.</param>
-		void OnEvent(Event& e);
-		
-		/// <summary>
-		/// Adds a new layer to the application. Layers are used for core engine logic and are updated and rendered in order.
-		/// The layer is inserted below overlays and above previously added layers.
-		/// </summary>
-		/// <param name="layer">Pointer to the Layer to be added.</param>
-		void PushLayer(Layer *layer);
+    // Delete copy/move to prevent reassignment
+    // Enforce Singleton pattern
+    Application(const Application&) = delete;
+    Application& operator=(const Application&) = delete;
+    Application(Application&&) = delete;
+    Application& operator=(Application&&) = delete;
+    
+    /// <summary>
+    /// Starts and manages the main application loop.
+    /// Continuously updates the window, processes events, and updates all layers
+    /// until the application is closed.
+    /// </summary>
+    void Run();
 
-		/// <summary>
-		/// Adds a new overlay to the application. Overlays are rendered and updated after all regular layers.
-		/// Typically used for UI or debug panels.
-		/// </summary>
-		/// <param name="layer">Pointer to the Layer to be added as an overlay.</param>
-		void PushOverlay(Layer *layer);
+    /// <summary>
+    /// Handles incoming events and dispatches them to the appropriate layers.
+    /// This function is called whenever an event occurs (e.g., input, window events).
+    /// It propagates the event through the layer stack in reverse order (from topmost to bottom),
+    /// allowing each layer to handle or consume the event as needed.
+    /// </summary>
+    /// <param name="e">Reference to the event object to be processed.</param>
+    void OnEvent(Event& e);
 
-		// Accessors return const references to prevent modification
-		//inline static Application& Get() { return *s_instance; }
+    /// <summary>
+    /// Adds a new layer to the application. Layers are used for core engine logic and are updated and rendered in order.
+    /// The layer is inserted below overlays and above previously added layers.
+    /// </summary>
+    /// <param name="layer">Pointer to the Layer to be added.</param>
+    void PushLayer(Layer *layer);
 
-	protected: 
-		inline static ServiceContainer& GetServices() { return Application::s_instance->services_; }
-	private:
-		bool OnClose(EventApplicationClose& e);
-		bool OnResize(EventWindowResize& e);
+    /// <summary>
+    /// Adds a new overlay to the application. Overlays are rendered and updated after all regular layers.
+    /// Typically used for UI or debug panels.
+    /// </summary>
+    /// <param name="layer">Pointer to the Layer to be added as an overlay.</param>
+    void PushOverlay(Layer *layer);
 
-		ServiceContainer services_;
-		ImGuiLayer *imGuiLayer_;	// imGuiLayer is owned by the layerStack_. Deleted by layerStack_ destructor
-		LayerStack layerStack_;
-		bool isRunning_ = true;
+    // Accessors return const references to prevent modification
+    //inline static Application& Get() { return *s_instance; }
 
-		static Application *s_instance;
-	};
+  protected: 
+    inline static ServiceContainer& GetServices() { return Application::s_instance->services_; }
+  private:
+    bool OnClose(EventApplicationClose& e);
+    bool OnResize(EventWindowResize& e);
 
-	// Function defined in the client application
-	Application* CreateApplication();
+    ServiceContainer services_;
+    ImGuiLayer *imGuiLayer_;	// imGuiLayer is owned by the layerStack_. Deleted by layerStack_ destructor
+    LayerStack layerStack_;
+    bool isRunning_ = true;
+
+    static Application *s_instance;
+  };
+
+  // Function defined in the client application
+  Application* CreateApplication();
 }

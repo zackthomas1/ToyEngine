@@ -3,14 +3,14 @@
 #include <glm/mat4x4.hpp>
 
 namespace ToyEngine {
-	class Entity
-	{
-	public:
-		virtual ~Entity() {}
-	
-		virtual void Update(const TimeStep& time_step) {}
-		virtual void Render(const glm::mat4& world_transform) const {}
-	protected:
-		Entity() {}
-	};
+  class Entity
+  {
+  public:
+    virtual ~Entity() {}
+  
+    virtual void Update(const TimeStep& time_step) {}
+    virtual void Render(const glm::mat4& world_transform) const {}
+  protected:
+    Entity() {}
+  };
 }

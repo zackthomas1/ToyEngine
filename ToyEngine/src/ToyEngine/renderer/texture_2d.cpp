@@ -5,16 +5,16 @@
 
 namespace ToyEngine
 {
-	Ref<Texture2D> Texture2D::Create(const std::string& path, eTextureType type, bool flip_vertically)
-	{
-		switch (Renderer::API())
-		{
-		case(eRenderAPI::kOpenGL): {
-			return MakeRef<OpenGLTexture2D>(path, type, flip_vertically);
-		}
-		default:
-			TY_CORE_ERROR("Unknown render api");
-			return nullptr;
-		}
-	}
+  Ref<Texture2D> Texture2D::Create(const std::string& path, eTextureType type, bool flip_vertically)
+  {
+    switch (Renderer::API())
+    {
+    case(eRenderAPI::kOpenGL): {
+      return MakeRef<OpenGLTexture2D>(path, type, flip_vertically);
+    }
+    default:
+      TY_CORE_ERROR("Unknown render api");
+      return nullptr;
+    }
+  }
 }

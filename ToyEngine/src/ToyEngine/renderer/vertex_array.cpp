@@ -5,16 +5,16 @@
 
 namespace ToyEngine
 {
-	Ref<VertexArray> VertexArray::Create()
-	{
-		switch (Renderer::API())
-		{
-		case(eRenderAPI::kOpenGL): {
-			return MakeRef<OpenGLVertexArray>();
-		}
-		default:
-			TY_CORE_ERROR("Unknown Render API");
-			return nullptr;
-		}
-	}
+  Ref<VertexArray> VertexArray::Create()
+  {
+    switch (Renderer::API())
+    {
+    case(eRenderAPI::kOpenGL): {
+      return MakeRef<OpenGLVertexArray>();
+    }
+    default:
+      TY_CORE_ERROR("Unknown Render API");
+      return nullptr;
+    }
+  }
 }

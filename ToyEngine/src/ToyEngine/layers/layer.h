@@ -8,72 +8,72 @@
 
 namespace ToyEngine
 {	
-	class Window;
+  class Window;
 
-	class Layer
-	{
-	public:
-		virtual ~Layer() {}
-		virtual void OnAttach() {};
-		virtual void OnDetatch() {};
-		/// <summary>
-		/// Called on every frame from Application::Run
-		/// Simulates one frame of the object behavior. 
-		/// Each frame, the engine updates every layer in m_layerStack
-		/// </summary>
-		/// <param name="time_delta"></param>
-		virtual void Update(float time_delta) {};
-		/// <summary>
-		/// Called in Application::Run after scene draw call.
-		/// GUI defined in client application project. 
-		/// ToyEngine maintains responsible for set up of dearimgui and lifetimes of layers.
-		/// </summary>
-		virtual void OnImGuiRender() {};
-		/// <summary>
-		/// Defines what events the layer consumes and how it responds.
-		/// </summary>
-		/// <param name="e"></param>
-		virtual void OnEvent(Event& e) {};
-	protected:
-		Layer() {}
-	};
-	
-	class IImGuiImpl
-	{
-	public:
-		IImGuiImpl() {}
-		virtual ~IImGuiImpl() {}
-		virtual void Init() = 0;
-		virtual void NewFrame() = 0;
-		virtual void EndFrame() = 0;
-		virtual void Shutdown() = 0;
-		static Scope<IImGuiImpl> Create(Window& window);
-	};
+  class Layer
+  {
+  public:
+    virtual ~Layer() {}
+    virtual void OnAttach() {};
+    virtual void OnDetatch() {};
+    /// <summary>
+    /// Called on every frame from Application::Run
+    /// Simulates one frame of the object behavior. 
+    /// Each frame, the engine updates every layer in m_layerStack
+    /// </summary>
+    /// <param name="time_delta"></param>
+    virtual void Update(float time_delta) {};
+    /// <summary>
+    /// Called in Application::Run after scene draw call.
+    /// GUI defined in client application project. 
+    /// ToyEngine maintains responsible for set up of dearimgui and lifetimes of layers.
+    /// </summary>
+    virtual void OnImGuiRender() {};
+    /// <summary>
+    /// Defines what events the layer consumes and how it responds.
+    /// </summary>
+    /// <param name="e"></param>
+    virtual void OnEvent(Event& e) {};
+  protected:
+    Layer() {}
+  };
+  
+  class IImGuiImpl
+  {
+  public:
+    IImGuiImpl() {}
+    virtual ~IImGuiImpl() {}
+    virtual void Init() = 0;
+    virtual void NewFrame() = 0;
+    virtual void EndFrame() = 0;
+    virtual void Shutdown() = 0;
+    static Scope<IImGuiImpl> Create(Window& window);
+  };
 
-	class ImGuiLayer : public Layer
-	{
-	public:
-		ImGuiLayer(Window& window);
-		virtual void OnAttach() override;
-		virtual void OnDetatch() override;
-		void BeginDraw();
-		void EndDraw();
-		virtual void OnEvent(Event& e) override;
-		void BlockEvents(bool blocking) { blocks_event_ = blocking; }
-	private:
-		bool blocks_event_;
-		Scope<IImGuiImpl> impl_;
-	};
+  class ImGuiLayer : public Layer
+  {
+  public:
+    ImGuiLayer(Window& window);
+    virtual void OnAttach() override;
+    virtual void OnDetatch() override;
+    void BeginDraw();
+    void EndDraw();
+    virtual void OnEvent(Event& e) override;
+    void BlockEvents(bool blocking) { blocks_event_ = blocking; }
+  private:
+    bool blocks_event_;
+    Scope<IImGuiImpl> impl_;
+  };
 
-	class ImGuiImplGLFW : public IImGuiImpl
-	{
-	public:
-		ImGuiImplGLFW(GLFWwindow* window) : window_(window) { }
-		virtual void Init() override;
-		virtual void NewFrame() override;
-		virtual void EndFrame() override;
-		virtual void Shutdown() override;
-	private:
-		GLFWwindow* window_;
-	};
+  class ImGuiImplGLFW : public IImGuiImpl
+  {
+  public:
+    ImGuiImplGLFW(GLFWwindow* window) : window_(window) { }
+    virtual void Init() override;
+    virtual void NewFrame() override;
+    virtual void EndFrame() override;
+    virtual void Shutdown() override;
+  private:
+    GLFWwindow* window_;
+  };
 }
