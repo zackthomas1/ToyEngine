@@ -1,13 +1,11 @@
 # ToyEngine
 
-A modern, cross-platform 3D game engine written in C++ with OpenGL rendering, designed for learning and experimentation with game engine architecture.
-
 ## Overview
 
-ToyEngine is a comprehensive 3D game engine that provides essential systems for modern game development including rendering, input handling, scene management, and asset loading. The engine features a modular architecture with well-defined interfaces between systems.
+ToyEngine is a 3D game engine that provides essential systems for modern game development including rendering, input handling, scene management, and asset loading. The engine features a modular architecture with well-defined interfaces between systems.
 
 ### Purpose 
-ToyEngine serves as both a learning platform for game engine development and a foundation for creating 3D applications. It demonstrates modern C++ practices, OpenGL rendering techniques, and game engine architecture patterns.
+ToyEngine serves as a foundation for creating 3D applications.
 
 ### Key Features
 - **Modern OpenGL Rendering**: PBR-based lighting with support for multiple light types
@@ -21,7 +19,7 @@ ToyEngine serves as both a learning platform for game engine development and a f
 
 ### Target Hardware
 - **Operating System**: Windows 10/11 (Linux support planned)
-- **Graphics**: OpenGL 4.3+ compatible GPU
+- **Graphics**: OpenGL 3.3+ compatible GPU
 - **Memory**: 4GB RAM minimum, 8GB recommended
 - **Storage**: 500MB for engine + assets
 
@@ -111,13 +109,7 @@ After building, run the Editor application to see the engine in action:
 - **[Premake5](https://premake.github.io/)** - Build configuration system (included in `vendor/premake/`)
 
 ## Documentation
-
 For detailed documentation, architecture diagrams, and development guides, visit our [Wiki](docs/README.md).
 
-## Contributing
-
-We welcome contributions! Please see our [Contributing Guide](docs/CONTRIBUTING.md) for details on how to get started.
-
 ## License
-
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
