@@ -6,7 +6,7 @@ namespace ToyEngine
 {
   Application* Application::s_instance = nullptr;
 
-  Application::Application()
+  Application::Application() : isRunning_(true)
   {
     TY_CORE_ASSERT(!s_instance, "Application already exist!")
     s_instance = this;
