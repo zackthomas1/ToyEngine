@@ -39,9 +39,11 @@ namespace ToyEngine
 
   void Application::Run()
   {
+    // Initialize time step service. Starts the timer.
     TimeStep& time_step = services_.Get<TimeStep>();
     time_step.Init();
 
+    // Get the window service for updating the window each frame.
     Window& window = services_.Get<Window>();
 
     while (isRunning_)
@@ -58,9 +60,9 @@ namespace ToyEngine
       imGuiLayer_->BeginDraw();
       for(Layer *layer: layerStack_)
         layer->OnImGuiRender();
-
       imGuiLayer_->EndDraw();
 
+      // Update the window (swap buffers, poll events)
       window.OnUpdate();
     }
   }

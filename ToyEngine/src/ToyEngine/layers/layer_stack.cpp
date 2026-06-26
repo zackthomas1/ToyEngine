@@ -17,7 +17,6 @@ namespace ToyEngine
 
   void LayerStack::PushLayer(Layer* layer)
   {
-
     // Layers are inserted at layerInsertionIndex_ so overlays remain at the end.
     // Newer layers receive events before older ones. 
     // Layers in the foreground(newer) handle or consume events before they reach background layers.
