@@ -11,13 +11,17 @@ namespace ToyEngine
     TY_CORE_ASSERT(!s_instance, "Application already exist!")
     s_instance = this;
 
-    // Initialize services - window, time step, and input polling
+    // Initialize services
 #ifdef TY_PLATFORM_WINDOWS
+    // window
     services_.Register<Window, WindowsWindow>();
     Window& window = services_.Get<Window>();
     window.SetCommandCallbackFn(TY_BINDFN(Application::OnEvent));
 
+    // time step
     services_.Register<TimeStep, TimeStepGLFW>();
+
+    // input poll
     services_.Register<InputPoll, InputPollGLFW>(window);
 #else
     services_.Register<Window, NullWindow>();
@@ -36,7 +40,7 @@ namespace ToyEngine
   void Application::Run()
   {
     TimeStep& time_step = services_.Get<TimeStep>();
-    time_step.Init(); 
+    time_step.Init();
 
     Window& window = services_.Get<Window>();
 

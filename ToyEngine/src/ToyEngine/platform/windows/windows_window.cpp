@@ -59,31 +59,33 @@ namespace ToyEngine
       window_ = nullptr;
     }
 
-    // Set rendering window size 
+    // Set rendering window size
     glViewport(0, 0, data_.width, data_.height);
 
+    // set the user pointer to the window data structure so that it can be accessed in the callback functions.
     glfwSetWindowUserPointer(window_, &data_);
 
     // Uncomment to capture mouse in window and disable mouse visiability  
     //glfwSetInputMode(window_, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-
   }
 
   void WindowsWindow::SetCallbackFns()
   {
+    // Set GLFW callback functions for frame buffer size event which is triggered when the window is resized. 
+    // The callback function updates the viewport and triggers a window resize event.
     glfwSetFramebufferSizeCallback(window_, [](GLFWwindow* window, int width, int height) {
       WindowData& data = *(WindowData*)glfwGetWindowUserPointer(window);
-      // make sure the viewport matches the new window dimensions; note that width and 
-      // height will be significantly larger than specified on retina displays.
+      
+      // Make sure the viewport matches the new window dimensions.
       TY_CORE_TRACE("Update Framebuffer size: width - {} height - {}", width, height);
       glViewport(0, 0, width, height);
       
+      // Create a window resize event and invoke the event callback function to notify the application of the change in window size.
       EventWindowResize window_resize(width, height);
       data.event_callback(window_resize);
-    
     });
 
-
+    // Set GLFW callback function for window close event which is triggered when the user attempts to close the window.
     glfwSetWindowCloseCallback(window_, [](GLFWwindow* window) {
       WindowData& data = *(WindowData*)glfwGetWindowUserPointer(window);
 
@@ -91,6 +93,7 @@ namespace ToyEngine
       data.event_callback(app_close);
     });
 
+    // Set GLFW callback function for key input events which is triggered when a key is pressed, released, or held down.
     glfwSetKeyCallback(window_, [](GLFWwindow* window, int key, int scancode, int action, int mods) {
       WindowData& data = *(WindowData*)glfwGetWindowUserPointer(window);
 
@@ -105,7 +108,8 @@ namespace ToyEngine
         data.event_callback(key_press);
       }
     });
-
+    
+    // Set GLFW callback function for scroll events which is triggered when the user scrolls the mouse wheel.
     glfwSetScrollCallback(window_, [](GLFWwindow* window, double x_offset, double y_offset) {
       WindowData& data = *(WindowData*)glfwGetWindowUserPointer(window);
       
@@ -113,6 +117,7 @@ namespace ToyEngine
       data.event_callback(scroll);
     });
 
+    // Set GLFW callback function for cursor position events which is triggered when the user moves the mouse cursor within the window.
     glfwSetCursorPosCallback(window_, [](GLFWwindow* window, double xpos, double ypos) {
       WindowData& data = *(WindowData*)glfwGetWindowUserPointer(window);
       

@@ -4,6 +4,9 @@
 
 namespace ToyEngine
 {
+  TimeStepGLFW::TimeStepGLFW() : 
+    current_time_(0), last_frame_time_(0), time_step_(0) {}
+
   void TimeStepGLFW::Init()
   {
     TY_CORE_INFO("GLFW time step provider");
