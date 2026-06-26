@@ -83,7 +83,6 @@ namespace ToyEngine
 		
 		});
 
-
 		glfwSetWindowCloseCallback(window_, [](GLFWwindow* window) {
 			WindowData& data = *(WindowData*)glfwGetWindowUserPointer(window);
 

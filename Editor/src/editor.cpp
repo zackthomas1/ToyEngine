@@ -41,6 +41,8 @@ public:
 
 		ToyEngine::Renderer::GetUniformManager().BindUniformBlockToShader(phongShader, "LightBlock");
 
+
+
 		TY_INFO("Create Camera...");
 		ToyEngine::CameraControllerProps camera_control_props;
 		camera_control_props.type = ToyEngine::eCameraControllerType::kOrbit;
@@ -65,6 +67,8 @@ public:
 
 		TY_INFO("Create scene...");
 		m_scene_graph = ToyEngine::MakeScope<ToyEngine::SceneNode>("root");
+
+		//ToyEngine::AssetManager::Import(AsssetType::Model, )
 
 		ToyEngine::Ref<ToyEngine::Model> backpack		= (ToyEngine::Model::Create("../assets/models/backpack/backpack.obj", true));
 		ToyEngine::Ref<ToyEngine::Model> cyborg			= (ToyEngine::Model::Create("../assets/models/cyborg/cyborg.obj", false));

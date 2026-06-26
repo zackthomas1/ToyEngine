@@ -51,7 +51,7 @@ namespace ToyEngine {
 				child->UpdateWorldTransform();
 			}
 			is_dirty = false;
-	}
+		}
 	}
 
 	void SceneNode::SetLocalTransform(glm::mat4& mat)

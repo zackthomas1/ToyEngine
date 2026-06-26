@@ -22,7 +22,7 @@ namespace ToyEngine
 				TY_CORE_WARN("Service {} already registered, replacing", typeid(TInterface).name());
 			}
 			
-			services_[std::type_index(typeid(TInterface))] = MakeScope<ServiceHolder<TImpl>>(std::forward<Args>(args)...);
+ 			services_[std::type_index(typeid(TInterface))] = MakeScope<ServiceHolder<TImpl>>(std::forward<Args>(args)...);
 			TY_CORE_INFO("Registered service: {}", typeid(TInterface).name());
 		}
 
