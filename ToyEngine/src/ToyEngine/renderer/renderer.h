@@ -30,7 +30,7 @@ namespace ToyEngine
     static void Submit(const VertexArray* vao);
 
     /// @brief Submits a SceneNode and its associated entity for rendering.
-    /// Treverses the scene graph starting from the provided node, updating world transforms and submitting each node's entity for rendering.
+    /// Traverses the scene graph starting from the provided node, updating world transforms and submitting each node's entity for rendering.
     /// @param node Pointer to the root SceneNode to start traversal from.
     static void Submit(SceneNode* node);
 

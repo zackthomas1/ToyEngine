@@ -60,7 +60,7 @@ namespace ToyEngine
 /* Macro to log a client  message with error level. */
 #define TY_ERROR(...) :: ToyEngine::Log::GetClientLogger()->log(spdlog::source_loc{__FILE__, __LINE__, SPDLOG_FUNCTION}, spdlog::level::err, __VA_ARGS__)
 
-/* Macro to log a client  message with cirtical level. */
+/* Macro to log a client  message with critical level. */
 #define TY_CRITICAL(...)  :: ToyEngine::Log::GetClientLogger()->log(spdlog::source_loc{__FILE__, __LINE__, SPDLOG_FUNCTION}, spdlog::level::critical, __VA_ARGS__)
 #else
 //  Core log macros

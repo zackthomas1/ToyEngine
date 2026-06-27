@@ -21,12 +21,12 @@ namespace ToyEngine {
     float x_mouse_pos, y_mouse_pos;
 
     /// @brief Constructs a WindowProps object with the specified parameters. If no parameters are provided, default values are used.
-    /// @param title: The title of the window. Default is "Editor".
-    /// @param is_mouse_active: Flag indicating whether the mouse is active. Default is false.
-    /// @param width: The width of the window in pixels. Default is TY_DEFAULT_WINDOW_WIDTH.
-    /// @param height: The height of the window in pixels. Default is TY_DEFAULT_WINDOW_HEIGHT.
-    /// @param x_mouse_pos: The initial x position of the mouse. Default is the center of the window.
-    /// @param y_mouse_pos: The initial y position of the mouse. Default is the center of the window.
+    /// @param title The title of the window. Default is "Editor".
+    /// @param is_mouse_active Flag indicating whether the mouse is active. Default is false.
+    /// @param width The width of the window in pixels. Default is TY_DEFAULT_WINDOW_WIDTH.
+    /// @param height The height of the window in pixels. Default is TY_DEFAULT_WINDOW_HEIGHT.
+    /// @param x_mouse_pos The initial x position of the mouse. Default is the center of the window.
+    /// @param y_mouse_pos The initial y position of the mouse. Default is the center of the window.
     WindowProps(const std::string& title = "Editor",
       bool is_mouse_active = false,
       unsigned int width = TY_DEFAULT_WINDOW_WIDTH,
