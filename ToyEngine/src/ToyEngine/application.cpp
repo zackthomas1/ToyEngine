@@ -6,18 +6,22 @@ namespace ToyEngine
 {
   Application* Application::s_instance = nullptr;
 
-  Application::Application()
+  Application::Application() : isRunning_(true)
   {
     TY_CORE_ASSERT(!s_instance, "Application already exist!")
     s_instance = this;
 
-    // Initialize services - window, time step, and input polling
+    // Initialize services
 #ifdef TY_PLATFORM_WINDOWS
+    // window
     services_.Register<Window, WindowsWindow>();
     Window& window = services_.Get<Window>();
     window.SetCommandCallbackFn(TY_BINDFN(Application::OnEvent));
 
+    // time step
     services_.Register<TimeStep, TimeStepGLFW>();
+
+    // input poll
     services_.Register<InputPoll, InputPollGLFW>(window);
 #else
     services_.Register<Window, NullWindow>();
@@ -35,9 +39,11 @@ namespace ToyEngine
 
   void Application::Run()
   {
+    // Initialize time step service. Starts the timer.
     TimeStep& time_step = services_.Get<TimeStep>();
-    time_step.Init(); 
+    time_step.Init();
 
+    // Get the window service for updating the window each frame.
     Window& window = services_.Get<Window>();
 
     while (isRunning_)
@@ -54,9 +60,9 @@ namespace ToyEngine
       imGuiLayer_->BeginDraw();
       for(Layer *layer: layerStack_)
         layer->OnImGuiRender();
-
       imGuiLayer_->EndDraw();
 
+      // Update the window (swap buffers, poll events)
       window.OnUpdate();
     }
   }

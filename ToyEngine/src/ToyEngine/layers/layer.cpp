@@ -8,8 +8,8 @@
 
 namespace ToyEngine
 {
-  ImGuiLayer::ImGuiLayer(Window& window)
-    : blocks_event_(true)
+  ImGuiLayer::ImGuiLayer(Window& window, bool blocks_event)
+    : blocks_event_(blocks_event)
   {
     impl_ = IImGuiImpl::Create(window);
   }
@@ -53,8 +53,6 @@ namespace ToyEngine
   }
   void ImGuiLayer::BeginDraw()
   {
-    // ImGui
-    // ------------------------------
     // Start the Dear Imgui frame
     impl_->NewFrame();
     ImGui::NewFrame();
@@ -84,6 +82,7 @@ namespace ToyEngine
   Scope<IImGuiImpl> ToyEngine::IImGuiImpl::Create(Window& window)
   {
 #ifdef  TY_PLATFORM_WINDOWS
+    TY_CORE_ASSERT(window.GetNativeWindow() != nullptr, "Window native window is null");
     return MakeScope<ImGuiImplGLFW>(static_cast<GLFWwindow*>(window.GetNativeWindow()));
 #else
     TY_CORE_ERROR("Platform not supported")

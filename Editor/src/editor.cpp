@@ -22,11 +22,11 @@ public:
   {
     TY_INFO("Compiling shaders...");
     m_shader_lib = ToyEngine::MakeScope<ToyEngine::ShaderLibrary>();
-    ToyEngine::Ref<ToyEngine::Shader> flatShader	= ToyEngine::Shader::Create("flat_color", "../assets/shaders/flat_color.vs", "../assets/shaders/flat_color.fs");
+    ToyEngine::Ref<ToyEngine::Shader> flatShader = ToyEngine::Shader::Create("flat_color", "../assets/shaders/flat_color.vs", "../assets/shaders/flat_color.fs");
     ToyEngine::Ref<ToyEngine::Shader> textureShader = ToyEngine::Shader::Create("flat_texture", "../assets/shaders/flat_texture.vs", "../assets/shaders/flat_texture.fs");
-    ToyEngine::Ref<ToyEngine::Shader> phongShader	= ToyEngine::Shader::Create("phong", "../assets/shaders/phong.vs", "../assets/shaders/phong.fs");
-    ToyEngine::Ref<ToyEngine::Shader> skyboxShader	= ToyEngine::Shader::Create("skybox", "../assets/shaders/skybox.vs", "../assets/shaders/skybox.fs");
-    ToyEngine::Ref<ToyEngine::Shader> postfxShader	= ToyEngine::Shader::Create("postfx", "../assets/shaders/post_process.vs", "../assets/shaders/post_process.fs");
+    ToyEngine::Ref<ToyEngine::Shader> phongShader = ToyEngine::Shader::Create("phong", "../assets/shaders/phong.vs", "../assets/shaders/phong.fs");
+    ToyEngine::Ref<ToyEngine::Shader> skyboxShader = ToyEngine::Shader::Create("skybox", "../assets/shaders/skybox.vs", "../assets/shaders/skybox.fs");
+    ToyEngine::Ref<ToyEngine::Shader> postfxShader = ToyEngine::Shader::Create("postfx", "../assets/shaders/post_process.vs", "../assets/shaders/post_process.fs");
 
     m_shader_lib->Add(flatShader);
     m_shader_lib->Add(textureShader);
@@ -43,7 +43,7 @@ public:
 
     TY_INFO("Create Camera...");
     ToyEngine::CameraControllerProps camera_control_props;
-    camera_control_props.type = ToyEngine::eCameraControllerType::kOrbit;
+    camera_control_props.type = ToyEngine::eCameraControllerType::kFly;
     m_camera_controller = ToyEngine::MakeRef<ToyEngine::CameraController>(input, camera_control_props);
   }
 
@@ -66,9 +66,9 @@ public:
     TY_INFO("Create scene...");
     m_scene_graph = ToyEngine::MakeScope<ToyEngine::SceneNode>("root");
 
-    ToyEngine::Ref<ToyEngine::Model> backpack		= (ToyEngine::Model::Create("../assets/models/backpack/backpack.obj", true));
-    ToyEngine::Ref<ToyEngine::Model> cyborg			= (ToyEngine::Model::Create("../assets/models/DamagedHelmet/DamagedHelmet.gltf", true));
-    ToyEngine::Ref<ToyEngine::Shader> phongShader	= m_shader_lib->Get("phong");
+    ToyEngine::Ref<ToyEngine::Model> backpack     = (ToyEngine::Model::Create("../assets/models/backpack/backpack.obj", true));
+    ToyEngine::Ref<ToyEngine::Model> cyborg       = (ToyEngine::Model::Create("../assets/models/cyborg/cyborg.obj", false));
+    ToyEngine::Ref<ToyEngine::Shader> phongShader = m_shader_lib->Get("phong");
     backpack->m_shader = phongShader;
     cyborg->m_shader = phongShader;
     m_scene_graph->AddChild(ToyEngine::MakeScope<ToyEngine::SceneNode>("backepack_model", backpack));
@@ -117,14 +117,14 @@ public:
       m_camera_controller->Update(time_delta);
 
     // Update lights
-    m_light_block->m_lights[0].m_direction		= glm::vec4(m_directional_light_dir,0.0f);
-    m_light_block->m_lights[0].m_value			= glm::vec4(m_directional_light_color, 0.0f);
-    m_light_block->m_lights[1].m_position		= glm::vec4(m_point_light_position_1, 0.0f);
-    m_light_block->m_lights[1].m_value			= glm::vec4(m_point_light_color_1, 0.0f);
-    m_light_block->m_lights[2].m_position		= glm::vec4(m_point_light_position_2, 0.0f);
-    m_light_block->m_lights[2].m_value			= glm::vec4(m_point_light_color_2, 0.0f);
-    m_light_block->m_lights[3].m_position		= glm::vec4(m_point_light_position_3, 0.0f);
-    m_light_block->m_lights[3].m_value			= glm::vec4(m_point_light_color_3, 0.0f);
+    m_light_block->m_lights[0].m_direction  = glm::vec4(m_directional_light_dir,0.0f);
+    m_light_block->m_lights[0].m_value      = glm::vec4(m_directional_light_color, 0.0f);
+    m_light_block->m_lights[1].m_position   = glm::vec4(m_point_light_position_1, 0.0f);
+    m_light_block->m_lights[1].m_value      = glm::vec4(m_point_light_color_1, 0.0f);
+    m_light_block->m_lights[2].m_position   = glm::vec4(m_point_light_position_2, 0.0f);
+    m_light_block->m_lights[2].m_value      = glm::vec4(m_point_light_color_2, 0.0f);
+    m_light_block->m_lights[3].m_position   = glm::vec4(m_point_light_position_3, 0.0f);
+    m_light_block->m_lights[3].m_value      = glm::vec4(m_point_light_color_3, 0.0f);
 
     // update model material properties
     if (m_scene_graph->GetChildren().size() >= 2) {

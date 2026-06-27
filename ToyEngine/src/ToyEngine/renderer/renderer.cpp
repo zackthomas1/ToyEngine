@@ -4,14 +4,16 @@
 
 namespace ToyEngine
 {
-  Renderer* Renderer::s_instance = nullptr; 
+  // Initialize the static instance of the Renderer class to nullptr.
+  // This ensures that there is only one instance of the Renderer throughout the application.
+  Renderer* Renderer::s_instance = nullptr;
 
-  Renderer::Renderer(eRenderAPI api, SceneData data) 
+  Renderer::Renderer(eRenderAPI api, SceneData data)
     : api_(api), m_data(data) {}
 
   void Renderer::Init()
   {
-#ifdef  TY_PLATFORM_OPENGL
+#ifdef TY_PLATFORM_OPENGL
     eRenderAPI api = eRenderAPI::kOpenGL;
 #else
     eRenderAPI api = eRenderAPI::kNone;
@@ -30,7 +32,7 @@ namespace ToyEngine
     RenderCommand::Enable(eParamType::kDEPTH_TEST);
 
     RenderCommand::Enable(eParamType::kCULL_FACE);
-    RenderCommand::CullFace(eParamType::kBACK);	
+    RenderCommand::CullFace(eParamType::kBACK);
     RenderCommand::FrontFace(eParamType::kCCW);
 
     RenderCommand::ClearSetBackground();

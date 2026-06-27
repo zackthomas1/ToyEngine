@@ -6,10 +6,9 @@ namespace ToyEngine
   class OpenGLRenderAPI : public RenderAPI
   {
   public:
-    OpenGLRenderAPI() {}
-    ~OpenGLRenderAPI() {}
+    OpenGLRenderAPI() = default;
+    ~OpenGLRenderAPI() = default;
 
-    // Methods
     virtual void ClearSetBackground(const glm::vec4& clear_color) const override;
     virtual void BindTexture(eSamplerType texture_type, uint32_t texture_id) const;
     virtual void DrawElements(ePrimType type, const VertexArray* vao) const override;
