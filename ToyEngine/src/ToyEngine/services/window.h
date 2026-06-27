@@ -67,7 +67,7 @@ namespace ToyEngine {
     /// @param callback: The callback function to be invoked when an event occurs.
     virtual void SetCommandCallbackFn(const EventCallbackFn& callback) = 0;
     
-    //// @brief Sets the cursor position within the window. 
+    /// @brief Sets the cursor position within the window.
     /// This method must be implemented by derived classes to update the cursor position.
     virtual void SetCursorPos(float xpos, float ypos) = 0;
 
