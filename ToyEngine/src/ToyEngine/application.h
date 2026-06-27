@@ -40,7 +40,7 @@ namespace ToyEngine
     /// This function is called whenever an event occurs (e.g., input, window events).
     /// It propagates the event through the layer stack in reverse order (from topmost to bottom),
     /// allowing each layer to handle or consume the event as needed.
-    /// @param e: Reference to the event object to be processed.</param>
+    /// @param e: Reference to the event object to be processed.
     void OnEvent(Event& e);
 
     /// @brief Adds a new layer to the application. Layers are used for core engine logic and are updated and rendered in order.
