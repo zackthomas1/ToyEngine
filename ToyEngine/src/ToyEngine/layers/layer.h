@@ -19,7 +19,7 @@ namespace ToyEngine
     virtual ~Layer() = default;
     
     /// @brief Called when the layer is added to the layer stack.
-    /// This method is called by the LayerStack::Pushlayer and LayerStack::PushOverlay.
+    /// This method is called by the LayerStack::PushLayer and LayerStack::PushOverlay.
     virtual void OnAttach() {};
     
     /// @brief Called when the layer is removed from the layer stack.
@@ -81,7 +81,7 @@ namespace ToyEngine
     ImGuiLayer(Window& window, bool blocks_event = true);
 
     /// @brief Called when the layer is added to the layer stack.
-    /// This method is called by the LayerStack::Pushlayer and LayerStack::PushOverlay.
+    /// This method is called by the LayerStack::PushLayer and LayerStack::PushOverlay.
     virtual void OnAttach() override;
 
     /// @brief Called when the layer is removed from the layer stack.

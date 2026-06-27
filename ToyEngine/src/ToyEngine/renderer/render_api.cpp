@@ -9,7 +9,7 @@ namespace ToyEngine
 
   void ToyEngine::RenderAPI::Init(eRenderAPI api)
   {
-    TY_CORE_ASSERT(!s_instance, "RenderAPI already initalized. To change backend graphics api, please shutdown the current instance first.");
+    TY_CORE_ASSERT(!s_instance, "RenderAPI already initialized. To change backend graphics api, please shutdown the current instance first.");
     switch (api)
     {
     case(eRenderAPI::kOpenGL): {

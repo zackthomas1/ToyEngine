@@ -12,7 +12,7 @@ namespace ToyEngine {
     virtual ~InputPoll() = default;
 
     /// @brief Retrieves the current state of a specified keyboard key.
-    /// @param key: The key code to query.
+    /// @param key The key code to query.
     /// @return The current state of the key (pressed, released, or held).
     virtual eKeyState Key(eKeyCode key)         const = 0;
     
