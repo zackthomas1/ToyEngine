@@ -7,15 +7,12 @@ namespace ToyEngine
   class RenderAPI
   {
   public:
-    // Enforce static class
-    // Delete default, copy, and move constructors
-    RenderAPI() {}
-    virtual ~RenderAPI() {}
+    RenderAPI() = default;
+    virtual ~RenderAPI() = default;
 
     static void Init(eRenderAPI api);
     static Scope<RenderAPI> s_instance;
 
-    // Methods
     virtual void ClearSetBackground(const glm::vec4& clear_color) const = 0;
     virtual void BindTexture(eSamplerType texture_type, uint32_t texture_id) const = 0;
     virtual void DrawElements(ePrimType type, const VertexArray* vao) const = 0;
@@ -102,6 +99,5 @@ namespace ToyEngine
     {
       RenderAPI::s_instance->FrontFace(winding_order);
     }
-
   };
 }
