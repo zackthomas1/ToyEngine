@@ -153,8 +153,11 @@ public:
     m_scene_graph->SetLocalTransform(glm::translate(glm::mat4(1.0f), m_translate));
     m_scene_graph->GetChildren()[1]->SetLocalTransform(
       glm::rotate(glm::translate(glm::mat4(1.0f), m_translate_cyborg),
-        glm::radians(m_rotation_degree), glm::vec3(0.0f, 1.0f, 0.0f)));
+      glm::radians(m_rotation_degree), glm::vec3(0.0f, 1.0f, 0.0f)));
+  }
 
+  virtual void OnRender()
+  {
     // Draw Scene to frame buffer
     m_viewport.GetProps().framebuffer->Bind();
     ToyEngine::Renderer::BeginScene(&m_camera_controller->GetCamera(), m_light_block.get());
@@ -179,7 +182,8 @@ public:
   {
     // Define the GUI windows
     // ------------------------------
-    ImGuiIO& io_ = ImGui::GetIO(); (void)io_;
+    ImGuiIO& io_ = ImGui::GetIO();
+    (void)io_;
 
     // Show the big demo window (Most of the sample code is in ImGui::ShowDemoWindow()! 
     // You can browse its code to learn more about Dear ImGui!).

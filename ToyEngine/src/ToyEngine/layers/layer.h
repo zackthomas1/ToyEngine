@@ -30,7 +30,10 @@ namespace ToyEngine
     /// Each frame, the engine updates every layer in m_layerStack
     /// @param time_delta: The time elapsed since the last frame, in seconds.
     virtual void Update(float time_delta) {};
-    
+
+    /// @brief Called in Application::Run after scene draw call.
+    virtual void OnRender() {};
+
     /// @brief Called in Application::Run after scene draw call.
     /// GUI defined in client application project. 
     /// ToyEngine maintains responsible for set up of dearimgui and lifetimes of layers.
@@ -39,8 +42,9 @@ namespace ToyEngine
     /// @brief Defines what events the layer consumes and how it responds.
     /// @param e: The event to handle.
     virtual void OnEvent(Event& e) {};
+    
   protected:
-    /// @brief Default constructor for the Layer class. Protected to prevent direct instantiation. 
+    /// @brief Default constructor for the Layer class. Protected to prevent direct instantiation.
     Layer() = default;
   };
 

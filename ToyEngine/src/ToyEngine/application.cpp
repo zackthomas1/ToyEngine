@@ -56,6 +56,10 @@ namespace ToyEngine
       for (Layer *layer : layerStack_)
         layer->Update(time_step.GetTimeDelta());
 
+      // Render layer
+      for (Layer* layer : layerStack_)
+        layer->OnRender(); 
+
       // Draw GUI
       imGuiLayer_->BeginDraw();
       for(Layer *layer: layerStack_)
