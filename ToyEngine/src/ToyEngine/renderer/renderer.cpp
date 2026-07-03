@@ -8,8 +8,8 @@ namespace ToyEngine
   // This ensures that there is only one instance of the Renderer throughout the application.
   Renderer* Renderer::s_instance = nullptr;
 
-  Renderer::Renderer(eRenderAPI api, SceneData data)
-    : api_(api), m_data(data) {}
+  Renderer::Renderer(eRenderAPI api)
+    : api_(api) {}
 
   void Renderer::Init()
   {
@@ -21,12 +21,9 @@ namespace ToyEngine
     TY_CORE_ASSERT(!s_instance, "Renderer already exist!"); 
     s_instance = new Renderer(api);
     RenderAPI::Init(api);
-
-    Renderer::GetUniformManager().CreateBuffer("ViewProjectMats", 2 * sizeof(glm::mat4) + sizeof(glm::vec3) + sizeof(float));
-    Renderer::GetUniformManager().CreateBuffer("LightBlock", sizeof(LightBlock));
   }
 
-  void Renderer::BeginScene(const Camera* camera, const LightBlock* light_block)
+  void Renderer::BeginScene()
   {
     // Reset state for scene rendering.
     RenderCommand::Enable(eParamType::kDEPTH_TEST);
@@ -36,15 +33,6 @@ namespace ToyEngine
     RenderCommand::FrontFace(eParamType::kCCW);
 
     RenderCommand::ClearSetBackground();
-
-    // Update uniform buffer objects
-    Ref<UniformBuffer> camera_uniforms = Renderer::GetUniformManager().GetBuffer("ViewProjectMats");
-    camera_uniforms->SetData(0, sizeof(glm::mat4), glm::value_ptr(camera->GetViewMatrix()));
-    camera_uniforms->SetData(sizeof(glm::mat4), sizeof(glm::mat4), glm::value_ptr(camera->GetProjectionMatrix()));
-    camera_uniforms->SetData(2 * sizeof(glm::mat4), sizeof(glm::vec3), glm::value_ptr(camera->GetProps().position));
-    
-    Ref<UniformBuffer> light_uniforms = Renderer::GetUniformManager().GetBuffer("LightBlock");
-    light_uniforms->SetData(0, sizeof(LightBlock), light_block);
   }
 
   void Renderer::Submit(const VertexArray* vao)
@@ -73,8 +61,5 @@ namespace ToyEngine
       node->GetEntity()->Render(node->GetWorldTransform());
   }
 
-  void Renderer::EndScene() 
-  {
-  
-  }
+  void Renderer::EndScene() { }
 }

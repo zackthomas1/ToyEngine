@@ -2,7 +2,6 @@
 //----------- entry point -------------
 #include "ToyEngine/entry_point.h"
 //-------------------------------------
-
 #include "viewport.h"
 
 void DrawSceneNodeTree(ToyEngine::SceneNode* node) {
@@ -18,38 +17,75 @@ void DrawSceneNodeTree(ToyEngine::SceneNode* node) {
 class Scene : public ToyEngine::Layer
 {
 public:
-  Scene(const ToyEngine::InputPoll& input)
+  Scene(ToyEngine::ResourceManager& resource_manager, ToyEngine::InputPoll& input) :
+    m_resource_manager(resource_manager), m_input(input) { }
+
+  virtual void OnAttach()
   {
     TY_INFO("Compiling shaders...");
-    m_shader_lib = ToyEngine::MakeScope<ToyEngine::ShaderLibrary>();
     ToyEngine::Ref<ToyEngine::Shader> flatShader = ToyEngine::Shader::Create("flat_color", "../assets/shaders/flat_color.vs", "../assets/shaders/flat_color.fs");
     ToyEngine::Ref<ToyEngine::Shader> textureShader = ToyEngine::Shader::Create("flat_texture", "../assets/shaders/flat_texture.vs", "../assets/shaders/flat_texture.fs");
     ToyEngine::Ref<ToyEngine::Shader> phongShader = ToyEngine::Shader::Create("phong", "../assets/shaders/phong.vs", "../assets/shaders/phong.fs");
     ToyEngine::Ref<ToyEngine::Shader> skyboxShader = ToyEngine::Shader::Create("skybox", "../assets/shaders/skybox.vs", "../assets/shaders/skybox.fs");
     ToyEngine::Ref<ToyEngine::Shader> postfxShader = ToyEngine::Shader::Create("postfx", "../assets/shaders/post_process.vs", "../assets/shaders/post_process.fs");
 
-    m_shader_lib->Add(flatShader);
-    m_shader_lib->Add(textureShader);
-    m_shader_lib->Add(phongShader);
-    m_shader_lib->Add(skyboxShader);
-    m_shader_lib->Add(postfxShader);
+    m_resource_manager.Add<ToyEngine::Shader>(flatShader->GetName(), flatShader);
+    m_resource_manager.Add<ToyEngine::Shader>(textureShader->GetName(), textureShader);
+    m_resource_manager.Add<ToyEngine::Shader>(phongShader->GetName(), phongShader);
+    m_resource_manager.Add<ToyEngine::Shader>(skyboxShader->GetName(), skyboxShader);
+    m_resource_manager.Add<ToyEngine::Shader>(postfxShader->GetName(), postfxShader);
 
-    ToyEngine::Renderer::GetUniformManager().BindUniformBlockToShader(flatShader, "ViewProjectMats");
-    ToyEngine::Renderer::GetUniformManager().BindUniformBlockToShader(textureShader, "ViewProjectMats");
-    ToyEngine::Renderer::GetUniformManager().BindUniformBlockToShader(phongShader, "ViewProjectMats");
-    ToyEngine::Renderer::GetUniformManager().BindUniformBlockToShader(skyboxShader, "ViewProjectMats");
+    ToyEngine::Ref<ToyEngine::UniformBuffer> view_project_mat = ToyEngine::UniformBuffer::Create("ViewProjectMats", 2 * sizeof(glm::mat4) + sizeof(glm::vec3) + sizeof(float));
+    ToyEngine::Ref<ToyEngine::UniformBuffer> light_block = ToyEngine::UniformBuffer::Create("LightBlock", sizeof(ToyEngine::LightBlock));
 
-    ToyEngine::Renderer::GetUniformManager().BindUniformBlockToShader(phongShader, "LightBlock");
+    m_resource_manager.Add<ToyEngine::UniformBuffer>(view_project_mat->GetName(), view_project_mat);
+    m_resource_manager.Add<ToyEngine::UniformBuffer>(light_block->GetName(), light_block);
 
-    TY_INFO("Create Camera...");
+    flatShader->BindUniformBlock(view_project_mat->GetName(), view_project_mat->GetBindPoint());
+    textureShader->BindUniformBlock(view_project_mat->GetName(), view_project_mat->GetBindPoint());
+    phongShader->BindUniformBlock(view_project_mat->GetName(), view_project_mat->GetBindPoint());
+    phongShader->BindUniformBlock(light_block->GetName(), light_block->GetBindPoint());
+    skyboxShader->BindUniformBlock(view_project_mat->GetName(), view_project_mat->GetBindPoint());
+
+    TY_INFO("Creating Camera...");
     ToyEngine::CameraControllerProps camera_control_props;
     camera_control_props.type = ToyEngine::eCameraControllerType::kFly;
-    m_camera_controller = ToyEngine::MakeRef<ToyEngine::CameraController>(input, camera_control_props);
-  }
+    m_camera_controller = ToyEngine::MakeRef<ToyEngine::CameraController>(m_input, camera_control_props);
 
-  virtual void OnAttach()
-  {
-    TY_INFO("Create lights...");
+    TY_INFO("Creating scene...");
+    m_scene_graph = ToyEngine::MakeScope<ToyEngine::SceneNode>("root");
+
+    ToyEngine::Ref<ToyEngine::Model> backpack = (ToyEngine::Model::Create("../assets/models/backpack/backpack.obj", true));
+    ToyEngine::Ref<ToyEngine::Model> cyborg = (ToyEngine::Model::Create("../assets/models/cyborg/cyborg.obj", false));
+    backpack->m_shader = phongShader;
+    cyborg->m_shader = phongShader;
+
+    m_resource_manager.Add<ToyEngine::Model>("backpack", backpack);
+    m_resource_manager.Add<ToyEngine::Model>("cyborg", cyborg);
+
+    m_scene_graph->AddChild(ToyEngine::MakeScope<ToyEngine::SceneNode>("backepack_model", backpack));
+    m_scene_graph->AddChild(ToyEngine::MakeScope<ToyEngine::SceneNode>("cyborg_model", cyborg));
+
+    TY_INFO("Creating Environment Map...");
+    ToyEngine::Ref<ToyEngine::TextureCube> sky_texture = ToyEngine::TextureCube::Create({
+      "../assets/cubemaps/skybox/right.jpg", // +X (right)
+      "../assets/cubemaps/skybox/left.jpg", // -X (left)
+      "../assets/cubemaps/skybox/top.jpg", // +Y (top)
+      "../assets/cubemaps/skybox/bottom.jpg", // -Y (bottom)
+      "../assets/cubemaps/skybox/front.jpg", // +Z (front)
+      "../assets/cubemaps/skybox/back.jpg", // -Z (back)
+      });
+
+    ToyEngine::Ref<ToyEngine::Skybox> skybox = ToyEngine::MakeRef<ToyEngine::Skybox>(sky_texture, skyboxShader);
+    m_scene_graph->AddChild(ToyEngine::MakeScope<ToyEngine::SceneNode>("skybox", skybox));
+    for (auto& mesh : backpack->m_meshes) {
+      mesh->m_material->SetEnvironmentMap(sky_texture);
+    }
+    for (auto& mesh : cyborg->m_meshes) {
+      mesh->m_material->SetEnvironmentMap(sky_texture);
+    }
+
+    TY_INFO("Creating lights...");
     m_light_block = ToyEngine::MakeScope<ToyEngine::LightBlock>();
     m_light_block->m_num_lights = 5;
     m_light_block->m_lights[0].m_type = int(ToyEngine::eLightType::kDirectional);
@@ -63,39 +99,10 @@ public:
     m_light_block->m_lights[3].m_enabled = true;
     m_light_block->m_lights[4].m_enabled = true;
 
-    TY_INFO("Create scene...");
-    m_scene_graph = ToyEngine::MakeScope<ToyEngine::SceneNode>("root");
-
-    ToyEngine::Ref<ToyEngine::Model> backpack     = (ToyEngine::Model::Create("../assets/models/backpack/backpack.obj", true));
-    ToyEngine::Ref<ToyEngine::Model> cyborg       = (ToyEngine::Model::Create("../assets/models/cyborg/cyborg.obj", false));
-    ToyEngine::Ref<ToyEngine::Shader> phongShader = m_shader_lib->Get("phong");
-    backpack->m_shader = phongShader;
-    cyborg->m_shader = phongShader;
-    m_scene_graph->AddChild(ToyEngine::MakeScope<ToyEngine::SceneNode>("backepack_model", backpack));
-    m_scene_graph->AddChild(ToyEngine::MakeScope<ToyEngine::SceneNode>("cyborg_model", cyborg));
-  
-    TY_INFO("Create Environment Map...");
-    ToyEngine::Ref<ToyEngine::TextureCube> sky_texture = ToyEngine::TextureCube::Create({
-      "../assets/cubemaps/skybox/right.jpg",	// +X (right)
-      "../assets/cubemaps/skybox/left.jpg",	// -X (left)
-      "../assets/cubemaps/skybox/top.jpg",	// +Y (top)
-      "../assets/cubemaps/skybox/bottom.jpg",	// -Y (bottom)
-      "../assets/cubemaps/skybox/front.jpg",	// +Z (front)
-      "../assets/cubemaps/skybox/back.jpg",	// -Z (back)
-      });
-    ToyEngine::Ref<ToyEngine::Skybox> skybox = ToyEngine::MakeRef<ToyEngine::Skybox>(sky_texture, m_shader_lib->Get("skybox"));
-    m_scene_graph->AddChild(ToyEngine::MakeScope<ToyEngine::SceneNode>("skybox", skybox));
-    for (auto& mesh : backpack->m_meshes) {
-      mesh->m_material->SetEnvironmentMap(sky_texture);
-    }
-    for (auto& mesh : cyborg->m_meshes) {
-      mesh->m_material->SetEnvironmentMap(sky_texture);
-    }
-
-    TY_INFO("Create Viewport...");
+    TY_INFO("Creating Viewport...");
     m_viewport.SetCameraController(m_camera_controller);
 
-    TY_INFO("Create Postfx Framebuffer...");
+    TY_INFO("Creating Postfx Framebuffer...");
     ToyEngine::FrameBufferProps fb_props; 
     m_postfx_framebuffer = ToyEngine::FrameBuffer::Create(fb_props);
     m_quad_vertex_array = ToyEngine::VertexArray::Create();
@@ -106,7 +113,7 @@ public:
     ToyEngine::Ref<ToyEngine::IndexBuffer>quad_index_buffer = ToyEngine::IndexBuffer::Create(ToyEngine::TextureQuadPrim::m_indices.data(),
       ToyEngine::TextureQuadPrim::m_indices.size());
     m_quad_vertex_array->SetIndexBuffer(quad_index_buffer);
-}
+  }
 
   virtual void OnDetach() {}
 
@@ -158,14 +165,23 @@ public:
 
   virtual void OnRender()
   {
+    // Update uniform buffer objects
+    ToyEngine::Ref<ToyEngine::UniformBuffer> camera_uniforms = m_resource_manager.Get<ToyEngine::UniformBuffer>("ViewProjectMats");
+    camera_uniforms->SetData(0, sizeof(glm::mat4), glm::value_ptr(m_camera_controller->GetCamera().GetViewMatrix()));
+    camera_uniforms->SetData(sizeof(glm::mat4), sizeof(glm::mat4), glm::value_ptr(m_camera_controller->GetCamera().GetProjectionMatrix()));
+    camera_uniforms->SetData(2 * sizeof(glm::mat4), sizeof(glm::vec3), glm::value_ptr(m_camera_controller->GetCamera().GetProps().position));
+
+    ToyEngine::Ref<ToyEngine::UniformBuffer> light_uniforms = m_resource_manager.Get<ToyEngine::UniformBuffer>("LightBlock");
+    light_uniforms->SetData(0, sizeof(ToyEngine::LightBlock), m_light_block.get());
+
     // Draw Scene to frame buffer
     m_viewport.GetProps().framebuffer->Bind();
-    ToyEngine::Renderer::BeginScene(&m_camera_controller->GetCamera(), m_light_block.get());
+    ToyEngine::Renderer::BeginScene();
     ToyEngine::Renderer::Submit(m_scene_graph.get());
     ToyEngine::Renderer::EndScene();
     m_viewport.GetProps().framebuffer->Unbind();
 
-    //// Draw quad with post-processing 
+    //// Draw quad with post-processing
     //ToyEngine::Ref<ToyEngine::Shader> postfxShader = m_shader_lib->Get("postfx");
     //postfxShader->Use();
     //postfxShader->SetInt("screenTexture", 0);
@@ -313,11 +329,12 @@ public:
   }
 
 public:
-  // The scene graph and shader library should be in ToyEngine::Application 
-  // and refactored as ResourceManager systems
-  ToyEngine::Scope<ToyEngine::SceneNode> m_scene_graph;
-  ToyEngine::Scope<ToyEngine::ShaderLibrary> m_shader_lib;
+  ToyEngine::InputPoll& m_input;
   
+  ToyEngine::ResourceManager& m_resource_manager;
+
+  ToyEngine::Scope<ToyEngine::SceneNode> m_scene_graph;
+
   //
   ToyEngine::Ref<ToyEngine::FrameBuffer> m_postfx_framebuffer;
   ToyEngine::Ref<ToyEngine::VertexArray> m_quad_vertex_array;
@@ -344,7 +361,10 @@ public:
   Editor()
   {
     TY_INFO("Initialize application");
-    PushLayer(new Scene(Application::GetServices().Get<ToyEngine::InputPoll>()));
+    PushLayer(
+      new Scene(
+        Application::GetServices().Get<ToyEngine::ResourceManager>(),
+        Application::GetServices().Get<ToyEngine::InputPoll>()));
   }
   ~Editor() { }
 };
