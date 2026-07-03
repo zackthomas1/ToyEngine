@@ -18,7 +18,7 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Run C++ Linter
         id: linter
@@ -27,7 +27,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           style: 'file'
-          tidy-checks: ''
+          tidy-checks: '-*,bugprone-*,google-*,modernize-*,performance-*,readability-*,-modernize-use-trailing-return-type,-modernize-avoid-c-arrays'
           thread-comments: true
           step-summary: true
 

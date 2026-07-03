@@ -1,0 +1,94 @@
+name: Build
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - '**.cpp'
+      - '**.hpp'
+      - '**.c'
+      - '**.h'
+      - 'premake5.lua'
+      - 'dependencies.lua'
+      - '**/premake5.lua'
+  pull_request:
+    branches:
+      - main
+    paths:
+      - '**.cpp'
+      - '**.hpp'
+      - '**.c'
+      - '**.h'
+      - 'premake5.lua'
+      - 'dependencies.lua'
+      - '**/premake5.lua'
+
+jobs:
+  build:
+    name: Build ${{ matrix.config }}
+    runs-on: windows-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        config: [Debug, Release, Dist]
+    
+    permissions:
+      contents: read
+      pull-requests: write
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+          fetch-depth: 0
+
+      - name: Setup MSBuild
+        uses: microsoft/setup-msbuild@v2
+
+      - name: Generate Visual Studio Projects
+        run: |
+          .\vendor\premake\premake5.exe vs2022
+        shell: pwsh
+
+      - name: Build ${{ matrix.config }} Configuration
+        run: |
+          msbuild ToyEngine.sln /p:Configuration=${{ matrix.config }} /p:Platform=x64 /m /v:minimal
+        shell: pwsh
+
+      - name: Check Build Artifacts
+        run: |
+          $config = "${{ matrix.config }}"
+          $outputDir = "bin\${config}-windows-x86_64"
+          if (-Not (Test-Path $outputDir)) {
+            Write-Error "Build output directory not found: $outputDir"
+            exit 1
+          }
+          Write-Host "✓ Build artifacts verified in $outputDir"
+        shell: pwsh
+
+      - name: Upload Build Artifacts
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ToyEngine-${{ matrix.config }}-${{ github.sha }}
+          path: |
+            bin/${{ matrix.config }}-windows-x86_64/
+          retention-days: 7
+
+  build-status:
+    name: Build Status Check
+    runs-on: ubuntu-latest
+    needs: build
+    if: always()
+    
+    steps:
+      - name: Check Build Results
+        run: |
+          if [ "${{ needs.build.result }}" != "success" ]; then
+            echo "Build failed! One or more configurations failed to build."
+            echo "This commit/PR cannot be merged until all builds pass."
+            exit 1
+          fi
+          echo "All configurations built successfully!"
