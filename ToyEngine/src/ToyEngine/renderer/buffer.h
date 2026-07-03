@@ -38,9 +38,9 @@ namespace ToyEngine {
 
   struct BufferElement
   {
-    eShaderDataType m_type; 
+    eShaderDataType m_type;
     std::string m_name;
-    uint32_t m_size, m_offset; 
+    uint32_t m_size, m_offset;
     bool m_normalize;
 
     BufferElement(eShaderDataType type, std::string name, bool normalize = false)
@@ -51,14 +51,14 @@ namespace ToyEngine {
     {
       switch (m_type)
       {
-        case eShaderDataType::Bool	:	return 1;
-        case eShaderDataType::Int	:	return 1;
-        case eShaderDataType::Float	:	return 1;
-        case eShaderDataType::Vec2	:	return 2;
-        case eShaderDataType::Vec3	:	return 3;
-        case eShaderDataType::Vec4	:	return 4;
-        case eShaderDataType::Mat3	:	return 3 * 3;
-        case eShaderDataType::Mat4	:	return 4 * 4;
+        case eShaderDataType::Bool : return 1;
+        case eShaderDataType::Int : return 1;
+        case eShaderDataType::Float : return 1;
+        case eShaderDataType::Vec2 : return 2;
+        case eShaderDataType::Vec3 : return 3;
+        case eShaderDataType::Vec4 : return 4;
+        case eShaderDataType::Mat3 : return 3 * 3;
+        case eShaderDataType::Mat4 : return 4 * 4;
       }
       TY_CORE_ASSERT(false, "Unknown ShaderDataType");
       return 0;
@@ -75,10 +75,10 @@ namespace ToyEngine {
     inline const Vector<BufferElement>& GetElements() const  { return elements_; }
     inline const uint32_t GetStride() const { return stride_; }
 
-    Vector<BufferElement>::iterator begin()				{ return elements_.begin(); }
-    Vector<BufferElement>::iterator end()				{ return elements_.end(); }
+    Vector<BufferElement>::iterator begin() { return elements_.begin(); }
+    Vector<BufferElement>::iterator end() { return elements_.end(); }
     Vector<BufferElement>::const_iterator begin() const { return elements_.begin(); }
-    Vector<BufferElement>::const_iterator end()	const	{ return elements_.end(); }
+    Vector<BufferElement>::const_iterator end() const { return elements_.end(); }
   private:
     void CalculateOffsetAndStride();
     Vector<BufferElement> elements_;
@@ -99,7 +99,7 @@ namespace ToyEngine {
   protected:
     VertexBuffer() {}
   };
-  
+
   class IndexBuffer
   {
   public:
