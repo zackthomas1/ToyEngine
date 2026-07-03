@@ -31,7 +31,7 @@ namespace ToyEngine
     /// @param time_delta: The time elapsed since the last frame, in seconds.
     virtual void Update(float time_delta) {};
 
-    /// @brief Called in Application::Run after scene draw call.
+    /// @brief Called each frame from Application::Run() after Update() and before OnImGuiRender().
     virtual void OnRender() {};
 
     /// @brief Called in Application::Run after scene draw call.
