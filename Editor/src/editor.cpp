@@ -49,7 +49,7 @@ public:
 
     TY_INFO("Creating Camera...");
     ToyEngine::CameraControllerProps camera_control_props;
-    camera_control_props.type = ToyEngine::eCameraControllerType::kFly;
+    camera_control_props.type = ToyEngine::eCameraControllerType::kOrbit;
     m_camera_controller = ToyEngine::MakeRef<ToyEngine::CameraController>(m_input, camera_control_props);
 
     TY_INFO("Creating scene...");
@@ -181,15 +181,16 @@ public:
     ToyEngine::Renderer::EndScene();
     m_viewport.GetProps().framebuffer->Unbind();
 
-    //// Draw quad with post-processing
-    //ToyEngine::Ref<ToyEngine::Shader> postfxShader = m_shader_lib->Get("postfx");
+    // TODO: Implement post-processing effects. It is currently broken after implementing the viewport framebuffer. 
+    // The post-processing shader is not working correctly and needs to be fixed.
+    //ToyEngine::Ref<ToyEngine::Shader> postfxShader = m_resource_manager.Get<ToyEngine::Shader>("postfx");
     //postfxShader->Use();
     //postfxShader->SetInt("screenTexture", 0);
     //bool depth_test;
     //ToyEngine::RenderCommand::GetBooleanv(ToyEngine::eParamType::kDEPTH_TEST, &depth_test);
     //ToyEngine::RenderCommand::Disable(ToyEngine::eParamType::kDEPTH_TEST);
     //ToyEngine::RenderCommand::ClearSetBackground();
-    //ToyEngine::RenderCommand::BindTexture(ToyEngine::eSamplerType::kTexture2D, m_viewport_framebuffer->GetColorAttachment());
+    //ToyEngine::RenderCommand::BindTexture(ToyEngine::eSamplerType::kTexture2D, m_viewport.GetProps().framebuffer->GetColorAttachment());
     //ToyEngine::Renderer::Submit(m_quad_vertex_array.get());
     //if (depth_test) ToyEngine::RenderCommand::Enable(ToyEngine::eParamType::kDEPTH_TEST);
   }
