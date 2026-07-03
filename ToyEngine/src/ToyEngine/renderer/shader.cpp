@@ -16,20 +16,4 @@ namespace ToyEngine {
       return nullptr;
     }
   }
-
-  void ShaderLibrary::Add(Ref<Shader> shader)
-  {
-    library_.emplace(std::make_pair(std::string(shader->m_name), shader));
-  }
-
-  Ref<Shader> ShaderLibrary::Get(const std::string& name)
-  {
-    auto it = library_.find(name);
-    Ref<Shader> shader;
-    if (it != library_.end()) {
-      shader = it->second;
-    }
-    TY_CORE_ASSERT(shader, "Shader library returned NULL. Shader not found.");
-    return shader;
-  }
 }

@@ -2,10 +2,6 @@
 #include "../core.h"
 #include <typeindex>
 
-#include "ToyEngine/services/window.h"
-#include "ToyEngine/services/time_step.h"
-#include "ToyEngine/services/input_poll.h"
-
 namespace ToyEngine
 {
   class ServiceContainer
@@ -19,8 +15,9 @@ namespace ToyEngine
     /// @tparam TImpl: The implementation type of the service. Defaults to TInterface.
     /// @tparam Args: The types of the arguments to pass to the service constructor.
     /// @param args: The arguments to pass to the service constructor.
+    /// @return True if the service was registered successfully, false otherwise.
     template<typename TInterface, typename TImpl = TInterface, typename... Args>
-    void Register(Args&&... args)
+    bool Register(Args&&... args)
     {
       // Ensure that TImpl is derived from or the same as TInterface
       static_assert(std::is_base_of_v<TInterface, TImpl> || std::is_same_v<TInterface, TImpl>, "TImpl must be derived from or be the same as TInterface");
@@ -33,6 +30,7 @@ namespace ToyEngine
       // Store the service instance in the services_ map using its type index as the key.
       services_[std::type_index(typeid(TInterface))] = MakeScope<ServiceHolder<TImpl>>(std::forward<Args>(args)...);
       TY_CORE_INFO("Registered service: {}", typeid(TInterface).name());
+      return true;
     }
 
     /// @brief Checks if a service of the given interface type is registered.

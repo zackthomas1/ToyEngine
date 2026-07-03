@@ -29,6 +29,16 @@ namespace ToyEngine
     services_.Register<InputPoll, NullInputPoll>();
 #endif TY_PLATFORM_WINDOWS
 
+    // Intialize resource manager and register common resource types.
+    services_.Register<ResourceManager, ResourceManager>();
+    ResourceManager& resource_manager = services_.Get<ResourceManager>();
+    resource_manager.Register<ToyEngine::UniformBuffer>();
+    resource_manager.Register<ToyEngine::Texture2D>();
+    resource_manager.Register<ToyEngine::TextureCube>();
+    resource_manager.Register<ToyEngine::Shader>();
+    resource_manager.Register<ToyEngine::Material>();
+    resource_manager.Register<ToyEngine::Model>();
+
     // Initalize imgui layer
     imGuiLayer_ = new ImGuiLayer(services_.Get<Window>());
     layerStack_.PushLayer(imGuiLayer_);
@@ -55,6 +65,10 @@ namespace ToyEngine
       // Update layers
       for (Layer *layer : layerStack_)
         layer->Update(time_step.GetTimeDelta());
+
+      // Render layer
+      for (Layer* layer : layerStack_)
+        layer->OnRender(); 
 
       // Draw GUI
       imGuiLayer_->BeginDraw();

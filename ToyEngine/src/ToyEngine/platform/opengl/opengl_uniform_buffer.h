@@ -5,7 +5,7 @@ namespace ToyEngine {
   class OpenGLUniformBuffer : public UniformBuffer
   {
   public:
-    OpenGLUniformBuffer(uint32_t size, uint32_t binding_point);
+    OpenGLUniformBuffer(const std::string& name, uint32_t size, uint32_t binding_point);
     ~OpenGLUniformBuffer();
 
     virtual void Bind() const override;

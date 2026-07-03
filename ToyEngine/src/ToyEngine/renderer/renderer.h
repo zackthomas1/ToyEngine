@@ -9,21 +9,14 @@
 
 namespace ToyEngine
 {
-  struct SceneData {
-    SceneData() {}
-  };
-
   class Renderer
   {
   public:
+    /// @brief Initializes the renderer by creating an instance of the appropriate Renderer subclass based on the current rendering API.
     static void Init();
 
-    /// @brief Begins a new rendering scene by setting up camera matrices and lighting data in the uniform buffer.
-    /// This function prepares the renderer for drawing by clearing the background and updating
-    /// the uniform buffer with the current camera's view and projection matrices, as well as the provided lighting information.
-    /// @param camera The camera to use for view and projection matrices.
-    /// @param light_block Pointer to the LightBlock containing scene lighting data.
-    static void BeginScene(const Camera* camera, const LightBlock* light_block);
+    /// @brief Prepares renderer for drawing by clearing the background.
+    static void BeginScene();
 
     /// @brief Submits a VertexArray for rendering. This function binds the provided VertexArray and issues a draw call.
     /// @param vao Pointer to the VertexArray to be rendered.
@@ -41,15 +34,10 @@ namespace ToyEngine
     /// @return The eRenderAPI enum value representing the current rendering API.
     static eRenderAPI API() { return Renderer::s_instance->api_; }
 
-    /// @brief Retrieves the UniformManager instance used by the renderer for managing uniform buffers.
-    /// @return Reference to the UniformManager instance.
-    static UniformManager& GetUniformManager() { return Renderer::s_instance->m_uniform_manager; }
-
   protected:
     /// @brief Constructs a Renderer instance with the specified rendering API and optional scene data.
     /// @param api An enum indicating the rendering API to use (e.g., OpenGL).
-    /// @param data Optional SceneData to initialize the renderer with.
-    Renderer(eRenderAPI api, SceneData data = SceneData());
+    Renderer(eRenderAPI api);
     
     /// Destructor for the Renderer class. Cleans up any resources used by the renderer.
     ~Renderer() = default;
@@ -58,9 +46,5 @@ namespace ToyEngine
     static Renderer* s_instance;
     /* The rendering API being used by the renderer */
     eRenderAPI api_;
-    /* The UniformManager instance used by the renderer for managing uniform buffers */
-    UniformManager m_uniform_manager;
-    /* The SceneData instance containing scene-specific data */
-    SceneData m_data;
   };
 }

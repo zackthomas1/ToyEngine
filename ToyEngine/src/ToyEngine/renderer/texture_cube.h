@@ -1,12 +1,12 @@
 #pragma once
 #include "ToyEngine/core.h"
 
-namespace ToyEngine 
+namespace ToyEngine
 {
-  class TextureCube 
+  class TextureCube
   {
   public:
-    virtual ~TextureCube() {} 
+    virtual ~TextureCube() {}
     
     virtual void Bind(uint32_t slot = 0) const = 0;
     virtual void GenerateMipMaps() = 0;

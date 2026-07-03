@@ -3,7 +3,7 @@
 
 namespace ToyEngine
 {
-  std::string FileManager::ReadSourceFile(const char* path)
+  std::string FileManager::ReadSourceFile(const std::string& path)
   {
     // retrieve source code from filePath
     std::string source_code;
@@ -29,7 +29,7 @@ namespace ToyEngine
     }
     catch (std::ifstream::failure e)
     {
-      TY_CORE_ERROR("ERROR::SHADER::FILE_NOT_SUCCESFULLY_READ");
+      TY_CORE_ERROR("File not successfully read.");
     }
     return source_code;
   }

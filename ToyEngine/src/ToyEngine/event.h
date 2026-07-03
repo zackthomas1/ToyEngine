@@ -84,14 +84,17 @@ namespace ToyEngine
   {
   public:
     EventDispatcher(Event& e) : event_(e) {}
-    ~EventDispatcher() {}
+    ~EventDispatcher() = default;
 
     template<typename T, typename F>
     bool Dispatch(const F& func)
     {
-      if (bool handled = event_.GetEventHandled()) 
+      // If the event has already been handled, return true to indicate that it was handled. No further processing is needed.
+      if (bool handled = event_.GetEventHandled())
         return handled;
 
+      // Use dynamic_cast to check if the event is of type T. 
+      // If it is, call the provided function with the casted event.
       if (T* cast_event = dynamic_cast<T*>(&event_))
       {
         bool is_handled = func(*cast_event);
@@ -101,6 +104,7 @@ namespace ToyEngine
       return false;
     }
   private:
+    /* Reference to the event being dispatched */
     Event& event_;
   };
 }

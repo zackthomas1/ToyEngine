@@ -22,14 +22,18 @@
 
   /// @brief Core assertion macro that checks a condition and logs an error message if the condition is false.
   #define TY_CORE_ASSERT(x, ...) { if(!(x)) { TY_CORE_ERROR("Assertion Failed: {0}", __VA_ARGS__); __debugbreak(); } }
+
+  /// @brief Static assertion macro that checks a condition at compile time and logs an error message if the condition is false.
+  #define TY_STATIC_ASSERT(x, msg) { static_assert(x, msg); }
 #else
   #define TY_ASSERT(x, ...)
   #define TY_CORE_ASSERT(x, ...)
+  #define TY_STATIC_ASSERT(x, msg)
+
 #endif
 
 /// @brief Macro to bind a member function to an event handler, capturing the current instance (this) and forwarding the event parameter.
 #define TY_BINDFN(fn) [this](auto&& e) { return fn(e); }
-
 //#define TY_BINDFN(fn) std::bind(&fn, this, std::placeholders::_1)
 
 /// @brief Macro to bind a member function to an event handler with additional arguments, capturing the current instance (this) and forwarding the event parameter.

@@ -8,7 +8,7 @@ namespace ToyEngine
     FileManager() = delete;
     ~FileManager() = delete;
 
-      static std::string ReadSourceFile(const char* path);
+      static std::string ReadSourceFile(const std::string& path);
   private:
 
   };

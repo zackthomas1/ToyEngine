@@ -5,12 +5,12 @@
 
 namespace ToyEngine
 {
-  OpenGLShader::OpenGLShader(const char* name, const char* vertex_path, const char* fragment_path) :
+  OpenGLShader::OpenGLShader(const std::string& name, const std::string& vertex_path, const std::string& fragment_path) :
     Shader(name)
   {
     // read shader from file
-    std::string vertex_shader_code		= FileManager::ReadSourceFile(vertex_path);
-    std::string fragment_shader_code	= FileManager::ReadSourceFile(fragment_path);
+    std::string vertex_shader_code = FileManager::ReadSourceFile(vertex_path);
+    std::string fragment_shader_code = FileManager::ReadSourceFile(fragment_path);
 
     // compile the shaders
     CompileShaderProgram(vertex_shader_code.c_str(), fragment_shader_code.c_str(), id_);
@@ -19,7 +19,7 @@ namespace ToyEngine
   void OpenGLShader::Use()
   {
     if (id_ == 0) {
-      TY_CORE_ERROR("SHADER::{} - Attempting to use invalid shader program (ID = 0)", m_name);
+      TY_CORE_ERROR("SHADER::{} - Attempting to use invalid shader program (ID = 0)", name_);
       return;
     }
 
@@ -27,11 +27,11 @@ namespace ToyEngine
     
     GLenum error = glGetError();
     if (error != GL_NO_ERROR) {
-      TY_CORE_ERROR("SHADER::{}(id={}) - glUseProgram failed with error: {}", m_name, id_, error);
+      TY_CORE_ERROR("SHADER::{}(id={}) - glUseProgram failed with error: {}", name_, id_, error);
     }
   }
 
-  void ToyEngine::OpenGLShader::BindUniformBlock(const char* uniform_block, uint32_t binding_point) const
+  void ToyEngine::OpenGLShader::BindUniformBlock(const std::string& uniform_block, uint32_t binding_point) const
   {
     // Get the index of the "Matrices" uniform block in each shader program.
     // This index is used to refer to the block within the shader.
@@ -40,7 +40,7 @@ namespace ToyEngine
 
     // Bind each uniform block index to a binding point (here, binding point 0).
     // This tells OpenGL that the "Matrices" block in each shader will use binding point 0.
-    glUniformBlockBinding(id_, glGetUniformBlockIndex(id_, uniform_block), binding_point);
+    glUniformBlockBinding(id_, glGetUniformBlockIndex(id_, uniform_block.c_str()), binding_point);
   }
 
   void OpenGLShader::SetBool(const std::string& name, bool value) const
