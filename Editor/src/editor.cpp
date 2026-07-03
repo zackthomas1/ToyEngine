@@ -328,10 +328,10 @@ public:
     }
   }
 
-public:
-  ToyEngine::InputPoll& m_input;
-  
+public: 
   ToyEngine::ResourceManager& m_resource_manager;
+
+  ToyEngine::InputPoll& m_input;
 
   ToyEngine::Scope<ToyEngine::SceneNode> m_scene_graph;
 

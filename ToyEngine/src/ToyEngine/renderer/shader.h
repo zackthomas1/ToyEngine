@@ -24,7 +24,7 @@ namespace ToyEngine
     /// @brief Returns the unique identifier of the shader program.
     /// @return The unique identifier of the shader program.
     uint32_t id() const { return id_; }
-    std::string GetName() const { return name_; }
+    const std::string& GetName() const { return name_; }
 
     static Ref<Shader> Create(const char* shader_name, const char* vertex_path, const char* fragment_path);
   protected:

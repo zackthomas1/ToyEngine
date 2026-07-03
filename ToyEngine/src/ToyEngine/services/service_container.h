@@ -2,11 +2,6 @@
 #include "../core.h"
 #include <typeindex>
 
-#include "ToyEngine/services/window.h"
-#include "ToyEngine/services/time_step.h"
-#include "ToyEngine/services/input_poll.h"
-#include "ToyEngine/services/resource_manager.h"
-
 namespace ToyEngine
 {
   class ServiceContainer

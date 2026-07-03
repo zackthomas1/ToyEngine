@@ -17,8 +17,6 @@ namespace ToyEngine
     /// @brief Begins a new rendering scene by setting up camera matrices and lighting data in the uniform buffer.
     /// This function prepares the renderer for drawing by clearing the background and updating
     /// the uniform buffer with the current camera's view and projection matrices, as well as the provided lighting information.
-    /// @param camera The camera to use for view and projection matrices.
-    /// @param light_block Pointer to the LightBlock containing scene lighting data.
     static void BeginScene();
 
     /// @brief Submits a VertexArray for rendering. This function binds the provided VertexArray and issues a draw call.

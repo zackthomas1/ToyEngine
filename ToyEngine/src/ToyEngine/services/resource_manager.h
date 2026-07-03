@@ -1,7 +1,7 @@
 #pragma once
+#include <typeindex>
+#include <typeinfo>
 #include <unordered_map>
-#include <string>
-
 #include "ToyEngine/core.h"
 
 #include "ToyEngine/model/model.h"
@@ -65,9 +65,15 @@ namespace ToyEngine {
     /// @brief Gets a reference to the requested resource
     /// @tparam T: The class type of the resource being requested.
     /// @param name: The name of the resource being requested. This is the key used to store the resource in the registry.
+    /// @return A shared pointer to the requested resource. If the resource does not exist, returns nullptr.
     template<typename T>
     Ref<T> Get(const std::string& name)
     {
+      if (!IsRegistered<T>()) {
+        TY_CORE_WARN("Resource class '{}' has not been registered with Resource Manager. Get method returned nullptr", typeid(T).name());
+        return nullptr;
+      }
+
       auto& registry = GetRegistry<T>();
 
       auto it = registry.find(name);
@@ -98,6 +104,11 @@ namespace ToyEngine {
     template<typename T>
     void Remove(const std::string& name)
     {
+      if (!IsRegistered<T>()) {
+        TY_CORE_WARN("Resource class '{}' has not been registered with Resource Manager. Remove method returned.", typeid(T).name());
+        return;
+      }
+
       auto& registry = GetRegistry<T>();
 
       auto it = registry.find(name)

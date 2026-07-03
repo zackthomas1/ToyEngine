@@ -2,6 +2,10 @@
 #include "core.h"
 #include "ToyEngine/event.h"
 #include "ToyEngine/layers/layer_stack.h"
+#include "ToyEngine/services/window.h"
+#include "ToyEngine/services/time_step.h"
+#include "ToyEngine/services/input_poll.h"
+#include "ToyEngine/services/resource_manager.h"
 #include "ToyEngine/services/service_container.h"
 
 namespace ToyEngine
