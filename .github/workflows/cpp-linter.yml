@@ -1,0 +1,38 @@
+name: C++ Linter
+
+on:
+  pull_request:
+    paths:
+      - '**.cpp'
+      - '**.hpp'
+      - '**.c'
+      - '**.h'
+
+jobs:
+  lint:
+    name: Check Code Quality
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+      contents: read
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Run C++ Linter
+              id: linter
+              uses: cpp-linter/cpp-linter-action@v2
+              env:
+                GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+              with:
+                style: 'file'
+                tidy-checks: ''
+                thread-comments: true
+                step-summary: true
+
+            - name: Fail on Formatting or Tidy Errors
+              if: steps.linter.outputs.checks-failed > 0
+              run: |
+                echo "Linting failed! Please check the PR comments for specific issues."
+                exit 1
