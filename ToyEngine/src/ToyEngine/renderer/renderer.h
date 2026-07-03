@@ -12,6 +12,7 @@ namespace ToyEngine
   class Renderer
   {
   public:
+    /// @brief Initializes the renderer by creating an instance of the appropriate Renderer subclass based on the current rendering API.
     static void Init();
 
     /// @brief Begins a new rendering scene by setting up camera matrices and lighting data in the uniform buffer.
@@ -35,14 +36,9 @@ namespace ToyEngine
     /// @return The eRenderAPI enum value representing the current rendering API.
     static eRenderAPI API() { return Renderer::s_instance->api_; }
 
-    ///// @brief Retrieves the UniformManager instance used by the renderer for managing uniform buffers.
-    ///// @return Reference to the UniformManager instance.
-    //static UniformManager& GetUniformManager() { return Renderer::s_instance->m_uniform_manager; }
-
   protected:
     /// @brief Constructs a Renderer instance with the specified rendering API and optional scene data.
     /// @param api An enum indicating the rendering API to use (e.g., OpenGL).
-    /// @param data Optional SceneData to initialize the renderer with.
     Renderer(eRenderAPI api);
     
     /// Destructor for the Renderer class. Cleans up any resources used by the renderer.
@@ -52,7 +48,5 @@ namespace ToyEngine
     static Renderer* s_instance;
     /* The rendering API being used by the renderer */
     eRenderAPI api_;
-    ///* The UniformManager instance used by the renderer for managing uniform buffers */
-    //UniformManager m_uniform_manager;
   };
 }
