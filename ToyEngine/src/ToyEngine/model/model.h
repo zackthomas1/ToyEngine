@@ -23,7 +23,6 @@ namespace ToyEngine
     Vector<Ref<Mesh>> m_meshes;
     Vector<Ref<Texture2D>> m_textures;
   private:
-    //
     void loadModel(std::string path);
     void processNode(aiNode* node, const aiScene* scene);
     Ref<Mesh> processMesh(aiMesh* mesh, const aiScene* scene);
