@@ -111,7 +111,7 @@ namespace ToyEngine {
 
       auto& registry = GetRegistry<T>();
 
-      auto it = registry.find(name)
+      auto it = registry.find(name);
       if (it == registry.end()) {
         // verify that resouce exist in resouce library
         TY_CORE_WARN("Resource '{}' does not exist in {} library.", name, typeid(T).name());
